@@ -1,0 +1,13 @@
+window_sizes 1800 923 450 1344 766 104
+cleanlooks_style
+diagrams
+  active  classdiagram_ref 128002 // diagsaeprog
+    1075 612 100 A4 0 0
+end
+show_stereotypes
+selected operation_ref 129282 // quit
+open
+  class_ref 128002 // Client
+  class_ref 128130 // Serveur
+end
+end

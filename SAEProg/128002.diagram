@@ -1,0 +1,11 @@
+format 224
+
+classcanvas 128002 class_ref 128002 // Client
+  classdiagramsettings show_members_full_definition yes show_members_visibility yes show_members_stereotype yes show_members_initialization yes show_attribute_modifiers yes member_max_width 0 show_parameter_dir yes show_parameter_name yes show_infonote no show_stereotype_properties yes end
+  xyz 55 179 2000
+end
+classcanvas 128386 class_ref 128130 // Serveur
+  classdiagramsettings member_max_width 0 end
+  xyz 567 168 2000
+end
+end
