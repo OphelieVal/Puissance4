@@ -1,21 +1,22 @@
 
 class Joueur {
-  public String getCouleur() {
-  }
-
-  private False gameOver = boolean;
-
+  private boolean gameOver = false;
   private String couleur;
+  private Plateau lePlateau;
 
-  public Joueur(String couleur) {
+  public Joueur(String couleur, Plateau plateau){
+    this.couleur = couleur;
+    this.lePlateau = plateau;
   }
 
-  public boolean aGagne() {
+  public String getCouleur(){
+    return this.couleur;
+  }
+
+  public boolean aGagne(){
   }
 
   public void reset() {
   }
-
-  private Plateau lePlateau;
 
 }
