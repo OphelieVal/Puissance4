@@ -1,7 +1,8 @@
 format 224
 "SAEProg"
-  revision 1
+  revision 3
   modified_by 2 "o22301776"
+  java_root_dir "/home/iut45/Etudiants/o22301776/BoUML/SAEProg/src/"
 
 
   
@@ -64,6 +65,7 @@ format 224
     
     activitydiagramsettings
      end
+    associated_deployment_view deploymentview_ref 128002 // saeprog
     classdiagram 128002 "diagsaeprog"
       classdiagramsettings member_max_width 0 end
       size A4
@@ -298,6 +300,457 @@ ${members}}
 	
 	
       end
+
+      classrelation 135042 // lesPlateaux (<unidirectional association>)
+	relation 135042 --->
+	  a role_name "lesPlateaux" multiplicity "*" private
+	    java "  ${comment}${@}${visibility}${static}${final}${transient}${volatile}${stereotype}<${type}> ${name}${value};
+"
+	    classrelation_ref 135042 // lesPlateaux (<unidirectional association>)
+	  b parent class_ref 134658 // Plateau
+      end
+
+      classrelation 135170 // lesJoueurs (<unidirectional association>)
+	relation 135170 --->
+	  a role_name "lesJoueurs" multiplicity "*" private
+	    java "  ${comment}${@}${visibility}${static}${final}${transient}${volatile}${stereotype}<${type}> ${name}${value};
+"
+	    classrelation_ref 135170 // lesJoueurs (<unidirectional association>)
+	  b parent class_ref 134786 // Joueur
+      end
+    end
+
+    class 134658 "Plateau"
+      visibility package 
+      cpp_decl ""
+      java_decl "${comment}${@}${visibility}${static}${final}${abstract}class ${name}${extends}${implements} {
+${members}}
+"
+      php_decl ""
+      python_2_2 python_decl ""
+      idl_decl ""
+      explicit_switch_type ""
+      mysql_decl ""
+      
+      attribute 135042 "nbLignes"
+	private explicit_type "int"
+	init_value "0"
+	cpp_decl ""
+	java_decl "  ${comment}${@}${visibility}${static}${final}${transient}${volatile}${type} ${name}${value};
+"
+	php_decl ""
+	python_decl ""
+	idl_decl ""
+	mysql_decl ""
+	MysqlColumn
+      end
+
+      attribute 135170 "nbColonnes"
+	private explicit_type "int"
+	init_value "0"
+	cpp_decl ""
+	java_decl "  ${comment}${@}${visibility}${static}${final}${transient}${volatile}${type} ${name}${value};
+"
+	php_decl ""
+	python_decl ""
+	idl_decl ""
+	mysql_decl ""
+	MysqlColumn
+      end
+
+      attribute 135298 "casesRestantes"
+	private explicit_type "int"
+	cpp_decl ""
+	java_decl "  ${comment}${@}${visibility}${static}${final}${transient}${volatile}${type} ${name}${value};
+"
+	php_decl ""
+	python_decl ""
+	idl_decl ""
+	mysql_decl ""
+	MysqlColumn
+      end
+
+      operation 135810 "Plateau"
+	public explicit_return_type ""
+	nparams 2
+	  param in name "nbLignes" explicit_type "int"
+	  param in name "nbColonnes" explicit_type "int"
+	
+	java_def "  ${comment}${@}${visibility}${final}${synchronized}${name}${(}${t0} ${p0}, ${t1} ${p1}${)}${throws} {
+  ${body}}
+"
+	
+	
+	
+      end
+
+      operation 135938 "poseJeton"
+	public explicit_return_type "bool"
+	nparams 2
+	  param in name "x" explicit_type "int"
+	  param in name "y" explicit_type "int"
+	
+	java_def "  ${comment}${@}${visibility}${final}${static}${abstract}${synchronized}${type} ${name}${(}${t0} ${p0}, ${t1} ${p1}${)}${throws}${staticnl}{
+  ${body}}
+"
+	
+	
+	
+      end
+
+      operation 136066 "reset"
+	public explicit_return_type "void"
+	nparams 0
+	
+	java_def "  ${comment}${@}${visibility}${final}${static}${abstract}${synchronized}${type} ${name}${(}${)}${throws}${staticnl}{
+  ${body}}
+"
+	
+	
+	
+      end
+
+      operation 136194 "getCase"
+	public explicit_return_type ""
+	nparams 2
+	  param in name "numLigne" explicit_type "int"
+	  param in name "numColonne" explicit_type "int"
+	
+	java_def "  ${comment}${@}${visibility}${final}${static}${abstract}${synchronized}${type} ${name}${(}${t0} ${p0}, ${t1} ${p1}${)}${throws}${staticnl}{
+  ${body}}
+"
+	
+	
+	
+      end
+
+      classrelation 128130 // lesCases (<unidirectional association>)
+	relation 128130 --->
+	  a role_name "lesCases" multiplicity "*" private
+	    java "  ${comment}${@}${visibility}${static}${final}${transient}${volatile}${stereotype}<${type}> ${name}${value};
+"
+	    classrelation_ref 128130 // lesCases (<unidirectional association>)
+	  b parent class_ref 134914 // Case
+      end
+    end
+
+    class 134786 "Joueur"
+      visibility package 
+      cpp_decl ""
+      java_decl "${comment}${@}${visibility}${static}${final}${abstract}class ${name}${extends}${implements} {
+${members}}
+"
+      php_decl ""
+      python_2_2 python_decl ""
+      idl_decl ""
+      explicit_switch_type ""
+      mysql_decl ""
+      
+      operation 136834 "getCouleur"
+	public explicit_return_type "string"
+	nparams 0
+	
+	java_def "  ${comment}${@}${visibility}${final}${static}${abstract}${synchronized}${type} ${name}${(}${)}${throws}${staticnl}{
+  ${body}}
+"
+	
+	
+	
+      end
+
+      attribute 135682 "gameOver"
+	private explicit_type "False"
+	init_value "boolean"
+	cpp_decl ""
+	java_decl "  ${comment}${@}${visibility}${static}${final}${transient}${volatile}${type} ${name}${value};
+"
+	php_decl ""
+	python_decl ""
+	idl_decl ""
+	mysql_decl ""
+	MysqlColumn
+      end
+
+      attribute 135810 "couleur"
+	private explicit_type "string"
+	cpp_decl ""
+	java_decl "  ${comment}${@}${visibility}${static}${final}${transient}${volatile}${type} ${name}${value};
+"
+	php_decl ""
+	python_decl ""
+	idl_decl ""
+	mysql_decl ""
+	MysqlColumn
+      end
+
+      operation 136962 "Joueur"
+	public explicit_return_type ""
+	nparams 1
+	  param in name "couleur" explicit_type "string"
+	
+	java_def "  ${comment}${@}${visibility}${final}${synchronized}${name}${(}${t0} ${p0}${)}${throws} {
+  ${body}}
+"
+	
+	
+	
+      end
+
+      operation 137090 "aGagne"
+	public explicit_return_type "boolean"
+	nparams 0
+	
+	java_def "  ${comment}${@}${visibility}${final}${static}${abstract}${synchronized}${type} ${name}${(}${)}${throws}${staticnl}{
+  ${body}}
+"
+	
+	
+	
+      end
+
+      operation 137218 "reset"
+	public explicit_return_type "void"
+	nparams 0
+	
+	java_def "  ${comment}${@}${visibility}${final}${static}${abstract}${synchronized}${type} ${name}${(}${)}${throws}${staticnl}{
+  ${body}}
+"
+	
+	
+	
+      end
+
+      classrelation 128514 // lePlateau (<unidirectional association>)
+	relation 128514 --->
+	  a role_name "lePlateau" multiplicity "1" private
+	    java "  ${comment}${@}${visibility}${static}${final}${transient}${volatile}${type} ${name}${value};
+"
+	    classrelation_ref 128514 // lePlateau (<unidirectional association>)
+	  b parent class_ref 134658 // Plateau
+      end
+    end
+
+    class 134914 "Case"
+      visibility package 
+      cpp_decl ""
+      java_decl "${comment}${@}${visibility}${static}${final}${abstract}class ${name}${extends}${implements} {
+${members}}
+"
+      php_decl ""
+      python_2_2 python_decl ""
+      idl_decl ""
+      explicit_switch_type ""
+      mysql_decl ""
+      
+      attribute 135426 "aJeton"
+	private explicit_type "boolean"
+	init_value "False"
+	cpp_decl ""
+	java_decl "  ${comment}${@}${visibility}${static}${final}${transient}${volatile}${type} ${name}${value};
+"
+	php_decl ""
+	python_decl ""
+	idl_decl ""
+	mysql_decl ""
+	MysqlColumn
+      end
+
+      operation 136322 "Case"
+	public explicit_return_type ""
+	nparams 0
+	
+	java_def "  ${comment}${@}${visibility}${final}${synchronized}${name}${(}${)}${throws} {
+  ${body}}
+"
+	
+	
+	
+      end
+
+      operation 136450 "reset"
+	public explicit_return_type "void"
+	nparams 0
+	
+	java_def "  ${comment}${@}${visibility}${final}${static}${abstract}${synchronized}${type} ${name}${(}${)}${throws}${staticnl}{
+  ${body}}
+"
+	
+	
+	
+      end
+
+      operation 136578 "contientJeton"
+	public explicit_return_type "boolean"
+	nparams 0
+	
+	java_def "  ${comment}${@}${visibility}${final}${static}${abstract}${synchronized}${type} ${name}${(}${)}${throws}${staticnl}{
+  ${body}}
+"
+	
+	
+	
+      end
+
+      operation 136706 "poseJeton"
+	public explicit_return_type "boolean"
+	nparams 0
+	
+	java_def "  ${comment}${@}${visibility}${final}${static}${abstract}${synchronized}${type} ${name}${(}${)}${throws}${staticnl}{
+  ${body}}
+"
+	
+	
+	
+      end
+
+      classrelation 128258 // lesVoisines (<unidirectional association>)
+	relation 128258 --->
+	  a role_name "lesVoisines" multiplicity "*" private
+	    java "  ${comment}${@}${visibility}${static}${final}${transient}${volatile}${stereotype}<${type}> ${name}${value};
+"
+	    classrelation_ref 128258 // lesVoisines (<unidirectional association>)
+	  b parent class_ref 134914 // Case
+      end
+
+      attribute 135554 "couleur"
+	private explicit_type "string"
+	init_value "null"
+	cpp_decl ""
+	java_decl "  ${comment}${@}${visibility}${static}${final}${transient}${volatile}${type} ${name}${value};
+"
+	php_decl ""
+	python_decl ""
+	idl_decl ""
+	mysql_decl ""
+	MysqlColumn
+      end
+    end
+
+    class 141442 "ClientHandler"
+      visibility package 
+      cpp_decl ""
+      java_decl "${comment}${@}${visibility}${static}${final}${abstract}class ${name}${extends}${implements} {
+${members}}
+"
+      php_decl ""
+      python_2_2 python_decl ""
+      idl_decl ""
+      explicit_switch_type ""
+      mysql_decl ""
+      
+      classrelation 135426 // client (<unidirectional association>)
+	relation 135426 --->
+	  a role_name "client" multiplicity "1" private
+	    java "  ${comment}${@}${visibility}${static}${final}${transient}${volatile}${type} ${name}${value};
+"
+	    classrelation_ref 135426 // client (<unidirectional association>)
+	  b parent class_ref 128002 // Client
+      end
+    end
+
+    class 141570 "ServerThread"
+      visibility package 
+      cpp_decl ""
+      java_decl "${comment}${@}${visibility}${static}${final}${abstract}class ${name}${extends}${implements} {
+${members}}
+"
+      php_decl ""
+      python_2_2 python_decl ""
+      idl_decl ""
+      explicit_switch_type ""
+      mysql_decl ""
+      
+      classrelation 135554 // server (<unidirectional association>)
+	relation 135554 --->
+	  a role_name "server" multiplicity "1" private
+	    java "  ${comment}${@}${visibility}${static}${final}${transient}${volatile}${type} ${name}${value};
+"
+	    classrelation_ref 135554 // server (<unidirectional association>)
+	  b parent class_ref 128130 // Serveur
+      end
     end
   end
+
+  deploymentview 128002 "saeprog"
+    //deployment diagram settings
+    deploymentdiagramsettings
+     end
+    artifact 128002 "Client"
+      stereotype "source"
+      java_src "${comment}
+${package}
+${imports}
+${definition}"
+      associated_elems
+	class_ref 128002 // Client
+      end
+    end
+
+    artifact 128130 "Serveur"
+      stereotype "source"
+      java_src "${comment}
+${package}
+${imports}
+${definition}"
+      associated_elems
+	class_ref 128130 // Serveur
+      end
+    end
+
+    artifact 128258 "Plateau"
+      stereotype "source"
+      java_src "${comment}
+${package}
+${imports}
+${definition}"
+      associated_elems
+	class_ref 134658 // Plateau
+      end
+    end
+
+    artifact 128386 "Joueur"
+      stereotype "source"
+      java_src "${comment}
+${package}
+${imports}
+${definition}"
+      associated_elems
+	class_ref 134786 // Joueur
+      end
+    end
+
+    artifact 128514 "Case"
+      stereotype "source"
+      java_src "${comment}
+${package}
+${imports}
+${definition}"
+      associated_elems
+	class_ref 134914 // Case
+      end
+    end
+
+    artifact 128642 "ClientHandler"
+      stereotype "source"
+      java_src "${comment}
+${package}
+${imports}
+${definition}"
+      associated_elems
+	class_ref 141442 // ClientHandler
+      end
+    end
+
+    artifact 128770 "ServerThread"
+      stereotype "source"
+      java_src "${comment}
+${package}
+${imports}
+${definition}"
+      associated_elems
+	class_ref 141570 // ServerThread
+      end
+    end
+  end
+
 end

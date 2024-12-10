@@ -1,13 +1,76 @@
-window_sizes 1800 923 450 1344 766 104
+window_sizes 1920 1032 450 1464 875 104
 cleanlooks_style
 diagrams
   active  classdiagram_ref 128002 // diagsaeprog
-    1075 612 100 A4 0 0
+    1144 695 69 A4 0 0
 end
 show_stereotypes
-selected operation_ref 129282 // quit
+marked
+  class_ref 128002 // Client
+  attribute_ref 128002 // IP
+  attribute_ref 128130 // nomJoueur
+  attribute_ref 128258 // nbVictoires
+  attribute_ref 128386 // pourcentVict
+  operation_ref 128002 // Client
+  operation_ref 128130 // updateVictoires
+  attribute_ref 128514 // listeMatchs
+  class_ref 128130 // Serveur
+  operation_ref 128258 // connect
+  operation_ref 128386 // wait
+  operation_ref 128514 // ask
+  operation_ref 128642 // play
+  operation_ref 128770 // update
+  operation_ref 128898 // win
+  operation_ref 129026 // end
+  operation_ref 129154 // getStats
+  operation_ref 129282 // quit
+  classrelation_ref 135042 // lesPlateaux (<unidirectional association>)
+  classrelation_ref 135170 // lesJoueurs (<unidirectional association>)
+  class_ref 134658 // Plateau
+  attribute_ref 135042 // nbLignes
+  attribute_ref 135170 // nbColonnes
+  attribute_ref 135298 // casesRestantes
+  operation_ref 135810 // Plateau
+  operation_ref 135938 // poseJeton
+  operation_ref 136066 // reset
+  operation_ref 136194 // getCase
+  classrelation_ref 128130 // lesCases (<unidirectional association>)
+  class_ref 134786 // Joueur
+  operation_ref 136834 // getCouleur
+  attribute_ref 135682 // gameOver
+  attribute_ref 135810 // couleur
+  operation_ref 136962 // Joueur
+  operation_ref 137090 // aGagne
+  operation_ref 137218 // reset
+  classrelation_ref 128514 // lePlateau (<unidirectional association>)
+  class_ref 134914 // Case
+  attribute_ref 135426 // aJeton
+  operation_ref 136322 // Case
+  operation_ref 136450 // reset
+  operation_ref 136578 // contientJeton
+  operation_ref 136706 // poseJeton
+  classrelation_ref 128258 // lesVoisines (<unidirectional association>)
+  attribute_ref 135554 // couleur
+  class_ref 141442 // ClientHandler
+  classrelation_ref 135426 // client (<unidirectional association>)
+  class_ref 141570 // ServerThread
+  classrelation_ref 135554 // server (<unidirectional association>)
+  artifact_ref 128002 // Client
+  artifact_ref 128130 // Serveur
+  artifact_ref 128258 // Plateau
+  artifact_ref 128386 // Joueur
+  artifact_ref 128514 // Case
+  artifact_ref 128642 // ClientHandler
+  artifact_ref 128770 // ServerThread
+end
+selected class_ref 128002 // Client
 open
   class_ref 128002 // Client
   class_ref 128130 // Serveur
+  class_ref 134658 // Plateau
+  class_ref 134786 // Joueur
+  class_ref 134914 // Case
+  class_ref 141442 // ClientHandler
+  deploymentview_ref 128002 // saeprog
 end
 end

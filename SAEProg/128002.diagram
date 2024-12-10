@@ -2,10 +2,77 @@ format 224
 
 classcanvas 128002 class_ref 128002 // Client
   classdiagramsettings show_members_full_definition yes show_members_visibility yes show_members_stereotype yes show_members_initialization yes show_attribute_modifiers yes member_max_width 0 show_parameter_dir yes show_parameter_name yes show_infonote no show_stereotype_properties yes end
-  xyz 55 179 2000
+  xyz 29.2803 39.8124 2000
 end
 classcanvas 128386 class_ref 128130 // Serveur
   classdiagramsettings member_max_width 0 end
-  xyz 567 168 2000
+  xyz 148.554 356.776 2000
+end
+classcanvas 128514 class_ref 134658 // Plateau
+  classdiagramsettings member_max_width 0 end
+  xyz 482.459 23.871 2000
+end
+classcanvas 128642 class_ref 134786 // Joueur
+  classdiagramsettings member_max_width 0 end
+  xyz 480.27 437.62 2000
+end
+classcanvas 128770 class_ref 134914 // Case
+  classdiagramsettings member_max_width 0 end
+  xyz 693.34 307.72 2000
+end
+classcanvas 132098 class_ref 141442 // ClientHandler
+  classdiagramsettings member_max_width 0 end
+  xyz 107.95 224.11 2000
+end
+classcanvas 133122 class_ref 141570 // ServerThread
+  classdiagramsettings member_max_width 0 end
+  xyz 224.53 227.22 2000
+end
+relationcanvas 129282 relation_ref 128130 // <unidirectional association>
+  from ref 128514 z 2001 to ref 128770
+  role_a_pos 747 282 3000 no_role_b
+  multiplicity_a_pos 715 282 3000 no_multiplicity_b
+end
+relationcanvas 129794 relation_ref 128258 // <unidirectional association>
+  decenter_begin 794
+  decenter_end 304
+  from ref 128770 z 2001 to point 815.44 441.44
+  line 130178 z 2001 to point 819.44 437.96
+  line 131842 z 2001 to point 814.91 443.5
+  line 130690 z 2001 to point 815.97 443.5
+  line 130306 z 2001 to point 814.91 443.5
+  line 130434 z 2001 to point 814.91 443.5
+  line 130818 z 2001 to point 815.44 444.03
+  line 129922 z 2001 to point 812.38 443.5
+  line 130050 z 2001 to point 739.48 444.26
+  line 130562 z 2001 to ref 128770
+  role_a_pos 756 432 3000 no_role_b
+  multiplicity_a_pos 723 432 3000 no_multiplicity_b
+end
+relationcanvas 131458 relation_ref 135042 // <unidirectional association>
+  from ref 128386 z 2001 to ref 128514
+  role_a_pos 468 122 3000 no_role_b
+  multiplicity_a_pos 527 148 3000 no_multiplicity_b
+end
+relationcanvas 131586 relation_ref 128514 // <unidirectional association>
+  from ref 128642 z 2001 to ref 128514
+  role_a_pos 625 162 3000 no_role_b
+  multiplicity_a_pos 588 162 3000 no_multiplicity_b
+end
+relationcanvas 131714 relation_ref 135170 // <unidirectional association>
+  from ref 128386 z 2001 to ref 128642
+  role_a_pos 407 459 3000 no_role_b
+  multiplicity_a_pos 462 485 3000 no_multiplicity_b
+end
+relationcanvas 132610 relation_ref 135426 // <unidirectional association>
+  decenter_begin 396
+  from ref 132098 z 2001 to ref 128002
+  role_a_pos 160 178 3000 no_role_b
+  multiplicity_a_pos 123 178 3000 no_multiplicity_b
+end
+relationcanvas 133250 relation_ref 135554 // <unidirectional association>
+  from ref 133122 z 2001 to ref 128386
+  role_a_pos 277 332 3000 no_role_b
+  multiplicity_a_pos 242 332 3000 no_multiplicity_b
 end
 end
