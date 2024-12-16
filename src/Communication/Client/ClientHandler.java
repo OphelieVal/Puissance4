@@ -1,7 +1,7 @@
-package src;
+package Client;
 
 
-class ClientHandler implements Runnable {
+class ClientHandler extends Thread {
   private Client client;
   public ClientHandler(Client client){
     this.client = client;
