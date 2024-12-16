@@ -36,6 +36,6 @@ class Serveur {
   }
 
   public String quit(String nomJoueur) {
-  }
 
+  }
 }
