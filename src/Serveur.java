@@ -1,6 +1,9 @@
-
+import java.util.List;
 class Serveur {
-  public  connect(String nomJoueur) {
+  private List<Plateau> lesPlateaux;
+
+  private List<Joueur> lesJoueurs;
+  public  void connect(String nomJoueur) {
   }
 
   public String wait(String nomJoueur) {
@@ -27,8 +30,5 @@ class Serveur {
   public String quit(String nomJoueur) {
   }
 
-  private <Plateau> lesPlateaux;
-
-  private <Joueur> lesJoueurs;
 
 }
