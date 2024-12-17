@@ -18,10 +18,8 @@ class Serveur {
   public void ajouter_plateau(Plateau plateau){
     this.lesPlateaux.add(plateau);
   }
-  public void ajouter_joueur(Joueur joueur){
-    this.lesJoueurs.add(joueur);
-  }
-  public void  connect(String nomJoueur) {
+  public void connect(String nomJoueur) {
+    // ajouter un joueur a la liste joueur
   }
 
   public String wait(String nomJoueur) {

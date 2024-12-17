@@ -20,4 +20,12 @@ class Client {
     this.pourcentVict = this.nbVictoires/this.listeMatchs.size();
   }
 
+  public String get_IP(){
+    return this.IP;
+  }
+
+  public String get_nomJoueur(){
+    return this.nomJoueur;
+  }
+
 }

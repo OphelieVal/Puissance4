@@ -1,0 +1,12 @@
+{
+    "java.project.sourcePaths": [
+        ".",
+        "src",
+        "src/Communication",
+        "src/Communication/Client",
+        "src/Communication/Serveur",
+        "src/Modele"
+    ],
+    "java.project.referencedLibraries": [],
+    "java.project.outputPath": "bin"
+}
