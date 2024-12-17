@@ -1,3 +1,4 @@
+
 import java.util.List;
 
 class Plateau {
@@ -19,7 +20,7 @@ class Plateau {
 
   public boolean poseJeton(int x, int y) throws IndexOutOfBoundsException {
     try {
-      this.lePlateau[x][y].poseJeton();
+      this.lePlateau[x][y].poseJeton(null);
     } 
     
     catch (Exception e) {
