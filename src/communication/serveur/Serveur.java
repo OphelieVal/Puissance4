@@ -53,7 +53,7 @@ public class Serveur {
       return false;
     }
     for (PlayerClient client : this.clientsJoueurs) {
-      if (client.getUsername().equals(nomJoueur)) {
+      if (client.getNomJoueur().equals(nomJoueur)) {
         return false;
       }
     }
@@ -76,6 +76,9 @@ public class Serveur {
     return false;
   }
 
+  /** affiche l'ensemble des clients connectes au serveur
+   * @return ensemble clients connectes au serveur
+   */
   public String showConnectedClients() {
     String res = "\n";
     for (PlayerClient client : this.clientsJoueurs) {

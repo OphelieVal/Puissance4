@@ -38,7 +38,7 @@ public class Joueur {
   /** setter nom joueur
    * @param nomJoueur nom du joueur
    */
-  public void setnomJoueur(String nomJoueur) { 
+  public void setNomJoueur(String nomJoueur) { 
     this.nomJoueur = nomJoueur; 
   }
 

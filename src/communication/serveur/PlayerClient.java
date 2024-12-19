@@ -3,37 +3,54 @@ package communication.serveur;
 import modele.Joueur;
 
 public class PlayerClient {
-    private String username;
+    private String nomJoueur;
     private String clientIP;
     private Joueur clientPlayer;
 
-    public PlayerClient(String username, String clientIP) {
-        this.username = username;
+    public PlayerClient(String nomJoueur, String clientIP) {
+        this.nomJoueur = nomJoueur;
         this.clientIP = clientIP;
     }
 
-    /**
+    /** getter nom joueur
      * @return nom du joueur
      */
-    public String getUsername() { 
-        return username; 
+    public String getNomJoueur() { 
+        return this.nomJoueur; 
     }
+
+    /**getter IP client
+     * @return IP du client
+     */
     public String getClientIP() { 
-        return clientIP; 
+        return this.clientIP; 
     }
 
+    /** gette objet joueur
+     * @return objet joueur
+     */
     public Joueur getClientPlayer() { 
-        return clientPlayer; 
+        return this.clientPlayer; 
     }
 
+    /** setter joueur
+     * @param clientPlayer joueur
+     */
     public void setClientPlayer(Joueur clientPlayer) { 
-        this.clientPlayer = clientPlayer; 
+        this.clientPlayer = clientPlayer;
     }
 
-    public void setUsername(String username) {
-         this.username = username; 
+    /**setter nom joueur
+     * @param nomJoueur nom du joueurs
+     */
+    public void setNomJoueur(String nomJoueur) {
+         this.nomJoueur = nomJoueur; 
+         this.clientPlayer.setNomJoueur(nomJoueur);
         }
 
+    /** setter IP client
+     * @param clientIP IP du client
+     */
     public void setClientIP(String clientIP) { 
         this.clientIP = clientIP; 
     }
@@ -43,7 +60,7 @@ public class PlayerClient {
         if (this == o) return true;
         if (o == null || !(o instanceof PlayerClient)) return false;
         PlayerClient newPlayer = (PlayerClient) o;
-        return this.clientIP.equals(newPlayer.clientIP) && this.username.equals(newPlayer.getUsername());
+        return this.clientIP.equals(newPlayer.clientIP) && this.nomJoueur.equals(newPlayer.getNomJoueur());
     }
 
     @Override
@@ -52,11 +69,11 @@ public class PlayerClient {
         if (clientPlayer != null) {
             ps = this.clientPlayer.toString();
         }
-        return "("+this.username+", "+this.clientIP+ ", "+ ps +")";
+        return "("+this.nomJoueur+", "+this.clientIP+ ", "+ ps +")";
     }
 
     @Override
     public int hashCode() {
-        return this.username.hashCode() + this.clientIP.hashCode();
+        return this.nomJoueur.hashCode() + this.clientIP.hashCode();
     }
 }

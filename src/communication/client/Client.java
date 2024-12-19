@@ -22,40 +22,45 @@ public class Client {
   private String nomJoueur;
   private ClientSocket clientSocket;
   private boolean connecté = false;
-  private String socketMessage;
 
   public Client(String serverIP, int serverPort) throws UnknownHostException {
     this.serverIP = serverIP;
     this.clientIP = InetAddress.getLocalHost().getHostAddress();
     this.serverPort = serverPort;
     this.clientSocket = new ClientSocket(this.serverPort, this.serverIP, this);
-    this.socketMessage = "";
   }
 
+  /** getter IP server
+   * @return IP du serveur
+   */
   public String get_IP(){
     return this.serverIP;
   }
 
+  /** getter nom joueur
+   * @return nom du joueur
+   */
   public String get_nomJoueur(){
     return this.nomJoueur;
   }
 
-  public String get_Message(){ 
-    return this.socketMessage; 
-  }
-
+  /** getter IP client
+   * @return IP du client
+   */
   public String get_ClientIP(){
     return this.clientIP;
   }
 
+  /**setter connecte au serveur
+   * @param connecté connecte au serveur
+   */
   public void set_Connected(boolean connecté){
     this.connecté = connecté;
   }
   
-  public void set_SocketMessage(String message){
-    this.socketMessage = message;
-  }
-
+  /**
+   * nettoie le terminal 
+   */
   public void nettoieTerminal() {
     try {
       if (System.getProperty("os.name").contains("Windows")) {
