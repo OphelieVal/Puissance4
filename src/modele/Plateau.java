@@ -1,7 +1,8 @@
 
+package modele;
 import java.util.List;
 
-class Plateau {
+public class Plateau {
   private int nbLignes = 0;
 
   private int nbColonnes = 0;
