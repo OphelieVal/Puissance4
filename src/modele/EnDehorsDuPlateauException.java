@@ -1,4 +1,4 @@
-package modele.Exception;
+package modele;
 
 public class EnDehorsDuPlateauException extends Exception {
     public EnDehorsDuPlateauException(String message) {

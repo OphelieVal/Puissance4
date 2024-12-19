@@ -2,8 +2,6 @@
 package modele;
 import java.util.List;
 
-import modele.Exception.EnDehorsDuPlateauException;
-
 public class Plateau {
   private int nbLignes = 0;
 

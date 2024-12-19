@@ -82,7 +82,7 @@ public class Client {
     this.nettoieTerminal();
     System.out.println("========================\n   Bienvenue dans le Puissance 4 - Client     \n========================\n");
     while (!request.equals("quit")) {
-      System.out.print("Entrez une commande : "+
+      System.out.print("Entrez une commande : \n"+
       "connect pour se connecter à son espace Joueur\n"+
       "ask demande d'une nouvelle partie avec un joueur\n"+
       "disconnect deconnecte de l'espace Joueur\n"+
@@ -92,17 +92,22 @@ public class Client {
       request = commandAndArgs[0];
       switch (request) {
         case "connect":
-          this.clientSocket.sendCommand("connect "+commandAndArgs[1]+ " " + this.clientIP);
+          try {
+            this.clientSocket.sendCommand("\nconnect "+commandAndArgs[1]+ " " + this.clientIP);
+          }
+          catch (IndexOutOfBoundsException e){
+            System.err.println("\nVous devez entre le nom du joueur\n");
+          }
           break;
         case "ask":
-          this.clientSocket.sendCommand("ask "+commandAndArgs[1]);
+          this.clientSocket.sendCommand("\nask "+commandAndArgs[1]);
           break;
 
         case "disconnect":
-          this.clientSocket.sendCommand("disconnect "+this.clientIP);
+          this.clientSocket.sendCommand("\ndisconnect "+this.clientIP);
           break;
         case "quit":
-          this.clientSocket.sendCommand("disconnect "+this.clientIP);
+          this.clientSocket.sendCommand("\ndisconnect "+this.clientIP);
           this.clientSocket.closeSocket();
           System.out.print("Quitting");
           break;
@@ -111,6 +116,7 @@ public class Client {
           break;
       }
     }
+    this.clientSocket.closeSocket();
     scanner.close();
   }
 

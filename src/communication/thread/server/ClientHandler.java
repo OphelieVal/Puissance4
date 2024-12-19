@@ -43,32 +43,32 @@ public class ClientHandler implements Runnable {
                         if (args.length >= 2) {
                             switch (args[0]) {
                                 case "connect":
-                                    System.out.println(args[1]+ args[2]);
-                                    status = this.serveur.clientIsConnected(args[1], args[2]);
-                                    if (status) {
-                                        this.writer.println("Already connected as "+args[1]+" OK");
-                                        System.out.println("connected clients: "+this.serveur.showConnectedClients());
-                                    }else if (this.serveur.connect(args[1], args[2])) {
-                                        this.writer.println("connection confirmed as "+args[1]+" OK");
-                                        System.out.println("connected clients: "+this.serveur.showConnectedClients());
-                                    }else {
-                                        this.writer.println("ERR connection to "+args[1]+" failed or refused");
-                                    }
+                                        System.out.println(args[1]+ args[2]);
+                                        status = this.serveur.clientIsConnected(args[1], args[2]);
+                                        if (status) {
+                                            this.writer.println("\nDeja connecte "+args[1]+" OK");
+                                            System.out.println("\nclients connectes: "+this.serveur.showConnectedClients());
+                                        }else if (this.serveur.connect(args[1], args[2])) {
+                                            this.writer.println("\nconnecté "+args[1]+" OK");
+                                            System.out.println("\nclients connectes: "+this.serveur.showConnectedClients());
+                                        }else {
+                                            this.writer.println("\nERR connexion à  "+args[1]+" refusé ou échoué");
+                                        }
 
                                 case "ask":
                                     String adversary = args[1];
-                                    this.sendMessage("ask request received for "+adversary+ "but feature not implemented yet");
+                                    this.sendMessage("\nask requête reçu par "+adversary+ "mais pas encore implémenté");
                                     break;
                                 case "disconnect":
                                     status = this.serveur.disconnect(args[1]);
                                     if (status) {
-                                        this.writer.println("disconnected, you are not a player anymore");
-                                        System.out.println("remain connected clients: "+this.serveur.showConnectedClients());
+                                        this.writer.println("\ndéconnecté");
+                                        System.out.println("\nclients connectés "+this.serveur.showConnectedClients());
                                     }else {
-                                        this.writer.println("ERR disconnected didn't success for "+args[1]);
+                                        this.writer.println("\nERR déconnexion échouée pour "+args[1]);
                                     }
                                 default:
-                                    this.sendMessage("ERR Unknown command");
+                                    this.sendMessage("\nERR commande non connue");
                             }
                         }
                     } catch (IOException e) {
