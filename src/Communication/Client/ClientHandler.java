@@ -10,15 +10,6 @@ class ClientHandler extends Thread {
   }
   @Override
   public void run(){
-    try {
-          Socket clientSocket = new Socket(this.client.get_IP(), 5000);
-
-          BufferedReader input = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-          PrintWriter output = new PrintWriter(clientSocket.getOutputStream(), true);
-        }
-        catch (Exception e){
-          System.err.println(e.getMessage());
-        }
   }
 
 }
