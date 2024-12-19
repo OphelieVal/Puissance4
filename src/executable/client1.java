@@ -6,7 +6,7 @@ import java.io.IOException;
 public class client1 {
 
     public static void main(String[] args) throws IOException {
-        System.out.println("Client1 is running");
+        System.out.println("Client 1 actif");
         String server = "localhost";
         int port = 4444;
         Client client = new Client(server, port);

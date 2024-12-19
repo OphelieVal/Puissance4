@@ -19,9 +19,9 @@ public class Client {
   private String serverIP;
   private String clientIP;
   private int serverPort;
-  private String username;
+  private String nomJoueur;
   private ClientSocket clientSocket;
-  private boolean connected = false;
+  private boolean connecté = false;
   private String socketMessage;
 
   public Client(String serverIP, int serverPort) throws UnknownHostException {
@@ -32,16 +32,31 @@ public class Client {
     this.socketMessage = "";
   }
 
-  public String get_IP(){return this.serverIP;}
-  public String get_Username(){
-    return this.username;
+  public String get_IP(){
+    return this.serverIP;
   }
-  public String get_Message(){ return this.socketMessage; }
-  public String get_ClientIP(){return this.clientIP;}
-  public void set_Connected(boolean connected){this.connected = connected;}
-  public void set_SocketMessage(String message){this.socketMessage = message;}
 
-  public void clearShell() {
+  public String get_nomJoueur(){
+    return this.nomJoueur;
+  }
+
+  public String get_Message(){ 
+    return this.socketMessage; 
+  }
+
+  public String get_ClientIP(){
+    return this.clientIP;
+  }
+
+  public void set_Connected(boolean connecté){
+    this.connecté = connecté;
+  }
+  
+  public void set_SocketMessage(String message){
+    this.socketMessage = message;
+  }
+
+  public void nettoieTerminal() {
     try {
       if (System.getProperty("os.name").contains("Windows")) {
         new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
@@ -59,10 +74,14 @@ public class Client {
     Scanner scanner = new Scanner(System.in);
     this.clientSocket.clientSocketInit();
     this.clientSocket.start();
-    this.clearShell();
-    System.out.println("========================\n     Welcoome to P4 Client       \n========================\n");
+    this.nettoieTerminal();
+    System.out.println("========================\n   Bienvenue dans le Puissance 4 - Client     \n========================\n");
     while (!request.equals("quit")) {
-      System.out.print("Enter command: \n");
+      System.out.print("Entrez une commande : "+
+      "connect pour se connecter à son espace Joueur\n"+
+      "ask demande d'une nouvelle partie avec un joueur\n"+
+      "disconnect deconnecte de l'espace Joueur\n"+
+      "quit demande la fin de connexion\n");
       String s = scanner.nextLine();
       String[] commandAndArgs = s.split(" ");
       request = commandAndArgs[0];
@@ -73,8 +92,7 @@ public class Client {
         case "ask":
           this.clientSocket.sendCommand("ask "+commandAndArgs[1]);
           break;
-        case "playColumn":
-          break;
+
         case "disconnect":
           this.clientSocket.sendCommand("disconnect "+this.clientIP);
           break;

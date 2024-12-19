@@ -9,6 +9,6 @@ public class server {
     public static void main(String[] args) throws IOException {
         int defaultPort = 4444; // port d'écoute 
         Serveur server = new Serveur(defaultPort);
-        System.out.println("Server is running... ");
+        System.out.println("Serveur actif ");
     }
 }

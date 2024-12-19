@@ -14,41 +14,62 @@ import modele.Plateau;
 public class Serveur {
   private final int port;
   private List<Plateau> lesPlateaux;
-  private List<PlayerClient> players_client;
-  private ServerSocketConnector socketConnector;
+  private List<PlayerClient> clientsJoueurs;
+  private ServerSocketConnector socketConnexion;
   private Random rand = new Random();
 
   public Serveur(int port) throws IOException {
     this.port = port;
     this.lesPlateaux = new ArrayList<>();
-    this.players_client = new ArrayList<>();
-    this.socketConnector = new ServerSocketConnector(port, this);
-    this.socketConnector.start();
+    this.clientsJoueurs = new ArrayList<>();
+    this.socketConnexion = new ServerSocketConnector(port, this);
+    this.socketConnexion.start();
   }
 
-  public int get_port(){return this.port;}
-
-  public boolean clientIsConnected(String username, String clientIP) {
-    return this.players_client.contains(new PlayerClient(username, clientIP));
+  /** getter port
+   * @return port du serveur
+   */
+  public int get_port(){
+    return this.port;
   }
 
-  public boolean connect(String username, String clientIP) throws IOException {
-    if (this.clientIsConnected(username, clientIP)) {
+  /** verifie si le client est deja connecte au serveur 
+   * @param nomJoueur nom du joueur
+   * @param clientIP IP du client
+   * @return true si le client est deja connecte au serveur
+   */
+  public boolean clientIsConnected(String nomJoueur, String clientIP) {
+    return this.clientsJoueurs.contains(new PlayerClient(nomJoueur, clientIP));
+  }
+
+  /** connecte le client avec un nom joueur different
+   * @param nomJoueur
+   * @param clientIP
+   * @return true si le client est connecté sinon false
+   * @throws IOException
+   */
+  public boolean connect(String nomJoueur, String clientIP) throws IOException {
+    if (this.clientIsConnected(nomJoueur, clientIP)) {
       return false;
     }
-    for (PlayerClient client : this.players_client) {
-      if (client.getUsername().equals(username)) {
+    for (PlayerClient client : this.clientsJoueurs) {
+      if (client.getUsername().equals(nomJoueur)) {
         return false;
       }
     }
-    this.players_client.add(new PlayerClient(username, clientIP));
+    this.clientsJoueurs.add(new PlayerClient(nomJoueur, clientIP));
     return true;
   }
 
+  /** deconnecte le client du serveur
+   * @param clientIP
+   * @return true si la demande a été prise en compte et realisé
+   * sinon false
+   */
   public boolean disconnect(String clientIP) {
-    for (PlayerClient client : this.players_client) {
+    for (PlayerClient client : this.clientsJoueurs) {
       if (client.getClientIP().equals(clientIP)) {
-        this.players_client.remove(client);
+        this.clientsJoueurs.remove(client);
         return true;
       }
     }
@@ -57,7 +78,7 @@ public class Serveur {
 
   public String showConnectedClients() {
     String res = "\n";
-    for (PlayerClient client : this.players_client) {
+    for (PlayerClient client : this.clientsJoueurs) {
       res += client.toString() + System.lineSeparator();
     }
     return res;
@@ -68,7 +89,7 @@ public class Serveur {
   }
 
   public void newClientConnected() {
-      System.out.println("a new client connected");
+      System.out.println("Un nouveau client est connecté");
   }
 
 //---------------------------------------------------------------------------------
@@ -101,6 +122,10 @@ public class Serveur {
     return "";
   }
 
+  /** demande la fin de connexion d'un joueur
+   * @param nomJoueur nom d'un joueur
+   * @return ERR si erreur, sinon BYE
+   */
   public String quit(String nomJoueur) {
     return "";
   }

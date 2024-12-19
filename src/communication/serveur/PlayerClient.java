@@ -12,13 +12,31 @@ public class PlayerClient {
         this.clientIP = clientIP;
     }
 
-    public String getUsername() { return username; }
-    public String getClientIP() { return clientIP; }
-    public Joueur getClientPlayer() { return clientPlayer; }
+    /**
+     * @return nom du joueur
+     */
+    public String getUsername() { 
+        return username; 
+    }
+    public String getClientIP() { 
+        return clientIP; 
+    }
 
-    public void setClientPlayer(Joueur clientPlayer) { this.clientPlayer = clientPlayer; }
-    public void setUsername(String username) { this.username = username; }
-    public void setClientIP(String clientIP) { this.clientIP = clientIP; }
+    public Joueur getClientPlayer() { 
+        return clientPlayer; 
+    }
+
+    public void setClientPlayer(Joueur clientPlayer) { 
+        this.clientPlayer = clientPlayer; 
+    }
+
+    public void setUsername(String username) {
+         this.username = username; 
+        }
+
+    public void setClientIP(String clientIP) { 
+        this.clientIP = clientIP; 
+    }
 
     @Override
     public boolean equals(Object o) {
@@ -30,7 +48,7 @@ public class PlayerClient {
 
     @Override
     public String toString() {
-        String ps = "no colors picked";
+        String ps = "Pas de couleur choisie";
         if (clientPlayer != null) {
             ps = this.clientPlayer.toString();
         }

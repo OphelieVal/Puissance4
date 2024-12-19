@@ -12,16 +12,29 @@ public class Case {
     this.lesVoisines = new ArrayList<>();
   }
 
+  /** remet par défaut la case
+   */
   public void reset(){
     this.aJeton = false;
     this.couleur = null;
   }
 
+  /** getter jeton case 
+   * @return true si il y a un jeton
+   */
   public boolean contientJeton(){
     return this.aJeton;
   }
 
-  public boolean poseJeton(String couleur){
+  /** ose le jeton sur une case
+   * @param couleur couleur du joueur
+   * @return true si le jeton est posé
+   * @throws Exception si la case contient deja un jeton
+   */
+  public boolean poseJeton(String couleur) throws Exception{
+    if (!(this.contientJeton())){
+      throw new Exception();
+    }
     this.aJeton = true;
     this.couleur = couleur;
     return true;
