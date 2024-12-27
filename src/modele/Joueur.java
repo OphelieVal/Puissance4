@@ -56,11 +56,19 @@ public class Joueur {
     this.lePlateau = lePlateau; 
   }
  
-  /** verifie si le joueur a gagné
+  /** verifie si le joueur a gagné apres chaque coup
    * @return true si le joueur a gagné sinon false
    */
-  public boolean aGagne(){
-    return false;
+  public boolean aGagne(int x, int j){
+    int compteur = 0;
+    Case caseJouee = this.lePlateau.getCase(x, j);
+    for (Case caseVoisine : caseJouee.getlesVoisines()){
+      if ((caseVoisine.getLigne()==x)){
+        return true;
+      }
+    }
+    return true;
+
   }
 
   /** remet à jour l'ensemble des cases du plateau

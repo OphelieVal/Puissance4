@@ -17,6 +17,11 @@ public class Plateau {
     this.nbColonnes = nbColonnes;
     this.casesRestantes = this.nbLignes * this.nbColonnes;
     this.lePlateau = new Case[this.nbLignes][this.nbColonnes];
+    for (int i = 0; i<this.nbLignes; i++){
+      for (int j = 0; j<this.nbColonnes; j++){
+        this.lePlateau[i][j] = new Case(i, j);
+      }
+    }
   }
 
   /** pose un jeton sur une case du plateau 
@@ -25,9 +30,9 @@ public class Plateau {
    * @return true si le jeton s'est posé sinon false
    * @throws IndexOutOfBoundsException en dehors du plateau
    */
-  public boolean poseJeton(int x, int y) throws EnDehorsDuPlateauException {
+  public boolean poseJeton(int x, int y, String couleur) throws EnDehorsDuPlateauException {
     try {
-      this.lePlateau[x][y].poseJeton(null);
+      this.lePlateau[x][y].poseJeton(couleur);
     } 
     catch (Exception e) {
       throw new EnDehorsDuPlateauException("Le jeton n'a pas pu être ajouté");
@@ -35,6 +40,7 @@ public class Plateau {
     if (!(this.lePlateau[x][y].contientJeton())) {
       return false;
     }
+    this.casesRestantes--;
     return true;
   }
 
@@ -42,8 +48,11 @@ public class Plateau {
    * 
    */
   public void reset() {
-    this.lePlateau = new Case[this.nbLignes][this.nbColonnes];
-    this.casesRestantes = this.nbLignes * this.nbColonnes;
+    for (int i = 0; i<this.nbLignes;i++){
+      for (int j = 0; j<this.nbColonnes;j++){
+        this.lePlateau[i][j].reset();
+      }
+    }
   }
 
   /** getter d'une case du plateau
@@ -64,7 +73,7 @@ public class Plateau {
     }
   }
 
-    /** gette cases du plateau
+    /** getter cases du plateau
      * @return l'ensemble des cases du plateau
      */
     public Case[][] getLePlateau() {
@@ -76,6 +85,22 @@ public class Plateau {
      */
     public void setLePlateau(Case[][] lePlateau) {
         this.lePlateau = lePlateau;
+    }
+
+    /**
+     * getter nb lignes du plateau
+     * @return nombre lignes du plateau
+     */
+    public int getNbLignes(){
+      return this.nbLignes;
+    }
+
+    /**
+     * getter nb colonnes du plateau
+     * @return nombre colonnes du plateau
+     */
+    public int getNbColonnes(){
+      return this.nbColonnes;
     }
   
 }
