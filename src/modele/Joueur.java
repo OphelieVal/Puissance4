@@ -59,20 +59,18 @@ public class Joueur {
   /** verifie si le joueur a gagné apres chaque coup
    * @return true si le joueur a gagné sinon false
    */
-  public boolean aGagne(int x, int j){
-    int compteur = 0;
-    Case caseJouee = this.lePlateau.getCase(x, j);
-    for (Case caseVoisine : caseJouee.getlesVoisines()){
-      if ((caseVoisine.getLigne()==x)){
-        return true;
-      }
-    }
-    return true;
-
+  public boolean aGagne(int x, int y) {
+    Case caseJouee = this.lePlateau.getCase(x, y);
+    return caseJouee.quatreHorizontal(caseJouee) >= 4 ||
+           caseJouee.quatreVertical(caseJouee) >= 4 ||
+           caseJouee.quatreDiagonal(caseJouee) >= 4;
   }
 
   /** remet à jour l'ensemble des cases du plateau
    * 
    */
-  public void reset() {}
+  public void reset() {
+    this.gameOver = false;
+    this.lePlateau.reset();
+  }
 }
