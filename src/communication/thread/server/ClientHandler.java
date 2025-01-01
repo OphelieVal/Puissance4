@@ -65,7 +65,7 @@ public class ClientHandler implements Runnable {
                                         this.writer.println("\ndéconnecté");
                                         System.out.println("\nclients connectés "+this.serveur.showConnectedClients());
                                     }else {
-                                        this.writer.println("\nERR déconnexion échouée pour "+args[1]);
+                                        this.writer.println("\nERR Vous n'êtes pas connecté en tant que joueur pour "+args[1]);
                                     }
                                 default:
                                     this.sendMessage("\nERR commande non connue");
@@ -77,7 +77,7 @@ public class ClientHandler implements Runnable {
                 }
             }
         }catch (Exception e) {
-            e.printStackTrace();
+            System.err.println("Déconnexion client inattendu\n");
         } finally {
             try {
                 if (reader != null) reader.close();

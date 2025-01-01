@@ -6,6 +6,7 @@ import java.net.InetAddress;
 import java.io.IOException;
 import java.net.UnknownHostException;
 import java.util.Scanner;
+import java.util.concurrent.ExecutionException;
 
 //  private List<Plateau> listeMatchs;
 //  private int nbVictoires = 0;
@@ -83,39 +84,40 @@ public class Client {
     System.out.println("========================\n   Bienvenue dans le Puissance 4 - Client     \n========================\n");
     while (!request.equals("quit")) {
       System.out.print("Entrez une commande : \n"+
-      "connect pour se connecter à son espace Joueur\n"+
-      "ask demande d'une nouvelle partie avec un joueur\n"+
-      "disconnect deconnecte de l'espace Joueur\n"+
-      "quit demande la fin de connexion\n");
+      "CONNECT NOMJOUEUR pour se connecter à son espace Joueur\n"+
+      "ASK NOMJOUEUR demande d'une nouvelle partie avec un joueur\n"+
+      "DISCONNECT deconnecte de l'espace Joueur\n"+
+      "QUIT demande la fin de connexion\n");
       String s = scanner.nextLine();
       String[] commandAndArgs = s.split(" ");
-      request = commandAndArgs[0];
-      switch (request) {
-        case "connect":
-          try {
-            this.clientSocket.sendCommand("\nconnect "+commandAndArgs[1]+ " " + this.clientIP);
-          }
-          catch (IndexOutOfBoundsException e){
-            System.err.println("\nVous devez entre le nom du joueur\n");
-          }
-          break;
-        case "ask":
-          this.clientSocket.sendCommand("\nask "+commandAndArgs[1]);
-          break;
+      request = commandAndArgs[0].toLowerCase();
+      try {
 
-        case "disconnect":
-          this.clientSocket.sendCommand("\ndisconnect "+this.clientIP);
-          break;
-        case "quit":
-          this.clientSocket.sendCommand("\ndisconnect "+this.clientIP);
-          this.clientSocket.closeSocket();
-          System.out.print("Quitting");
-          break;
-        default:
-          System.out.println("Unknown command");
-          break;
+        switch (request) {
+          case "connect":
+            this.clientSocket.sendCommand("\nconnect "+commandAndArgs[1]+ " " + this.clientIP);
+            break;
+          case "ask":
+            this.clientSocket.sendCommand("\nask "+commandAndArgs[1]);
+            break;
+
+          case "disconnect":
+            this.clientSocket.sendCommand("\ndisconnect "+this.clientIP);
+            break;
+          case "quit":
+            this.clientSocket.sendCommand("\ndisconnect "+this.clientIP);
+            this.clientSocket.closeSocket();
+            System.out.print("Quitting");
+            break;
+          default:
+            System.out.println("Unknown command");
+            break;
+        }
       }
-    }
+      catch(Exception e){
+        System.err.println("Vous devez rentrer le NOM JOUEUR avec votre commande (CONNECT, ASK)\n");
+      }
+  }
     this.clientSocket.closeSocket();
     scanner.close();
   }
