@@ -12,6 +12,8 @@ public class Joueur {
   public Joueur(String nomJoueur,String couleur){
     this.nomJoueur = nomJoueur;
     this.couleur = couleur;
+    this.lePlateau = null;
+    
   }
 
   /** getter nom joueur

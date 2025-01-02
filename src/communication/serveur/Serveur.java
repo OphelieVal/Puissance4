@@ -15,6 +15,7 @@ public class Serveur {
   private final int port;
   private List<Plateau> lesPlateaux;
   private List<PlayerClient> clientsJoueurs;
+  private List<PlayerClient> attenteClients;
   private ServerSocketConnector socketConnexion;
   private Random rand = new Random();
 
@@ -95,14 +96,49 @@ public class Serveur {
       System.out.println("Un nouveau client est connecté");
   }
 
+  public PlayerClient getClient(String nomJoueur){
+    for (PlayerClient client : this.clientsJoueurs){
+      if (client.getNomJoueur().equals(nomJoueur)){
+        return client;
+      }
+    }
+    return null;
+  }
+  /**
+   * get un client en attente
+   * @return un client en attente
+   */
+  public PlayerClient getClientAttente(){
+    for (PlayerClient client : this.attenteClients){
+      if (client.getClientPlayer().getPlateau()==null){
+        return client;
+      }
+    }
+    return null;
+
+  }
+
 //---------------------------------------------------------------------------------
 
-  public String wait(String nomJoueur) {
-    return "";
+  public String waitClient(PlayerClient player) {
+    this.attenteClients.add(player);
+    return "EN ATTENTE d'autres joueurs";
   }
 
   public String ask(String nomJoueur) {
-    return "";
+    PlayerClient client1 = this.getClient(nomJoueur);
+    if (client1==null){
+      return "ERR Non connecté";
+    }
+    PlayerClient client2 = this.getClientAttente();
+    if (client2==null){
+      this.waitClient(client1);
+      return "Veuillez patienter";
+    }
+    Plateau plateau = new Plateau(6, 7);
+    client1.getClientPlayer().setLePlateau(plateau);
+    client2.getClientPlayer().setLePlateau(plateau);
+    return "OK Plateau initialisé";
   }
 
   public String play(int nomColonne) {
