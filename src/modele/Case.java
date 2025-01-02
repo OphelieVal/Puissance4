@@ -122,6 +122,20 @@ public class Case {
   public int quatreDiagonal(Case casedepart) {
     return 1;
   }
+
+  @Override 
+  public boolean equals(Object objet){
+    if (objet == null){return false;}
+    if (objet == this){return true;}
+    if (!(objet instanceof Case)){return false;}
+    Case tmp = (Case) objet;
+    if (this.aJeton == tmp.contientJeton()){ 
+        if (this.x == tmp.getLigne() && this.y == tmp.getColonne()){
+            if (this.couleur.equals(tmp.getCouleur()) && this.lesVoisines.equals(tmp.getlesVoisines())){return true;}
+        }
+    }   
+    return false;
+}
   
 
 

@@ -102,5 +102,24 @@ public class Plateau {
     public int getNbColonnes(){
       return this.nbColonnes;
     }
+
+    public int getCasesRestantes(){
+      return
+       this.casesRestantes;
+    }
+
+    @Override
+    public boolean equals(Object objet){
+      if (objet == null){return false;}
+      if (objet == this){return true;}
+      if (!(objet instanceof Case)){return false;}
+      Plateau tmp = (Plateau) objet;
+      if (this.nbLignes == tmp.getNbLignes() && this.nbColonnes == tmp.getNbColonnes()){ 
+          if (this.casesRestantes == tmp.getCasesRestantes()){
+              if (this.lePlateau.equals(tmp.getLePlateau())){return true;}
+          }
+      }   
+      return false;
+  }
   
 }
