@@ -1,5 +1,6 @@
 package communication.serveur;
 
+import java.util.Random;
 import modele.Joueur;
 
 public class PlayerClient {
@@ -10,6 +11,8 @@ public class PlayerClient {
     public PlayerClient(String nomJoueur, String clientIP) {
         this.nomJoueur = nomJoueur;
         this.clientIP = clientIP;
+        Random rand = new Random();
+        this.clientPlayer = new Joueur(nomJoueur, "rouge");
     }
 
     /** getter nom joueur

@@ -1,7 +1,7 @@
 package communication.thread.server;
 
+import communication.serveur.PlayerClient;
 import communication.serveur.Serveur;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -57,9 +57,16 @@ public class ClientHandler implements Runnable {
 
                                 case "ask":
                                     String joueur = args[1];
-//                                    this.sendMessage("\nask requête reçu par "+adversary+ "mais pas encore implémenté");
-//                                    break;
-                                    this.serveur.ask(joueur);
+                                    PlayerClient client = this.serveur.ask(joueur);
+                                    if (client==null){
+                                        this.writer.println("EN ATTENTE d'autres joueurs");
+                                    }
+                                    else {
+                                        this.writer.println("OK plateau initilialisé");
+                                    }
+                                    
+                                    
+                                    break;
                                 case "disconnect":
                                     status = this.serveur.disconnect(args[1]);
                                     if (status) {
@@ -78,6 +85,7 @@ public class ClientHandler implements Runnable {
                 }
             }
         }catch (Exception e) {
+            System.err.println(e.getMessage()+e.getCause());
             System.err.println("Déconnexion client inattendu\n");
         } finally {
             try {
