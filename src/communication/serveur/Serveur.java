@@ -154,7 +154,13 @@ public class Serveur {
   }
 
   public String end(String nomJoueur) {
-    return "";
+    for (PlayerClient joueur : this.clientsJoueurs){
+      if (joueur.getNomJoueur().equals(nomJoueur)){
+        this.clientsJoueurs.remove(joueur);
+        return "Partie terminée";
+      }
+    }
+    return "Joueur non trouvé";
   }
 
   public String getStats(String nomJoueur) {
