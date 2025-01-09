@@ -1,12 +1,10 @@
 package communication.client;
 
 import communication.thread.client.ClientSocket;
-import java.net.InetAddress;
-
 import java.io.IOException;
+import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Scanner;
-import java.util.concurrent.ExecutionException;
 
 //  private List<Plateau> listeMatchs;
 //  private int nbVictoires = 0;
@@ -78,31 +76,24 @@ public class Client {
   public void execute() throws IOException {
     String request = "";
     Scanner scanner = new Scanner(System.in);
-    this.clientSocket.clientSocketInit();
-    this.clientSocket.start();
     this.nettoieTerminal();
     System.out.println("========================\n   Bienvenue dans le Puissance 4 - Client     \n========================\n");
     while (!request.equals("quit")) {
       System.out.print("Entrez une commande : \n"+
       "CONNECT NOMJOUEUR pour se connecter à son espace Joueur\n"+
-      "ASK NOMJOUEUR demande d'une nouvelle partie avec un joueur\n"+
-      "DISCONNECT deconnecte de l'espace Joueur\n"+
       "QUIT demande la fin de connexion\n");
       String s = scanner.nextLine();
       String[] commandAndArgs = s.split(" ");
       request = commandAndArgs[0].toLowerCase();
       try {
-
+        this.nettoieTerminal();
         switch (request) {
           case "connect":
-            this.clientSocket.sendCommand("\nconnect "+commandAndArgs[1]+ " " + this.clientIP);
-            break;
-          case "ask":
-            this.clientSocket.sendCommand("\nask "+commandAndArgs[1]);
-            break;
-
-          case "disconnect":
-            this.clientSocket.sendCommand("\ndisconnect "+this.clientIP);
+            nomJoueur = commandAndArgs[1];
+            this.clientSocket.clientSocketInit();
+            this.clientSocket.start();
+            this.clientSocket.sendCommand("\nconnect "+nomJoueur+ " " + this.clientIP);
+            this.connected();
             break;
           case "quit":
             this.clientSocket.sendCommand("\ndisconnect "+this.clientIP);
@@ -115,11 +106,45 @@ public class Client {
         }
       }
       catch(Exception e){
-        System.err.println("Vous devez rentrer le NOM JOUEUR avec votre commande (CONNECT, ASK)\n");
+        System.err.println("Vous devez rentrer le NOM JOUEUR avec votre commande (CONNECT)\n");
       }
   }
     this.clientSocket.closeSocket();
     scanner.close();
+  }
+
+  public void connected(){
+    String request = "";
+    Scanner scanner = new Scanner(System.in);
+    this.nettoieTerminal();
+    System.out.println("Vous êtes connecté en tant que " + this.nomJoueur);
+    while (!(request.equals("quit"))){
+      System.out.println( "ASK demande d'une nouvelle partie avec un joueur\n"+ 
+      "DISCONNECT deconnecte de l'espace Joueur\n");
+      String s = scanner.nextLine();
+      String[] commandAndArgs = s.split(" ");
+      request = commandAndArgs[0].toLowerCase();
+      try {
+
+        switch (request) {
+    
+          case "ask":
+            this.clientSocket.sendCommand("\nask "+ this.nomJoueur);
+            break;
+          case "disconnect":
+            this.clientSocket.sendCommand("\ndisconnect "+this.clientIP);
+            break;
+          default:
+            System.out.println("Unknown command");
+            break;
+        }
+      }
+      catch(Exception e){
+        System.err.println(e.getMessage());
+      }
+    }
+
+    
   }
 
 }

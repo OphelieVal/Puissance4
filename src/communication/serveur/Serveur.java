@@ -6,7 +6,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-
+import modele.EnDehorsDuPlateauException;
+import modele.GagnantException;
 import modele.Joueur;
 import modele.Plateau;
 
@@ -23,6 +24,7 @@ public class Serveur {
     this.port = port;
     this.lesPlateaux = new ArrayList<>();
     this.clientsJoueurs = new ArrayList<>();
+    this.attenteClients = new ArrayList<>();
     this.socketConnexion = new ServerSocketConnector(port, this);
     this.socketConnexion.start();
   }
@@ -125,32 +127,44 @@ public class Serveur {
     return "EN ATTENTE d'autres joueurs";
   }
 
-  public String ask(String nomJoueur) {
+  public PlayerClient ask(String nomJoueur) {
     PlayerClient client1 = this.getClient(nomJoueur);
-    if (client1==null){
-      return "ERR Non connecté";
-    }
     PlayerClient client2 = this.getClientAttente();
     if (client2==null){
       this.waitClient(client1);
-      return "Veuillez patienter";
+      return null;
     }
     Plateau plateau = new Plateau(6, 7);
     client1.getClientPlayer().setLePlateau(plateau);
     client2.getClientPlayer().setLePlateau(plateau);
-    return "OK Plateau initialisé";
+    return client2;
   }
 
-  public String play(int nomColonne) {
-    return "";
+  public String play(int nomColonne, String nomJoueur) {
+    boolean pose = false;
+      Joueur joueur =  this.getClient(nomJoueur).getClientPlayer();
+      try {
+        if (joueur.getNomJoueur()!=null){
+          boolean result = joueur.getPlateau().poseJeton(nomColonne, joueur);
+          pose = true;
+        }
+      }
+      catch (EnDehorsDuPlateauException e){
+        return "ERR plus de place sur cette colonne";
+      }
+      catch (GagnantException e){
+        this.win(joueur);
+      }
+    if (pose){
+      return "OK jeton posé";
+    }
+    return "ERR nomJoueur invalide";
   }
 
-  public String update(String nomJoueur) {
-    return "";
-  }
 
-  public boolean win(String nomJoueur) {
-    return false;
+  public boolean win(Joueur joueur) {
+    System.out.println(joueur.getNomJoueur() + " a gagné la partie ");
+    return true;
   }
 
   public String end(String nomJoueur) {

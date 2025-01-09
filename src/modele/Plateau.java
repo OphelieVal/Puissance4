@@ -1,6 +1,5 @@
 
 package modele;
-import java.util.List;
 
 public class Plateau {
   private int nbLignes = 0;
@@ -24,21 +23,41 @@ public class Plateau {
     }
   }
 
+  /**
+   * get la position x libre de la colonne y
+   * @param y
+   * @return la ligne disponible pour la colonne y
+   */
+  public Integer getMaxligne(int y){
+    for (int x = 0; x<this.nbLignes; x++){
+      if (!(this.lePlateau[x][y].contientJeton())){
+        return x;
+      }
+    }
+    return null;
+
+
+  }
+
   /** pose un jeton sur une case du plateau 
    * @param x la ligne du plateau
    * @param y la colonne du plateau
    * @return true si le jeton s'est posé sinon false
    * @throws IndexOutOfBoundsException en dehors du plateau
    */
-  public boolean poseJeton(int x, int y, String couleur) throws EnDehorsDuPlateauException {
+  public boolean poseJeton(int y, Joueur joueur) throws EnDehorsDuPlateauException, GagnantException {
+    int x = this.getMaxligne(y);
     try {
-      this.lePlateau[x][y].poseJeton(couleur);
+      this.lePlateau[x][y].poseJeton(joueur.getCouleur());
     } 
     catch (Exception e) {
       throw new EnDehorsDuPlateauException("Le jeton n'a pas pu être ajouté");
     }
     if (!(this.lePlateau[x][y].contientJeton())) {
       return false;
+    }
+    if (joueur.aGagne(x, y)){
+      throw new GagnantException();
     }
     this.casesRestantes--;
     return true;

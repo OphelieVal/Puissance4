@@ -68,6 +68,7 @@ public class Joueur {
            caseJouee.quatreDiagonal(caseJouee) >= 4;
   }
 
+
   /** remet à jour l'ensemble des cases du plateau
    * 
    */
