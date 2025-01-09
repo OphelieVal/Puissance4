@@ -1,12 +1,10 @@
 package communication.client;
 
 import communication.thread.client.ClientSocket;
-import java.net.InetAddress;
-
 import java.io.IOException;
+import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Scanner;
-import java.util.concurrent.ExecutionException;
 
 //  private List<Plateau> listeMatchs;
 //  private int nbVictoires = 0;
@@ -23,6 +21,7 @@ public class Client {
   private String nomJoueur;
   private ClientSocket clientSocket;
   private boolean connecté = false;
+
 
   public Client(String serverIP, int serverPort) throws UnknownHostException {
     this.serverIP = serverIP;
@@ -75,6 +74,7 @@ public class Client {
     }
   }
 
+
   public void execute() throws IOException {
     String request = "";
     Scanner scanner = new Scanner(System.in);
@@ -86,6 +86,7 @@ public class Client {
       System.out.print("Entrez une commande : \n"+
       "CONNECT NOMJOUEUR pour se connecter à son espace Joueur\n"+
       "ASK NOMJOUEUR demande d'une nouvelle partie avec un joueur\n"+
+      "STATS NOMJOUEUR récupère les statistiques d'un joueur\n"+
       "DISCONNECT deconnecte de l'espace Joueur\n"+
       "QUIT demande la fin de connexion\n");
       String s = scanner.nextLine();
@@ -100,6 +101,8 @@ public class Client {
           case "ask":
             this.clientSocket.sendCommand("\nask "+commandAndArgs[1]);
             break;
+          case "stats":
+            this.clientSocket.sendCommand("\ngetStats" + this.nomJoueur);
 
           case "disconnect":
             this.clientSocket.sendCommand("\ndisconnect "+this.clientIP);

@@ -6,8 +6,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-
-import modele.Joueur;
 import modele.Plateau;
 
 
@@ -142,6 +140,7 @@ public class Serveur {
   }
 
   public String play(int nomColonne) {
+    // Ajouter match/plateau dans PlayerClient.listeMatchs
     return "";
   }
 
@@ -150,6 +149,8 @@ public class Serveur {
   }
 
   public boolean win(String nomJoueur) {
+    // PlayerClient client = this.getClient(nomJoueur);
+    // client.updateVictoires();
     return false;
   }
 
@@ -158,7 +159,14 @@ public class Serveur {
   }
 
   public String getStats(String nomJoueur) {
-    return "";
+    PlayerClient client = this.getClient(nomJoueur);
+    int nbVict = client.getNbVictoires();
+    double pourcentVict = client.getPourcentVict();
+    int nbMatchs = client.getNbMatchs();
+    String res = "Voici les statistiques du joueur" + nomJoueur + 
+    "\n Nombre de victoires :" + nbVict + "Nombre de matchs joués :" +
+    nbMatchs + "\n Pourcentage de victoires :" + pourcentVict;
+    return res;
   }
 
   /** demande la fin de connexion d'un joueur
