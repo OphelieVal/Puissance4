@@ -56,9 +56,10 @@ public class ClientHandler implements Runnable {
                                         }
 
                                 case "ask":
-                                    String adversary = args[1];
-                                    this.sendMessage("\nask requête reçu par "+adversary+ "mais pas encore implémenté");
-                                    break;
+                                    String joueur = args[1];
+//                                    this.sendMessage("\nask requête reçu par "+adversary+ "mais pas encore implémenté");
+//                                    break;
+                                    this.serveur.ask(joueur);
                                 case "disconnect":
                                     status = this.serveur.disconnect(args[1]);
                                     if (status) {

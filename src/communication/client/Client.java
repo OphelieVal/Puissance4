@@ -23,6 +23,7 @@ public class Client {
   private String nomJoueur;
   private ClientSocket clientSocket;
   private boolean connecté = false;
+  private boolean inGame = false;
 
   public Client(String serverIP, int serverPort) throws UnknownHostException {
     this.serverIP = serverIP;

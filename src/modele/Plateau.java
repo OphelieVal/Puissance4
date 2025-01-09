@@ -1,5 +1,7 @@
 
 package modele;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class Plateau {
@@ -11,6 +13,8 @@ public class Plateau {
 
   private Case[][] lePlateau;
 
+  private List<String> allColors = Arrays.asList("YELLOW", "RED", "BLUE", "PURPLE");
+  private List<String> chosenColors = new ArrayList<>();
 
   public Plateau(int nbLignes, int nbColonnes) {
     this.nbLignes = nbLignes;
@@ -24,7 +28,20 @@ public class Plateau {
     }
   }
 
-  /** pose un jeton sur une case du plateau 
+  public String getAColor() {
+    for (String color : this.allColors) {
+      if (!this.chosenColors.contains(color)) {
+        return color;
+      }
+    }
+    return null;
+  }
+
+  public void setChosenColors(List<String> chosenColors) {
+    this.chosenColors = chosenColors;
+  }
+
+  /** pose un jeton sur une case du plateau
    * @param x la ligne du plateau
    * @param y la colonne du plateau
    * @return true si le jeton s'est posé sinon false
@@ -33,7 +50,7 @@ public class Plateau {
   public boolean poseJeton(int x, int y, String couleur) throws EnDehorsDuPlateauException {
     try {
       this.lePlateau[x][y].poseJeton(couleur);
-    } 
+    }
     catch (Exception e) {
       throw new EnDehorsDuPlateauException("Le jeton n'a pas pu être ajouté");
     }
@@ -45,7 +62,7 @@ public class Plateau {
   }
 
   /** reset l'ensemble des cases du plateau
-   * 
+   *
    */
   public void reset() {
     for (int i = 0; i<this.nbLignes;i++){
@@ -58,15 +75,15 @@ public class Plateau {
   /** getter d'une case du plateau
    * @param numLigne ligne de la case
    * @param numColonne colonne de la case
-   * @return case du plateau 
+   * @return case du plateau
    * @throws IndexOutOfBoundsException
    */
   public Case getCase(int numLigne, int numColonne) throws IndexOutOfBoundsException {
     try {
       Case element = this.lePlateau[numLigne][numColonne];
       return element;
-    } 
-    
+    }
+
     catch (Exception e) {
       System.err.println("la case renseignée n'existe pas");
       throw new IndexOutOfBoundsException();
@@ -114,12 +131,12 @@ public class Plateau {
       if (objet == this){return true;}
       if (!(objet instanceof Case)){return false;}
       Plateau tmp = (Plateau) objet;
-      if (this.nbLignes == tmp.getNbLignes() && this.nbColonnes == tmp.getNbColonnes()){ 
+      if (this.nbLignes == tmp.getNbLignes() && this.nbColonnes == tmp.getNbColonnes()){
           if (this.casesRestantes == tmp.getCasesRestantes()){
               if (this.lePlateau.equals(tmp.getLePlateau())){return true;}
           }
-      }   
+      }
       return false;
   }
-  
+
 }
