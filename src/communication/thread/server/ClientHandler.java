@@ -91,9 +91,13 @@ public class ClientHandler implements Runnable {
                     try {
                         message = reader.readLine();
                         String[] args = message.split(" ");
-                        boolean status;
-                        if (args.length >= 2) {
-                            switch (args[0]) {
+                        if (!message.isEmpty()) {
+                            this.serverLog("received interaction: [" + message + "] from client: "+this.clientInetAdress +
+                                    " | command and args numbers: "+args.length);
+                            boolean status;
+                            String indicator = args[0];
+                            switch (indicator.toLowerCase()) {
+
                                 case "connect":
                                         serverLog("received connection request from: "+this.clientInetAdress +" to username: "+args[1]);
                                         status = this.serveur.clientIsConnected(args[1], this.clientInetAdress);
@@ -108,6 +112,7 @@ public class ClientHandler implements Runnable {
                                             this.sendMessage("ERR connexion à  "+args[1]+" refusé ou échoué");
                                         }
                                     break;
+
                                 case "ask":
                                     String joueur = args[1];
                                     PlayerClient client = this.serveur.ask(joueur);
@@ -125,11 +130,12 @@ public class ClientHandler implements Runnable {
                                     serverLog("received disconnect request from: "+this.clientInetAdress);
                                     status = this.serveur.disconnect(this.clientInetAdress);
                                     if (status) {
-                                        System.out.println("clients connectés "+this.serveur.showConnectedClients());
-                                        this.sendResponse("clientInstruction", "SET USERDISCONNECT STATE OK");
+                                        this.sendResponse("clientInstruction", "SET USERDISCONNECTED STATE OK");
                                         this.sendResponse("serverMessage", "vous etes déconnecté");
+                                        serverLog("clients connectes: "+this.serveur.showConnectedClients());
                                     }else {
                                         this.sendResponse("serverMessage", "ERR Vous n'êtes pas connecté en tant que joueur pour "+this.clientInetAdress);
+                                        serverLog("clients connectes: "+this.serveur.showConnectedClients());
                                     }
                                     break;
 

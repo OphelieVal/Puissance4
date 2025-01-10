@@ -8,7 +8,9 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.NoSuchElementException;
 
 public class ClientSocket extends Thread {
@@ -44,6 +46,16 @@ public class ClientSocket extends Thread {
         this.writer.flush(); //on peut aussi mettre le autoFlush (mais a eviter)
     }
 
+    /**
+     * Permer d'afficher un log dans la console du client
+     * forme [yyyy-MM-dd HH:mm:ss] + message
+     * @param message message du log
+     */
+    public void clientLog(String message) {
+        String timeStamp = new SimpleDateFormat("[yyyy-MM-dd HH:mm:ss]").format(Calendar.getInstance().getTime());
+        System.out.println(timeStamp + " : "+ message);
+    }
+
     public void closeSocket() throws IOException {
         this.socket.close();
         this.reader.close();
@@ -52,6 +64,7 @@ public class ClientSocket extends Thread {
     }
 
     public void handleSreverInstruction(String serverInstruction) throws InterruptedException {
+        this.clientLog("get instruction: " + serverInstruction);
         String[] args = serverInstruction.split(" ");
         String type = args[0].toLowerCase();
         switch (type) {
@@ -85,7 +98,7 @@ public class ClientSocket extends Thread {
             while (true) {
                 String serverMessage = this.reader.readLine();
                 if (!serverMessage.isEmpty()) {
-//                    System.out.println("global stmt: "+serverMessage);
+                    this.clientLog("received interaction: [" + serverMessage + "] from server");
                     String[] infos = serverMessage.split("\\|");
                     String indicator = infos[0].split(":")[1];
                     switch (indicator) {

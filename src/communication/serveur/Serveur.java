@@ -67,19 +67,33 @@ public class Serveur {
   }
 
   /** deconnecte le client du serveur
-   * @param clientIP
+   * @param clientIP IP du client a deconnceter de son utilisateur
    * @return true si la demande a été prise en compte et realisé
    * sinon false
    */
-  public boolean disconnect(String clientIP) {
-    for (PlayerClient client : this.clientsJoueurs) {
-      if (client.getClientIP().equals(clientIP)) {
-        this.clientsJoueurs.remove(client);
-        return true;
+//  Debug with GPT (temporaire et sera supprimer a la fin de la correction)
+    public boolean disconnect(String clientIP) {
+      System.out.println("Attempting to disconnect client with IP: " + clientIP);
+      for (PlayerClient client : this.clientsJoueurs) {
+        System.out.println("Checking client: " + client.getClientIP());
+        if (client.getClientIP().equals(clientIP)) {
+          this.clientsJoueurs.remove(client);
+          System.out.println("Client disconnected: " + clientIP);
+          return true;
+        }
       }
+      System.out.println("Client not found: " + clientIP);
+      return false;
     }
-    return false;
-  }
+//  public boolean disconnect(String clientIP) {
+//    for (PlayerClient client : this.clientsJoueurs) {
+//      if (client.getClientIP().equals(clientIP)) {
+//        this.clientsJoueurs.remove(client);
+//        return true;
+//      }
+//    }
+//    return false;
+//  }
 
   /** affiche l'ensemble des clients connectes au serveur
    * @return ensemble clients connectes au serveur
