@@ -1,6 +1,7 @@
 package communication.thread.client;
 
 import communication.client.Client;
+import communication.client.ClientState;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -27,13 +28,11 @@ public class ClientSocket extends Thread {
     }
 
     public void clientSocketInit() throws IOException {
-        if (!this.isConnected) {
             this.socket = new Socket(this.ip, this.port);
             this.stream = new InputStreamReader(this.socket.getInputStream());
             this.reader = new BufferedReader(stream);
             this.writer = new PrintWriter(socket.getOutputStream());
             this.isConnected = true;
-        }
     }
 
     public void sendCommand(String command) throws IOException {
@@ -57,12 +56,13 @@ public class ClientSocket extends Thread {
             clientSocketInit();
             while (true) {
                 String serverMessage = this.reader.readLine();
-                String[] infos = serverMessage.split(" ");
                 if (!serverMessage.isEmpty()) {
+                    String[] infos = serverMessage.split(" ");
                     if (serverMessage.equals("exit")) {
+                        this.client.set_ClientState(ClientState.USERDISCONNECTED);
                         break;
                     }else if(infos[0].equals("connecté") && infos[2].equals("OK")) {
-                        this.client.set_Connected(true);
+                        this.client.set_ClientState(ClientState.USERCONNECTED);
                     }
                     System.out.println("Message from server: " + serverMessage);
                 }

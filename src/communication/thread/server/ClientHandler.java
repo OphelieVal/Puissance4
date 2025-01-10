@@ -90,6 +90,18 @@ public class ClientHandler implements Runnable {
                                         this.writer.println("\nERR Vous n'êtes pas connecté en tant que joueur pour "+this.clientInetAdress);
                                     }
                                     break;
+                                case "disconnect ":
+                                    serverLog("received disconnect request from: "+this.clientInetAdress);
+                                    status = this.serveur.disconnect(this.clientInetAdress);
+                                    if (status) {
+                                        System.out.println("\nclients connectés "+this.serveur.showConnectedClients());
+                                        this.writer.println("\ndéconnecté");
+                                        this.writer.println("\nexit");
+                                        this.socket.close();
+                                    }else {
+                                        this.writer.println("\nERR Vous n'êtes pas connecté en tant que joueur pour "+this.clientInetAdress);
+                                    }
+                                    break;
                                 default:
                                     this.sendMessage("\nERR commande non connue");
                                     break;

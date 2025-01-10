@@ -6,22 +6,13 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Scanner;
 
-//  private List<Plateau> listeMatchs;
-//  private int nbVictoires = 0;
-//  private double pourcentVict = 0;
-//  public void updateVictoires() {
-//    this.nbVictoires += 1;
-//    this.pourcentVict = this.nbVictoires/this.listeMatchs.size();
-//  }
-
-public class Client {
+public class Client extends Thread {
   private String serverIP;
   private String clientIP;
   private int serverPort;
   private String nomJoueur;
   private ClientSocket clientSocket;
-  private boolean connecté = false;
-  private boolean inGame = false;
+  private ClientState clientState = ClientState.USERDISCONNECTED;
 
   public Client(String serverIP, int serverPort) throws UnknownHostException {
     this.serverIP = serverIP;
@@ -33,7 +24,7 @@ public class Client {
   /** getter IP server
    * @return IP du serveur
    */
-  public String get_IP(){
+  public String get_ServerIP(){
     return this.serverIP;
   }
 
@@ -47,15 +38,24 @@ public class Client {
   /** getter IP client
    * @return IP du client
    */
-  public String get_ClientIP(){
+  public synchronized String get_ClientIP(){
     return this.clientIP;
   }
 
-  /**setter connecte au serveur
-   * @param connecté connecte au serveur
+  /**
+   * getter Etat du client
+   * @return Etat actuel du client
    */
-  public void set_Connected(boolean connecté){
-    this.connecté = connecté;
+  public synchronized ClientState get_ClientState(){
+    return this.clientState;
+  }
+
+  /**
+   * Setter Etat client future
+   * @param clientState Etat future
+   */
+  public synchronized void set_ClientState(ClientState clientState){
+    this.clientState = clientState;
   }
 
   /**
@@ -74,81 +74,128 @@ public class Client {
     }
   }
 
-  public void execute() throws IOException {
+  /**
+   * Permet de mettre a jour le terminal en fonction de l'etat du client
+   * @param actualState
+   */
+  public void updateTerminal(ClientState actualState) {
+    String terminal = "";
+    switch (actualState) {
+      case ClientState.USERDISCONNECTED:
+        terminal = "Entrez une commande : \n"+
+          "-> CONNECT NOMJOUEUR pour se connecter à son espace Joueur\n"+
+          "-> QUIT demande la fin de connexion\n";
+        break;
+      case ClientState.USERCONNECTED:
+        terminal = "Entrez une commande : \n"+
+          "-> ASK demande d'une nouvelle partie avec un joueur\n"+
+          "-> DISCONNECT deconnecte de l'espace Joueur\n";
+        break;
+      case ClientState.INGAME:
+        terminal = "NO COMMANE\n";
+      case ClientState.LOOKINGADVERSARY:
+        terminal = "NOT IMPLEMENTED\n";
+      default:
+        terminal = "NOTHING";
+    }
+    this.nettoieTerminal();
+    System.out.println(terminal);
+  }
+
+  /**
+   * Prepare la requete qui sera envoye au server distant
+   * @param command La commande a effectue
+   * @param args list de string contenant la commande et le argument
+   * @param executeCondition condition d'execution de la requete
+   * @throws IOException Exception
+   */
+  public void request(String command, String[] args, boolean executeCondition) throws IOException, InterruptedException {
+      if (executeCondition) {
+        String prepare = "\n"+command;
+        if (args.length > 1) {
+          System.out.println("one or more param in request");
+          prepare += " ";
+          for (int i = 1; i < args.length; i++) {
+            prepare += args[i] + " ";
+          }
+        }
+        System.out.println(prepare);
+        this.clientSocket.sendCommand(prepare);
+        Thread.sleep(1500);
+      }else {
+        System.out.println("Unknown command");
+      }
+  }
+
+  /**
+   * Methode principal, lancement du client
+   * @throws IOException
+   */
+  @Override
+  public void run()  {
+      try {
+          this.clientSocket.clientSocketInit();
+      } catch (IOException e) {
+          throw new RuntimeException(e);
+      }
+    this.clientSocket.start();
+    boolean quit = false;
+    this.nettoieTerminal();
     String request = "";
     Scanner scanner = new Scanner(System.in);
-    this.nettoieTerminal();
     System.out.println("========================\n   Bienvenue dans le Puissance 4 - Client     \n========================\n");
-    while (!request.equals("quit") || !this.connecté) {
-      System.out.print("Entrez une commande : \n"+
-              "CONNECT NOMJOUEUR pour se connecter à son espace Joueur\n"+
-              "QUIT demande la fin de connexion\n");
+    while (!quit) {
+
+      this.updateTerminal(this.clientState);
+      System.out.println(this.clientState);
       String s = scanner.nextLine();
       String[] commandAndArgs = s.split(" ");
       request = commandAndArgs[0].toLowerCase();
+
       try {
         this.nettoieTerminal();
         switch (request) {
           case "connect":
-            nomJoueur = commandAndArgs[1];
-            this.clientSocket.clientSocketInit();
-            this.clientSocket.start();
-            this.clientSocket.sendCommand("\nconnect "+nomJoueur);
+            if (commandAndArgs.length > 2) throw new IOException("La commande ask doit avoir 2 argument");
+            this.request("connect", commandAndArgs, this.clientState == ClientState.USERDISCONNECTED);
+            System.out.println(this.get_ClientState());
             break;
+
           case "quit":
-            this.clientSocket.sendCommand("\ndisconnect");
+            if (commandAndArgs.length > 1) throw new IOException("Il ne doit pas avoir d'argument pour cette commande");
+            this.request("disconnect", commandAndArgs, this.clientState == ClientState.USERDISCONNECTED);
             this.clientSocket.closeSocket();
             System.out.print("Quitting");
+            quit = true;
             break;
+
+          case "ask":
+            if (commandAndArgs.length > 2) throw new IOException("La commande ask doit avoir 2 argument");
+            this.request("ask", commandAndArgs, this.clientState == ClientState.USERCONNECTED);
+            break;
+
+          case "disconnect":
+            if (commandAndArgs.length > 1) throw new IOException("Il ne doit pas avoir d'argument pour cette commande");
+            this.request("disconnect", commandAndArgs, this.clientState == ClientState.USERCONNECTED);
+            break;
+
           default:
             System.out.println("Unknown command");
             break;
         }
       }
+
       catch(Exception e){
-        e.printStackTrace();
+        e.fillInStackTrace();
         System.err.println("Vous devez rentrer le NOM JOUEUR avec votre commande (CONNECT)\n");
       }
-    }
-    if (this.connecté) {
-      this.connected();
-    }
-    this.clientSocket.closeSocket();
-    scanner.close();
-  }
 
-  public void connected(){
-    String request = "";
-    Scanner scanner = new Scanner(System.in);
-    this.nettoieTerminal();
-    System.out.println("Vous êtes connecté en tant que " + this.nomJoueur);
-    while (!(request.equals("quit"))){
-      System.out.println( "ASK demande d'une nouvelle partie avec un joueur\n"+
-              "DISCONNECT deconnecte de l'espace Joueur\n");
-      String s = scanner.nextLine();
-      String[] commandAndArgs = s.split(" ");
-      request = commandAndArgs[0].toLowerCase();
+    }
       try {
-        switch (request) {
-          case "ask":
-            this.clientSocket.sendCommand("\nask "+ this.nomJoueur);
-            break;
-          case "disconnect":
-            this.clientSocket.sendCommand("\ndisconnect "+this.clientIP);
-            request = "quit";
-            break;
-          default:
-            System.out.println("Unknown command");
-            break;
-        }
-      }
-      catch(Exception e){
-        System.err.println(e.getMessage());
+          this.clientSocket.closeSocket();
+      } catch (IOException e) {
+          throw new RuntimeException(e);
       }
       scanner.close();
-    }
-
-
   }
-
 }
