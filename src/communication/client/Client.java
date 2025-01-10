@@ -36,6 +36,10 @@ public class Client extends Thread {
     return this.nomJoueur;
   }
 
+  public void setNomJoueur(String nomJoueur){
+    this.nomJoueur = nomJoueur;
+  }
+
   /** getter IP client
    * @return IP du client
    */
@@ -101,6 +105,9 @@ public class Client extends Thread {
     }
     this.nettoieTerminal();
     System.out.println("Actual client state: "+this.get_ClientState());
+    if (!(this.nomJoueur == null) && this.clientState != ClientState.USERDISCONNECTED) {
+      System.out.println("Connecte en tant que joueur: "+this.nomJoueur);
+    }
     System.out.println(terminal);
   }
 

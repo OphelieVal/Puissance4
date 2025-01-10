@@ -148,6 +148,15 @@ public class Serveur {
     return "EN ATTENTE d'autres joueurs";
   }
 
+  public boolean isPlayerInAwaitingQueue(String nomJoueur, String clientIP) {
+    for (PlayerClient client : this.clientsJoueurs) {
+      if (client.getNomJoueur().equals(nomJoueur) && client.getClientIP().equals(clientIP)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   public PlayerClient ask(String nomJoueur) {
     PlayerClient client1 = this.getClient(nomJoueur);
     PlayerClient client2 = this.getClientAttente();

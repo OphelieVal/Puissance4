@@ -105,6 +105,7 @@ public class ClientHandler implements Runnable {
                                             this.sendResponse("serverMessage", "Deja connecte "+args[1]+" OK");
                                             serverLog("clients connectes: "+this.serveur.showConnectedClients());
                                         }else if (this.serveur.connect(args[1], this.clientInetAdress)) {
+                                            this.sendResponse("clientInstruction", "INITUSERNAME "+args[1]+" OK");
                                             this.sendResponse("clientInstruction", "SET USERCONNECTED STATE WITH "+args[1]+" OK");
                                             this.sendResponse("serverMessage", "connecté "+args[1]+" OK");
                                             serverLog("clients connectes: "+this.serveur.showConnectedClients());
@@ -117,19 +118,26 @@ public class ClientHandler implements Runnable {
                                     String joueur = args[1];
                                     PlayerClient client = this.serveur.ask(joueur);
                                     if (client==null){
+                                        this.sendResponse("clientInstruction", "SET LOOKINGADVERSARY STATE OK");
                                         this.sendResponse("serverMessage", "EN ATTENTE d'autres joueurs");
-                                        this.writer.println("EN ATTENTE d'autres joueurs");
+//                                        this.writer.println("EN ATTENTE d'autres joueurs");
                                     }
                                     else {
-                                        this.sendResponse("clientInstruction", "SET INGAME STATE OK");
+                                        this.sendResponse("serverMessage", "ADVERSAIRE TROUVE USERNAME: "+client.getNomJoueur() + " | " +
+                                                "IP: " + client.getClientIP());
                                         this.sendResponse("serverMessage", "OK plateau initilialisé");
+                                        this.sendResponse("clientInstruction", "SET INGAME STATE OK");
                                     }
                                     break;
+
+                                case "awaitqueu":
+
 
                                 case "disconnect":
                                     serverLog("received disconnect request from: "+this.clientInetAdress);
                                     status = this.serveur.disconnect(this.clientInetAdress);
                                     if (status) {
+                                        this.sendResponse("clientInstruction", "INITUSERNAME NULL OK");
                                         this.sendResponse("clientInstruction", "SET USERDISCONNECTED STATE OK");
                                         this.sendResponse("serverMessage", "vous etes déconnecté");
                                         serverLog("clients connectes: "+this.serveur.showConnectedClients());

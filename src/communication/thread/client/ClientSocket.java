@@ -63,6 +63,11 @@ public class ClientSocket extends Thread {
         this.interrupt();
     }
 
+    /**
+     * Execute les instruction donne par le server de jeu
+     * @param serverInstruction instruction complete du serveur
+     * @throws InterruptedException Exception
+     */
     public void handleSreverInstruction(String serverInstruction) throws InterruptedException {
         this.clientLog("get instruction: " + serverInstruction);
         String[] args = serverInstruction.split(" ");
@@ -84,11 +89,18 @@ public class ClientSocket extends Thread {
                         break;
                 }
                 break;
+
+            case "initusername":
+                String name = args[1].toUpperCase();
+                if (name.equals("NULL")) this.client.setNomJoueur(null);
+                else this.client.setNomJoueur(args[1]);
+                break;
+
             default:
                 System.out.println("no available: " + type);
                 break;
         }
-        Thread.sleep(1000);
+//        Thread.sleep(1000);
     }
 
     @Override
