@@ -182,8 +182,7 @@ public class Client extends Thread {
             break;
 
           default:
-            System.out.println("Unknown command");
-            break;
+            throw new IOException("Unknown command");
         }
       }
 
