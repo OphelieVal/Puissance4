@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.NoSuchElementException;
 
 public class ClientSocket extends Thread {
     private final int port;
@@ -26,11 +27,13 @@ public class ClientSocket extends Thread {
     }
 
     public void clientSocketInit() throws IOException {
-        this.socket = new Socket(this.ip, this.port);
-        this.stream = new InputStreamReader(this.socket.getInputStream());
-        this.reader = new BufferedReader(stream);
-        this.writer = new PrintWriter(socket.getOutputStream());
-        this.isConnected = true;
+        if (!this.isConnected) {
+            this.socket = new Socket(this.ip, this.port);
+            this.stream = new InputStreamReader(this.socket.getInputStream());
+            this.reader = new BufferedReader(stream);
+            this.writer = new PrintWriter(socket.getOutputStream());
+            this.isConnected = true;
+        }
     }
 
     public void sendCommand(String command) throws IOException {
@@ -42,21 +45,30 @@ public class ClientSocket extends Thread {
     }
 
     public void closeSocket() throws IOException {
+        this.socket.close();
         this.reader.close();
         this.writer.close();
-        this.socket.close();
         this.interrupt();
     }
 
+    @Override
     public void run() {
         try {
             clientSocketInit();
             while (true) {
                 String serverMessage = this.reader.readLine();
+                String[] infos = serverMessage.split(" ");
                 if (!serverMessage.isEmpty()) {
+                    if (serverMessage.equals("exit")) {
+                        break;
+                    }else if(infos[0].equals("connecté") && infos[2].equals("OK")) {
+                        this.client.set_Connected(true);
+                    }
                     System.out.println("Message from server: " + serverMessage);
                 }
             }
+            this.closeSocket();
+            System.out.print("Quitting");
         } catch (Exception e) {
             e.printStackTrace();
         } finally {

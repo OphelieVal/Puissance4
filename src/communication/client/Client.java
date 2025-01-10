@@ -57,9 +57,9 @@ public class Client {
   public void set_Connected(boolean connecté){
     this.connecté = connecté;
   }
-  
+
   /**
-   * nettoie le terminal 
+   * nettoie le terminal
    */
   public void nettoieTerminal() {
     try {
@@ -79,10 +79,10 @@ public class Client {
     Scanner scanner = new Scanner(System.in);
     this.nettoieTerminal();
     System.out.println("========================\n   Bienvenue dans le Puissance 4 - Client     \n========================\n");
-    while (!request.equals("quit")) {
+    while (!request.equals("quit") || !this.connecté) {
       System.out.print("Entrez une commande : \n"+
-      "CONNECT NOMJOUEUR pour se connecter à son espace Joueur\n"+
-      "QUIT demande la fin de connexion\n");
+              "CONNECT NOMJOUEUR pour se connecter à son espace Joueur\n"+
+              "QUIT demande la fin de connexion\n");
       String s = scanner.nextLine();
       String[] commandAndArgs = s.split(" ");
       request = commandAndArgs[0].toLowerCase();
@@ -93,11 +93,10 @@ public class Client {
             nomJoueur = commandAndArgs[1];
             this.clientSocket.clientSocketInit();
             this.clientSocket.start();
-            this.clientSocket.sendCommand("\nconnect "+nomJoueur+ " " + this.clientIP);
-            this.connected();
+            this.clientSocket.sendCommand("\nconnect "+nomJoueur);
             break;
           case "quit":
-            this.clientSocket.sendCommand("\ndisconnect "+this.clientIP);
+            this.clientSocket.sendCommand("\ndisconnect");
             this.clientSocket.closeSocket();
             System.out.print("Quitting");
             break;
@@ -107,9 +106,13 @@ public class Client {
         }
       }
       catch(Exception e){
+        e.printStackTrace();
         System.err.println("Vous devez rentrer le NOM JOUEUR avec votre commande (CONNECT)\n");
       }
-  }
+    }
+    if (this.connecté) {
+      this.connected();
+    }
     this.clientSocket.closeSocket();
     scanner.close();
   }
@@ -120,20 +123,19 @@ public class Client {
     this.nettoieTerminal();
     System.out.println("Vous êtes connecté en tant que " + this.nomJoueur);
     while (!(request.equals("quit"))){
-      System.out.println( "ASK demande d'une nouvelle partie avec un joueur\n"+ 
-      "DISCONNECT deconnecte de l'espace Joueur\n");
+      System.out.println( "ASK demande d'une nouvelle partie avec un joueur\n"+
+              "DISCONNECT deconnecte de l'espace Joueur\n");
       String s = scanner.nextLine();
       String[] commandAndArgs = s.split(" ");
       request = commandAndArgs[0].toLowerCase();
       try {
-
         switch (request) {
-    
           case "ask":
             this.clientSocket.sendCommand("\nask "+ this.nomJoueur);
             break;
           case "disconnect":
             this.clientSocket.sendCommand("\ndisconnect "+this.clientIP);
+            request = "quit";
             break;
           default:
             System.out.println("Unknown command");
@@ -143,9 +145,10 @@ public class Client {
       catch(Exception e){
         System.err.println(e.getMessage());
       }
+      scanner.close();
     }
 
-    
+
   }
 
 }

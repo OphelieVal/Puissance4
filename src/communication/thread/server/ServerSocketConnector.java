@@ -24,7 +24,7 @@ public class ServerSocketConnector extends Thread {
             while(true){
                 Socket clientSocket = serverSock.accept();
                 Thread t = new Thread(new ClientHandler(clientSocket, this.serveur));
-                this.serveur.newClientConnected();
+                this.serveur.newClientConnected(clientSocket.getInetAddress().getHostAddress());
                 t.start();
             }
         } catch (IOException e) {

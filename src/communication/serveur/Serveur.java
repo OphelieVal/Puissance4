@@ -3,7 +3,9 @@ package communication.serveur;
 
 import communication.thread.server.ServerSocketConnector;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Random;
 import modele.EnDehorsDuPlateauException;
@@ -94,8 +96,13 @@ public class Serveur {
     this.lesPlateaux.add(plateau);
   }
 
-  public void newClientConnected() {
-      System.out.println("Un nouveau client est connecté");
+  public void serverLog(String message) {
+    String timeStamp = new SimpleDateFormat("[yyyy-MM-dd HH:mm:ss]").format(Calendar.getInstance().getTime());
+    System.out.println(timeStamp + " : "+ message);
+  }
+
+  public void newClientConnected(String ip) {
+      serverLog("Un nouveau client est connecté avec l'ip: "+ip);
   }
 
   public PlayerClient getClient(String nomJoueur){

@@ -7,12 +7,15 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 
 public class ClientHandler implements Runnable {
     private final Socket socket;
     private InputStreamReader stream;
     private final BufferedReader reader;
     private final PrintWriter writer;
+    private String clientInetAdress;
     private Serveur serveur;
 
     public ClientHandler(Socket socket, Serveur server) throws IOException {
@@ -21,6 +24,16 @@ public class ClientHandler implements Runnable {
         this.stream = new InputStreamReader(this.socket.getInputStream());
         this.reader = new BufferedReader(stream);
         this.writer = new PrintWriter(socket.getOutputStream(), true);
+        this.clientInetAdress = socket.getInetAddress().getHostAddress();
+    }
+
+    public String getClientIP() {
+        return this.clientInetAdress;
+    }
+
+    public void serverLog(String message) {
+        String timeStamp = new SimpleDateFormat("[yyyy-MM-dd HH:mm:ss]").format(Calendar.getInstance().getTime());
+        System.out.println(timeStamp + " : "+ message);
     }
 
     public void sendMessage(String message) {
@@ -43,18 +56,18 @@ public class ClientHandler implements Runnable {
                         if (args.length >= 2) {
                             switch (args[0]) {
                                 case "connect":
-                                        System.out.println(args[1]+ args[2]);
-                                        status = this.serveur.clientIsConnected(args[1], args[2]);
+                                        serverLog("received connection request from: "+this.clientInetAdress +" to username: "+args[1]);
+                                        status = this.serveur.clientIsConnected(args[1], this.clientInetAdress);
                                         if (status) {
                                             this.writer.println("\nDeja connecte "+args[1]+" OK");
-                                            System.out.println("\nclients connectes: "+this.serveur.showConnectedClients());
-                                        }else if (this.serveur.connect(args[1], args[2])) {
+                                            serverLog("clients connectes: "+this.serveur.showConnectedClients());
+                                        }else if (this.serveur.connect(args[1], this.clientInetAdress)) {
                                             this.writer.println("\nconnecté "+args[1]+" OK");
-                                            System.out.println("\nclients connectes: "+this.serveur.showConnectedClients());
+                                            serverLog("clients connectes: "+this.serveur.showConnectedClients());
                                         }else {
                                             this.writer.println("\nERR connexion à  "+args[1]+" refusé ou échoué");
                                         }
-
+                                        break;
                                 case "ask":
                                     String joueur = args[1];
                                     PlayerClient client = this.serveur.ask(joueur);
@@ -64,19 +77,22 @@ public class ClientHandler implements Runnable {
                                     else {
                                         this.writer.println("OK plateau initilialisé");
                                     }
-                                    
-                                    
                                     break;
                                 case "disconnect":
-                                    status = this.serveur.disconnect(args[1]);
+                                    serverLog("received disconnect request from: "+this.clientInetAdress);
+                                    status = this.serveur.disconnect(this.clientInetAdress);
                                     if (status) {
-                                        this.writer.println("\ndéconnecté");
                                         System.out.println("\nclients connectés "+this.serveur.showConnectedClients());
+                                        this.writer.println("\ndéconnecté");
+                                        this.writer.println("\nexit");
+                                        this.socket.close();
                                     }else {
-                                        this.writer.println("\nERR Vous n'êtes pas connecté en tant que joueur pour "+args[1]);
+                                        this.writer.println("\nERR Vous n'êtes pas connecté en tant que joueur pour "+this.clientInetAdress);
                                     }
+                                    break;
                                 default:
                                     this.sendMessage("\nERR commande non connue");
+                                    break;
                             }
                         }
                     } catch (IOException e) {
