@@ -31,14 +31,53 @@ public class ClientHandler implements Runnable {
         return this.clientInetAdress;
     }
 
+    /**
+     * Permer d'afficher un log dans la console du server
+     * forme [yyyy-MM-dd HH:mm:ss] + message
+     * @param message message du log
+     */
     public void serverLog(String message) {
         String timeStamp = new SimpleDateFormat("[yyyy-MM-dd HH:mm:ss]").format(Calendar.getInstance().getTime());
         System.out.println(timeStamp + " : "+ message);
     }
 
+    /**
+     * envoie un message qui sera affiche sur le terminal du client connecte
+     * @param message message qui sera affiche
+     */
     public void sendMessage(String message) {
-        writer.println(message);
+        String prepare = "\ntype:serverMessage|";
+        writer.println(prepare + message);
         writer.flush();
+    }
+
+    /**
+     * envoie une instruction d'action au client connecte comme un changenment d'etat.
+     * Contrairement a l'envoie de message une instruction n'affiche rien sur le terminal du client
+     * @param instruction instriction a realiser qui sera comparer au client distant
+     */
+    public void sendClientInstruction(String instruction) {
+        String prepare = "\ntype:clientInstruction|";
+        writer.println(prepare + instruction);
+        writer.flush();
+    }
+
+    /**
+     * Envoie une reponse au client via le reseau, la reponse peut etre de type different :
+     * - Instrction
+     * - Message
+     * @param type type de la reponse a envoyer
+     * @param statement reponse qui sera envoyer
+     */
+    public void sendResponse(String type, String statement) {
+        switch (type) {
+            case "serverMessage":
+                this.sendMessage(statement);
+                break;
+            case "clientInstruction":
+                this.sendClientInstruction(statement);
+                break;
+        }
     }
 
     @Override
@@ -59,52 +98,45 @@ public class ClientHandler implements Runnable {
                                         serverLog("received connection request from: "+this.clientInetAdress +" to username: "+args[1]);
                                         status = this.serveur.clientIsConnected(args[1], this.clientInetAdress);
                                         if (status) {
-                                            this.writer.println("\nDeja connecte "+args[1]+" OK");
+                                            this.sendResponse("serverMessage", "Deja connecte "+args[1]+" OK");
                                             serverLog("clients connectes: "+this.serveur.showConnectedClients());
                                         }else if (this.serveur.connect(args[1], this.clientInetAdress)) {
-                                            this.writer.println("\nconnecté "+args[1]+" OK");
+                                            this.sendResponse("clientInstruction", "SET USERCONNECTED STATE WITH "+args[1]+" OK");
+                                            this.sendResponse("serverMessage", "connecté "+args[1]+" OK");
                                             serverLog("clients connectes: "+this.serveur.showConnectedClients());
                                         }else {
-                                            this.writer.println("\nERR connexion à  "+args[1]+" refusé ou échoué");
+                                            this.sendMessage("ERR connexion à  "+args[1]+" refusé ou échoué");
                                         }
-                                        break;
+                                    break;
                                 case "ask":
                                     String joueur = args[1];
                                     PlayerClient client = this.serveur.ask(joueur);
                                     if (client==null){
+                                        this.sendResponse("serverMessage", "EN ATTENTE d'autres joueurs");
                                         this.writer.println("EN ATTENTE d'autres joueurs");
                                     }
                                     else {
-                                        this.writer.println("OK plateau initilialisé");
+                                        this.sendResponse("clientInstruction", "SET INGAME STATE OK");
+                                        this.sendResponse("serverMessage", "OK plateau initilialisé");
                                     }
                                     break;
+
                                 case "disconnect":
                                     serverLog("received disconnect request from: "+this.clientInetAdress);
                                     status = this.serveur.disconnect(this.clientInetAdress);
                                     if (status) {
-                                        System.out.println("\nclients connectés "+this.serveur.showConnectedClients());
-                                        this.writer.println("\ndéconnecté");
-                                        this.writer.println("\nexit");
-                                        this.socket.close();
+                                        System.out.println("clients connectés "+this.serveur.showConnectedClients());
+                                        this.sendResponse("clientInstruction", "SET USERDISCONNECT STATE OK");
+                                        this.sendResponse("serverMessage", "vous etes déconnecté");
                                     }else {
-                                        this.writer.println("\nERR Vous n'êtes pas connecté en tant que joueur pour "+this.clientInetAdress);
+                                        this.sendResponse("serverMessage", "ERR Vous n'êtes pas connecté en tant que joueur pour "+this.clientInetAdress);
                                     }
                                     break;
-                                case "disconnect ":
-                                    serverLog("received disconnect request from: "+this.clientInetAdress);
-                                    status = this.serveur.disconnect(this.clientInetAdress);
-                                    if (status) {
-                                        System.out.println("\nclients connectés "+this.serveur.showConnectedClients());
-                                        this.writer.println("\ndéconnecté");
-                                        this.writer.println("\nexit");
-                                        this.socket.close();
-                                    }else {
-                                        this.writer.println("\nERR Vous n'êtes pas connecté en tant que joueur pour "+this.clientInetAdress);
-                                    }
-                                    break;
+
                                 default:
-                                    this.sendMessage("\nERR commande non connue");
+                                    this.sendResponse("serverMessage","ERR commande non connue");
                                     break;
+
                             }
                         }
                     } catch (IOException e) {
@@ -114,7 +146,7 @@ public class ClientHandler implements Runnable {
             }
         }catch (Exception e) {
             System.err.println(e.getMessage()+e.getCause());
-            System.err.println("Déconnexion client inattendu\n");
+            System.err.println("Déconnexion client inattendu");
         } finally {
             try {
                 if (reader != null) reader.close();

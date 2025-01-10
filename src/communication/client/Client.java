@@ -1,5 +1,6 @@
 package communication.client;
 
+import com.sun.source.doctree.EscapeTree;
 import communication.thread.client.ClientSocket;
 import java.io.IOException;
 import java.net.InetAddress;
@@ -7,11 +8,11 @@ import java.net.UnknownHostException;
 import java.util.Scanner;
 
 public class Client extends Thread {
-  private String serverIP;
-  private String clientIP;
+  private final String serverIP;
+  private final String clientIP;
+  private final ClientSocket clientSocket;
   private int serverPort;
   private String nomJoueur;
-  private ClientSocket clientSocket;
   private ClientState clientState = ClientState.USERDISCONNECTED;
 
   public Client(String serverIP, int serverPort) throws UnknownHostException {
@@ -99,6 +100,7 @@ public class Client extends Thread {
         terminal = "NOTHING";
     }
     this.nettoieTerminal();
+    System.out.println("Actual client state: "+this.get_ClientState());
     System.out.println(terminal);
   }
 
@@ -113,13 +115,13 @@ public class Client extends Thread {
       if (executeCondition) {
         String prepare = "\n"+command;
         if (args.length > 1) {
-          System.out.println("one or more param in request");
+          System.out.println("[logs] one or more param in request");
           prepare += " ";
           for (int i = 1; i < args.length; i++) {
             prepare += args[i] + " ";
           }
         }
-        System.out.println(prepare);
+        //System.out.println(prepare);
         this.clientSocket.sendCommand(prepare);
         Thread.sleep(1500);
       }else {
@@ -135,8 +137,10 @@ public class Client extends Thread {
   public void run()  {
       try {
           this.clientSocket.clientSocketInit();
-      } catch (IOException e) {
-          throw new RuntimeException(e);
+      } catch (Exception e) {
+          throw new RuntimeException(e.getMessage() + "\n Assurez vous que l'adresse IP du serveur est bonne ou bien qu'il est lance" +
+                  "\npour trouver l'adresse du serrver rendez vous sur la machine de celui-ci et ouvrez un terminal entrez: ipconfig (si windows) ou ifconfig" +
+                  "\nregarder l'IPv4 de l'interface que vous utiliser (eth0 pour carte reseau ethernet / Wifi pour carte Wi-fi)");
       }
     this.clientSocket.start();
     boolean quit = false;
@@ -147,7 +151,6 @@ public class Client extends Thread {
     while (!quit) {
 
       this.updateTerminal(this.clientState);
-      System.out.println(this.clientState);
       String s = scanner.nextLine();
       String[] commandAndArgs = s.split(" ");
       request = commandAndArgs[0].toLowerCase();
@@ -158,7 +161,6 @@ public class Client extends Thread {
           case "connect":
             if (commandAndArgs.length > 2) throw new IOException("La commande ask doit avoir 2 argument");
             this.request("connect", commandAndArgs, this.clientState == ClientState.USERDISCONNECTED);
-            System.out.println(this.get_ClientState());
             break;
 
           case "quit":
@@ -170,7 +172,7 @@ public class Client extends Thread {
             break;
 
           case "ask":
-            if (commandAndArgs.length > 2) throw new IOException("La commande ask doit avoir 2 argument");
+            if (commandAndArgs.length != 2) throw new IOException("La commande ask doit avoir 1 argument 'ASK <nom du Joueur>'");
             this.request("ask", commandAndArgs, this.clientState == ClientState.USERCONNECTED);
             break;
 
@@ -185,9 +187,14 @@ public class Client extends Thread {
         }
       }
 
-      catch(Exception e){
+
+      catch(IOException e){
         e.fillInStackTrace();
-        System.err.println("Vous devez rentrer le NOM JOUEUR avec votre commande (CONNECT)\n");
+        System.err.println(e.getMessage());
+      }
+
+      catch (InterruptedException e) {
+          throw new RuntimeException(e);
       }
 
     }

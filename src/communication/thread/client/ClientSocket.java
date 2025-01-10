@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.Arrays;
 import java.util.NoSuchElementException;
 
 public class ClientSocket extends Thread {
@@ -50,6 +51,33 @@ public class ClientSocket extends Thread {
         this.interrupt();
     }
 
+    public void handleSreverInstruction(String serverInstruction) throws InterruptedException {
+        String[] args = serverInstruction.split(" ");
+        String type = args[0].toLowerCase();
+        switch (type) {
+            case "set":
+                switch (args[1].toUpperCase()) {
+                    case "USERCONNECTED":
+                        this.client.set_ClientState(ClientState.USERCONNECTED);
+                        break;
+                    case "USERDISCONNECTED":
+                        this.client.set_ClientState(ClientState.USERDISCONNECTED);
+                        break;
+                    case "LOOKINGADVERSARY":
+                        this.client.set_ClientState(ClientState.LOOKINGADVERSARY);
+                        break;
+                    case "INGAME":
+                        this.client.set_ClientState(ClientState.INGAME);
+                        break;
+                }
+                break;
+            default:
+                System.out.println("no available: " + type);
+                break;
+        }
+        Thread.sleep(1000);
+    }
+
     @Override
     public void run() {
         try {
@@ -57,18 +85,22 @@ public class ClientSocket extends Thread {
             while (true) {
                 String serverMessage = this.reader.readLine();
                 if (!serverMessage.isEmpty()) {
-                    String[] infos = serverMessage.split(" ");
-                    if (serverMessage.equals("exit")) {
-                        this.client.set_ClientState(ClientState.USERDISCONNECTED);
-                        break;
-                    }else if(infos[0].equals("connecté") && infos[2].equals("OK")) {
-                        this.client.set_ClientState(ClientState.USERCONNECTED);
+//                    System.out.println("global stmt: "+serverMessage);
+                    String[] infos = serverMessage.split("\\|");
+                    String indicator = infos[0].split(":")[1];
+                    switch (indicator) {
+                        case "clientInstruction":
+                            this.handleSreverInstruction(infos[1]);
+                            break;
+                        case "serverMessage":
+                            System.out.println("Message from server: " + infos[1]);
+                            break;
+                        default:
+                            System.out.println("Unknown indicator: " + infos[1]);
+                            break;
                     }
-                    System.out.println("Message from server: " + serverMessage);
                 }
             }
-            this.closeSocket();
-            System.out.print("Quitting");
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
