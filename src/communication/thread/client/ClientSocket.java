@@ -96,15 +96,6 @@ public class ClientSocket extends Thread {
                 else this.client.setNomJoueur(args[1]);
                 break;
 
-//            case "awaitqueu":
-//                if (args[1].toUpperCase().equals("OK"))  {
-//                    String[] argument = {"awaiting", this.client.get_nomJoueur()};
-//                    this.client.request("await", argument, true);
-//                }else if (args[1].toUpperCase().equals("NO"))  {
-//                    this.client.set_ClientState(ClientState.INGAME);
-//                    this.client.notifyAll();
-//                }
-
             default:
                 System.out.println("no available: " + type);
                 break;

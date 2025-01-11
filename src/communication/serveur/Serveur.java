@@ -131,9 +131,9 @@ public class Serveur {
    * get un client en attente
    * @return un client en attente
    */
-  public PlayerClient getClientAttente(){
+  public PlayerClient getClientAttente(PlayerClient excludedClient){
     for (PlayerClient client : this.attenteClients){
-      if (client.getClientPlayer().getPlateau()==null){
+      if (client.getClientPlayer().getPlateau()==null && !(client.equals(excludedClient))){
         return client;
       }
     }
@@ -148,8 +148,23 @@ public class Serveur {
     return "EN ATTENTE d'autres joueurs";
   }
 
+  public String removeWaitClient(PlayerClient client) {
+    boolean status = false;
+    for (PlayerClient client2 : this.attenteClients) {
+      if (client.getNomJoueur().equals(client2.getNomJoueur())) {
+        this.clientsJoueurs.remove(client2);
+        status = true;
+      }
+    }
+    if (!status) {
+      return "ERR Joueur non present dans la fill d'attente";
+    }else {
+      return "Joueur: "+client.getNomJoueur()+ "supprimé de la file d'attente";
+    }
+  }
+
   public boolean isPlayerInAwaitingQueue(String nomJoueur, String clientIP) {
-    for (PlayerClient client : this.clientsJoueurs) {
+    for (PlayerClient client : this.attenteClients) {
       if (client.getNomJoueur().equals(nomJoueur) && client.getClientIP().equals(clientIP)) {
         return true;
       }
@@ -159,7 +174,7 @@ public class Serveur {
 
   public PlayerClient ask(String nomJoueur) {
     PlayerClient client1 = this.getClient(nomJoueur);
-    PlayerClient client2 = this.getClientAttente();
+    PlayerClient client2 = this.getClientAttente(client1);
     if (client2==null){
       this.waitClient(client1);
       return null;
@@ -167,6 +182,8 @@ public class Serveur {
     Plateau plateau = new Plateau(6, 7);
     client1.getClientPlayer().setLePlateau(plateau);
     client2.getClientPlayer().setLePlateau(plateau);
+//    this.removeWaitClient(client1);
+    this.removeWaitClient(client2);
     return client2;
   }
 

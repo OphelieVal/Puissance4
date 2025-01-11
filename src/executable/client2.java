@@ -7,7 +7,7 @@ import java.io.IOException;
 public class client2 {
     public static void main(String[] args) throws IOException {
         System.out.println("Client 2 actif");
-        String server = "10.192.1.15";
+        String server = "localhost";
         int port = 4444;
         Client client = new Client(server, port);
         System.out.println(client.get_ClientIP());

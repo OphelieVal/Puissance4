@@ -17,6 +17,7 @@ public class ClientHandler implements Runnable {
     private final PrintWriter writer;
     private final String clientInetAdress;
     private final Serveur serveur;
+    private String username;
 
     public ClientHandler(Socket socket, Serveur server) throws IOException {
         this.serveur = server;
@@ -129,16 +130,16 @@ public class ClientHandler implements Runnable {
                                     }
                                     break;
 
-//                                case "awaiting":
-//                                    status = this.serveur.isPlayerInAwaitingQueue(args[1], this.clientInetAdress);
-//                                    if (status) {
-//                                        this.sendResponse("clientInstruction", "AWAITQUEUE OK");
-//                                        this.sendResponse("serverMessage", "LOOKING FOR ANOTHER PLAYER TO JOIN...");
-//                                    }else {
-//                                        this.sendResponse("clientInstruction", "AWAITQUEUE NO");
-//                                        this.sendResponse("serverMessage", "GAME FOUND");
-//                                        this.sendResponse("serverMessage", "STARTING...");
-//                                    }
+                                case "isawait":
+                                    status = this.serveur.isPlayerInAwaitingQueue(args[1], this.clientInetAdress);
+                                    if (status) {
+                                        this.sendResponse("serverMessage", "LOOKING FOR ANOTHER PLAYER TO JOIN...");
+                                    }else {
+                                        this.sendResponse("clientInstruction", "SET INGAME STATE OK");
+                                        this.sendResponse("serverMessage", "GAME FOUND");
+                                        this.sendResponse("serverMessage", "STARTING...");
+                                    }
+                                    break;
 
                                 case "disconnect":
                                     serverLog("received disconnect request from: "+this.clientInetAdress);
@@ -163,6 +164,7 @@ public class ClientHandler implements Runnable {
                     } catch (IOException e) {
                         throw new RuntimeException(e);
                     }
+
                 }
             }
         }catch (Exception e) {
@@ -176,7 +178,7 @@ public class ClientHandler implements Runnable {
             } catch (IOException e) {
                 e.printStackTrace();
             }
+            this.serveur.disconnect(this.clientInetAdress);
         }
-
     }
 }

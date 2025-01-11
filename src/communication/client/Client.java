@@ -138,12 +138,12 @@ public class Client extends Thread {
       }
   }
 
-//  public synchronized void waitPlayerJoin(String[] args) throws IOException, InterruptedException {
-//    Thread.sleep(1000);
-//    while (this.clientState == ClientState.LOOKINGADVERSARY) {
-//      this.wait();
-//    }
-//  }
+  public synchronized void waitPlayerJoin(String[] args) throws IOException, InterruptedException {
+    Thread.sleep(1000);
+    while (this.clientState == ClientState.LOOKINGADVERSARY) {
+      this.wait();
+    }
+  }
 
   /**
    * Methode principal, lancement du client
@@ -175,7 +175,7 @@ public class Client extends Thread {
         this.nettoieTerminal();
         switch (request) {
           case "connect":
-            if (commandAndArgs.length > 2) throw new IOException("La commande ask doit avoir 2 argument");
+            if (commandAndArgs.length != 2 ) throw new IOException("La commande ask doit avoir 2 argument");
             this.request("connect", commandAndArgs, this.clientState == ClientState.USERDISCONNECTED);
             break;
 
@@ -188,8 +188,19 @@ public class Client extends Thread {
             break;
 
           case "ask":
-            if (commandAndArgs.length != 2) throw new IOException("La commande ask doit avoir 1 argument 'ASK <nom du Joueur>'");
-            this.request("ask", commandAndArgs, this.clientState == ClientState.USERCONNECTED);
+            if (commandAndArgs.length != 1) throw new IOException("La commande ask ne doit pas avoir d'arguments ");
+            String[] arguments = new String[] {"ask", this.nomJoueur};
+            this.request("ask", arguments, this.clientState == ClientState.USERCONNECTED);
+            Thread.sleep(1000);
+            String[] none = new String[] {"isawait", this.nomJoueur};
+            long currentTime = System.currentTimeMillis();
+            while (this.clientState == ClientState.LOOKINGADVERSARY) {
+              this.request("isawait", none, true);
+              System.out.println("state: "+this.clientState);
+              System.out.println("Durée écoulé: "+ (System.currentTimeMillis()-currentTime));
+              Thread.sleep(500);
+            }
+            System.out.print("exiting while");
             Thread.sleep(1000);
             break;
 
