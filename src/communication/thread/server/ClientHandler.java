@@ -133,7 +133,14 @@ public class ClientHandler implements Runnable {
                                         serverLog("clients connectes: "+this.serveur.showConnectedClients());
                                     }
                                     break;
-
+                                case "play":
+                                System.out.println("played");
+                                    String player = args[3];
+                                    Integer colonne = Integer.parseInt(args[2]);
+                                    String result = this.serveur.play(colonne, player);
+                                    this.sendResponse("serverMessage", result);
+                                    serverLog(player + " a joué colonne " + colonne + " resultat plateau : " + result);
+                                    break;
                                 default:
                                     this.sendResponse("serverMessage","ERR commande non connue");
                                     break;

@@ -96,7 +96,7 @@ public class Client extends Thread {
           "-> DISCONNECT deconnecte de l'espace Joueur\n";
         break;
       case ClientState.INGAME:
-        terminal = "Vous avez rejoint une nouvelle partie\nVous posséder un plateau de 6 lignes et 7 colonnes\nPour jouer, entrez PLAY + le numéro de la colonne (0 à 6) où vous déposez un jeton";
+        terminal = "Vous avez rejoint une nouvelle partie\nVous posséder un plateau de 6 lignes et 7 colonnes\nPour jouer, entrez PLAY + le numéro de la colonne (0 à 6) où vous déposez un jeton\nQUIT pour quitter";
         break;
       case ClientState.LOOKINGADVERSARY:
         terminal = "AWAITING QUERY\n";
@@ -192,15 +192,18 @@ public class Client extends Thread {
             this.ask_client(commandAndArgs);
             break;
           case "play":
-            if (commandAndArgs.length < 1) throw new IOException("Veuillez rentrer le numéro de la colonne à jouer");
+            if (commandAndArgs.length < 2) throw new IOException("Veuillez rentrer le numéro de la colonne à jouer");
+            System.out.println(commandAndArgs.length+"");
             String colonne = commandAndArgs[1];
             try {
               Integer number = Integer.parseInt(s);
+              commandAndArgs[3] = this.nomJoueur;
               this.request("play", commandAndArgs, this.clientState == ClientState.USERCONNECTED);
             }
             catch (NumberFormatException e){
               throw new IOException("Veuillez entrer un nombre");
             }
+            System.out.println("play good");
           case "disconnect":
             if (commandAndArgs.length > 1) throw new IOException("Il ne doit pas avoir d'argument pour cette commande");
             this.request("disconnect", commandAndArgs, this.clientState == ClientState.USERCONNECTED);

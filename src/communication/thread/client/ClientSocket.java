@@ -106,7 +106,7 @@ public class ClientSocket extends Thread {
                 }
 
             default:
-                System.out.println("no available: " + type);
+                System.out.println("non disponible: " + type);
                 break;
         }
 //        Thread.sleep(1000);
@@ -119,7 +119,7 @@ public class ClientSocket extends Thread {
             while (true) {
                 String serverMessage = this.reader.readLine();
                 if (!serverMessage.isEmpty()) {
-                    this.clientLog("received interaction: [" + serverMessage + "] from server");
+                    this.clientLog("received interaction: [" + serverMessage + "] du serveur");
                     String[] infos = serverMessage.split("\\|");
                     String indicator = infos[0].split(":")[1];
                     switch (indicator) {
@@ -127,10 +127,10 @@ public class ClientSocket extends Thread {
                             this.handleSreverInstruction(infos[1]);
                             break;
                         case "serverMessage":
-                            System.out.println("Message from server: " + infos[1]);
+                            System.out.println("Message du serveur: " + infos[1]);
                             break;
                         default:
-                            System.out.println("Unknown indicator: " + infos[1]);
+                            System.out.println("Indication non connue: " + infos[1]);
                             break;
                     }
                 }
