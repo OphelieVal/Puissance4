@@ -142,12 +142,17 @@ public class Serveur {
   }
 
 //---------------------------------------------------------------------------------
-
+  /**
+   * met le joueur en attente
+   * @param player joueur a mettre en attente
+   * @return string en attente
+   */
   public String waitClient(PlayerClient player) {
     this.attenteClients.add(player);
     return "EN ATTENTE d'autres joueurs";
   }
 
+  /** verifie si le joueur est dans la file d'attente */
   public boolean isPlayerInAwaitingQueue(String nomJoueur, String clientIP) {
     for (PlayerClient client : this.clientsJoueurs) {
       if (client.getNomJoueur().equals(nomJoueur) && client.getClientIP().equals(clientIP)) {
@@ -157,6 +162,11 @@ public class Serveur {
     return false;
   }
 
+  /**
+   * demande une nouvelle partie contre un joueur au hasard
+   * @param nomJoueur joueur demandant un adversaire
+   * @return null si aucun joueur sinon nouveau joueur (adversaire)
+   */
   public PlayerClient ask(String nomJoueur) {
     PlayerClient client1 = this.getClient(nomJoueur);
     PlayerClient client2 = this.getClientAttente();
@@ -170,6 +180,12 @@ public class Serveur {
     return client2;
   }
 
+  /**
+   * depose le jeton du joueur sur le plateau 
+   * @param nomColonne colonne ou le jeton est pose
+   * @param nomJoueur nom du joueur jouant
+   * @return ERR si plus de place ou joueur non toruvé, sinon OK
+   */
   public String play(int nomColonne, String nomJoueur) {
     boolean pose = false;
       Joueur joueur =  this.getClient(nomJoueur).getClientPlayer();
@@ -191,16 +207,34 @@ public class Serveur {
     return "ERR nomJoueur invalide";
   }
 
-
+  /**
+   * verifie si le joueur a gagné
+   * @param joueur
+   * @return true si a gagné sinon false
+   */
   public boolean win(Joueur joueur) {
     System.out.println(joueur.getNomJoueur() + " a gagné la partie ");
     return true;
   }
-
+  /**
+   * fin de partie du joueur = quitte le plateau de jeu
+   * @param nomJoueur
+   * @return chaine de caractere : OK si plateau quitté sinon ERR
+   */
   public String end(String nomJoueur) {
-    return "";
+    PlayerClient client = this.getClient(nomJoueur);
+    if (client==null){
+      return "ERR joueur non recoonu";
+    }
+    client.getClientPlayer().setLePlateau(null);
+    return "OK fin de partie";
   }
 
+  /**
+   * donne les statistiques d'un joueur (nb parties, nb gagnantes..)
+   * @param nomJoueur
+   * @return statistique d'un joueur
+   */
   public String getStats(String nomJoueur) {
     return "";
   }
@@ -210,7 +244,17 @@ public class Serveur {
    * @return ERR si erreur, sinon BYE
    */
   public String quit(String nomJoueur) {
-    return "";
+    PlayerClient client = this.getClient(nomJoueur);
+    if (client==null){
+      return "ERR le client n'existe pas";
+    }
+    if (this.attenteClients.contains(client)){
+      this.attenteClients.remove(client);
+    }
+    else  {
+      this.clientsJoueurs.remove(client);
+    }
+    return "BYE";
   }
 
 }

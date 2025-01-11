@@ -129,16 +129,16 @@ public class ClientHandler implements Runnable {
                                     }
                                     break;
 
-//                                case "awaiting":
-//                                    status = this.serveur.isPlayerInAwaitingQueue(args[1], this.clientInetAdress);
-//                                    if (status) {
-//                                        this.sendResponse("clientInstruction", "AWAITQUEUE OK");
-//                                        this.sendResponse("serverMessage", "LOOKING FOR ANOTHER PLAYER TO JOIN...");
-//                                    }else {
-//                                        this.sendResponse("clientInstruction", "AWAITQUEUE NO");
-//                                        this.sendResponse("serverMessage", "GAME FOUND");
-//                                        this.sendResponse("serverMessage", "STARTING...");
-//                                    }
+                                case "awaiting":
+                                    status = this.serveur.isPlayerInAwaitingQueue(args[1], this.clientInetAdress);
+                                    if (status) {
+                                        this.sendResponse("clientInstruction", "AWAITQUEUE OK");
+                                        this.sendResponse("serverMessage", "LOOKING FOR ANOTHER PLAYER TO JOIN...");
+                                    }else {
+                                        this.sendResponse("clientInstruction", "AWAITQUEUE NO");
+                                        this.sendResponse("serverMessage", "GAME FOUND");
+                                        this.sendResponse("serverMessage", "STARTING...");
+                                    }
 
                                 case "disconnect":
                                     serverLog("received disconnect request from: "+this.clientInetAdress);
