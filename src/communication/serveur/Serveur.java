@@ -154,11 +154,9 @@ public class Serveur {
 
   public String removeWaitClient(PlayerClient client) {
     boolean status = false;
-    for (PlayerClient client2 : this.attenteClients) {
-      if (client.getNomJoueur().equals(client2.getNomJoueur())) {
-        this.clientsJoueurs.remove(client2);
-        status = true;
-      }
+    if (this.attenteClients.contains(client)){
+      this.attenteClients.remove(client);
+      status = true;
     }
     if (!status) {
       return "ERR Joueur non present dans la fill d'attente";
