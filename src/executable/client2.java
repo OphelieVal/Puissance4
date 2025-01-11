@@ -12,5 +12,6 @@ public class client2 {
         Client client = new Client(server, port);
         System.out.println(client.get_ClientIP());
         client.start();
+        System.out.println("Connexion au server...");
     }
 }
