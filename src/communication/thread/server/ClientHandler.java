@@ -15,8 +15,8 @@ public class ClientHandler implements Runnable {
     private InputStreamReader stream;
     private final BufferedReader reader;
     private final PrintWriter writer;
-    private String clientInetAdress;
-    private Serveur serveur;
+    private final String clientInetAdress;
+    private final Serveur serveur;
 
     public ClientHandler(Socket socket, Serveur server) throws IOException {
         this.serveur = server;
