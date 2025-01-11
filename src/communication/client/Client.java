@@ -96,7 +96,7 @@ public class Client extends Thread {
           "-> DISCONNECT deconnecte de l'espace Joueur\n";
         break;
       case ClientState.INGAME:
-        terminal = "\n";
+        terminal = "Vous avez rejoint une nouvelle partie\nVous posséder un plateau de 6 lignes et 7 colonnes\nPour jouer, entrez PLAY + le numéro de la colonne (0 à 6) où vous déposez un jeton";
         break;
       case ClientState.LOOKINGADVERSARY:
         terminal = "AWAITING QUERY\n";
@@ -155,7 +155,7 @@ public class Client extends Thread {
       try {
           this.clientSocket.clientSocketInit();
       } catch (Exception e) {
-          throw new RuntimeException(e.getMessage() + "\n Assurez vous que l'adresse IP du serveur est bonne ou bien qu'il est lance" +
+          throw new RuntimeException("\n Assurez vous que l'adresse IP du serveur est bonne ou bien qu'il est lance" +
                   "\npour trouver l'adresse du serrver rendez vous sur la machine de celui-ci et ouvrez un terminal entrez: ipconfig (si windows) ou ifconfig" +
                   "\nregarder l'IPv4 de l'interface que vous utiliser (eth0 pour carte reseau ethernet / Wifi pour carte Wi-fi)");
       }
@@ -189,7 +189,47 @@ public class Client extends Thread {
             break;
 
           case "ask":
-            if (commandAndArgs.length != 1) throw new IOException("La commande ask ne doit pas avoir d'arguments ");
+            this.ask_client(commandAndArgs);
+            break;
+          case "play":
+            if (commandAndArgs.length < 1) throw new IOException("Veuillez rentrer le numéro de la colonne à jouer");
+            String colonne = commandAndArgs[1];
+            try {
+              Integer number = Integer.parseInt(s);
+              this.request("play", commandAndArgs, this.clientState == ClientState.USERCONNECTED);
+            }
+            catch (NumberFormatException e){
+              throw new IOException("Veuillez entrer un nombre");
+            }
+          case "disconnect":
+            if (commandAndArgs.length > 1) throw new IOException("Il ne doit pas avoir d'argument pour cette commande");
+            this.request("disconnect", commandAndArgs, this.clientState == ClientState.USERCONNECTED);
+            break;
+          default:
+            throw new IOException("Unknown command");
+        }
+      }
+      catch(IOException e){
+        e.fillInStackTrace();
+        System.err.println(e.getMessage());
+      }
+      catch (InterruptedException e) {
+          throw new RuntimeException(e);
+      }
+    }
+    try {
+        this.clientSocket.closeSocket();
+    } catch (IOException e) {
+        throw new RuntimeException(e);
+    }
+
+    scanner.close();
+  }
+
+
+
+  public void ask_client(String[] commandAndArgs) throws IOException, InterruptedException{
+    if (commandAndArgs.length != 1) throw new IOException("La commande ask ne doit pas avoir d'arguments ");
             String[] arguments = new String[] {"ask", this.nomJoueur};
             this.request("ask", arguments, this.clientState == ClientState.USERCONNECTED);
             Thread.sleep(1000);
@@ -203,35 +243,11 @@ public class Client extends Thread {
             }
             System.out.print("exiting while");
             Thread.sleep(1000);
-            break;
+  }
+  public void play_client(String[] commandAndArgs){
 
-          case "disconnect":
-            if (commandAndArgs.length > 1) throw new IOException("Il ne doit pas avoir d'argument pour cette commande");
-            this.request("disconnect", commandAndArgs, this.clientState == ClientState.USERCONNECTED);
-            break;
-          default:
-            throw new IOException("Unknown command");
-        }
-      }
-
-
-      catch(IOException e){
-        e.fillInStackTrace();
-        System.err.println(e.getMessage());
-      }
-
-      catch (InterruptedException e) {
-          throw new RuntimeException(e);
-      }
-
-    }
-
-    try {
-        this.clientSocket.closeSocket();
-    } catch (IOException e) {
-        throw new RuntimeException(e);
-    }
-
-    scanner.close();
   }
 }
+
+
+

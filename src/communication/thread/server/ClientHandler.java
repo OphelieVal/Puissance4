@@ -100,34 +100,13 @@ public class ClientHandler implements Runnable {
                             switch (indicator.toLowerCase()) {
 
                                 case "connect":
-                                        serverLog("received connection request from: "+this.clientInetAdress +" to username: "+args[1]);
-                                        status = this.serveur.clientIsConnected(args[1], this.clientInetAdress);
-                                        if (status) {
-                                            this.sendResponse("serverMessage", "Deja connecte "+args[1]+" OK");
-                                            serverLog("clients connectes: "+this.serveur.showConnectedClients());
-                                        }else if (this.serveur.connect(args[1], this.clientInetAdress)) {
-                                            this.sendResponse("clientInstruction", "INITUSERNAME "+args[1]+" OK");
-                                            this.sendResponse("clientInstruction", "SET USERCONNECTED STATE WITH "+args[1]+" OK");
-                                            this.sendResponse("serverMessage", "connecté "+args[1]+" OK");
-                                            serverLog("clients connectes: "+this.serveur.showConnectedClients());
-                                        }else {
-                                            this.sendMessage("ERR connexion à  "+args[1]+" refusé ou échoué");
-                                        }
+                                    serverLog("received connection request from: "+this.clientInetAdress +" to username: "+args[1]);
+                                    status = this.serveur.clientIsConnected(args[1], this.clientInetAdress);
+                                    this.connect_server(args, status);
                                     break;
 
                                 case "ask":
-                                    String joueur = args[1];
-                                    PlayerClient client = this.serveur.ask(joueur);
-                                    if (client==null){
-                                        this.sendResponse("clientInstruction", "SET LOOKINGADVERSARY STATE OK");
-                                        this.sendResponse("serverMessage", "EN ATTENTE d'autres joueurs");
-                                    }
-                                    else {
-                                        this.sendResponse("serverMessage", "ADVERSAIRE TROUVE USERNAME: "+client.getNomJoueur() + " | " +
-                                                "IP: " + client.getClientIP());
-                                        this.sendResponse("serverMessage", "OK plateau initilialisé");
-                                        this.sendResponse("clientInstruction", "SET INGAME STATE OK");
-                                    }
+                                    this.ask_server(args);
                                     break;
 
                                 case "isawait":
@@ -180,5 +159,36 @@ public class ClientHandler implements Runnable {
             }
             this.serveur.disconnect(this.clientInetAdress);
         }
+    }
+
+    public void ask_server(String[] args){
+        String joueur = args[1];
+        PlayerClient client = this.serveur.ask(joueur);
+        if (client==null){
+            this.sendResponse("clientInstruction", "SET LOOKINGADVERSARY STATE OK");
+            this.sendResponse("serverMessage", "EN ATTENTE d'autres joueurs");
+        }
+        else {
+            this.sendResponse("serverMessage", "ADVERSAIRE TROUVE USERNAME: "+client.getNomJoueur() + " | " +
+                                                "IP: " + client.getClientIP());
+            this.sendResponse("serverMessage", "OK plateau initilialisé");
+            this.sendResponse("clientInstruction", "SET INGAME STATE OK");
+        }
+
+    }
+
+    public void connect_server(String[] args, boolean status) throws IOException{
+        if (status) {
+            this.sendResponse("serverMessage", "Deja connecte "+args[1]+" OK");
+            serverLog("clients connectes: "+this.serveur.showConnectedClients());
+        }else if (this.serveur.connect(args[1], this.clientInetAdress)) {
+            this.sendResponse("clientInstruction", "INITUSERNAME "+args[1]+" OK");
+            this.sendResponse("clientInstruction", "SET USERCONNECTED STATE WITH "+args[1]+" OK");
+            this.sendResponse("serverMessage", "connecté "+args[1]+" OK");
+            serverLog("clients connectes: "+this.serveur.showConnectedClients());
+        }else {
+            this.sendMessage("ERR connexion à  "+args[1]+" refusé ou échoué");
+        }
+
     }
 }
