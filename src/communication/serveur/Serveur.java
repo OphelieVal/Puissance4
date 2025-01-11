@@ -142,6 +142,9 @@ public class Serveur {
   }
 
 //---------------------------------------------------------------------------------
+public List<PlayerClient> getClientAttenteList() {
+    return this.attenteClients;
+}
 
   public String waitClient(PlayerClient player) {
     this.attenteClients.add(player);
@@ -150,11 +153,9 @@ public class Serveur {
 
   public String removeWaitClient(PlayerClient client) {
     boolean status = false;
-    for (PlayerClient client2 : this.attenteClients) {
-      if (client.getNomJoueur().equals(client2.getNomJoueur())) {
-        this.clientsJoueurs.remove(client2);
-        status = true;
-      }
+    if (this.attenteClients.contains(client)){
+      this.attenteClients.remove(client);
+      status = true;
     }
     if (!status) {
       return "ERR Joueur non present dans la fill d'attente";
@@ -182,7 +183,7 @@ public class Serveur {
     Plateau plateau = new Plateau(6, 7);
     client1.getClientPlayer().setLePlateau(plateau);
     client2.getClientPlayer().setLePlateau(plateau);
-//    this.removeWaitClient(client1);
+    this.removeWaitClient(client1);
     this.removeWaitClient(client2);
     return client2;
   }

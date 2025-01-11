@@ -8,6 +8,7 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Calendar;
 
 public class ClientHandler implements Runnable {
@@ -132,6 +133,7 @@ public class ClientHandler implements Runnable {
 
                                 case "isawait":
                                     status = this.serveur.isPlayerInAwaitingQueue(args[1], this.clientInetAdress);
+                                    System.out.println(Arrays.toString(this.serveur.getClientAttenteList().toArray()));
                                     if (status) {
                                         this.sendResponse("serverMessage", "LOOKING FOR ANOTHER PLAYER TO JOIN...");
                                     }else {
