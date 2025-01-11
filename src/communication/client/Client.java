@@ -191,19 +191,20 @@ public class Client extends Thread {
           case "ask":
             this.ask_client(commandAndArgs);
             break;
+
           case "play":
             if (commandAndArgs.length < 2) throw new IOException("Veuillez rentrer le numéro de la colonne à jouer");
             System.out.println(commandAndArgs.length+"");
             String colonne = commandAndArgs[1];
             try {
-              Integer number = Integer.parseInt(s);
-              commandAndArgs[3] = this.nomJoueur;
-              this.request("play", commandAndArgs, this.clientState == ClientState.USERCONNECTED);
+              Integer.parseInt(colonne);
+              commandAndArgs[2] = this.nomJoueur;
+              this.request("play", commandAndArgs, this.clientState == ClientState.INGAME);
             }
             catch (NumberFormatException e){
               throw new IOException("Veuillez entrer un nombre");
             }
-            System.out.println("play good");
+            break;
           case "disconnect":
             if (commandAndArgs.length > 1) throw new IOException("Il ne doit pas avoir d'argument pour cette commande");
             this.request("disconnect", commandAndArgs, this.clientState == ClientState.USERCONNECTED);
