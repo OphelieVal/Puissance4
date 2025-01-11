@@ -174,9 +174,11 @@ public class Serveur {
       this.waitClient(client1);
       return null;
     }
-    Plateau plateau = new Plateau(6, 7);
-    client1.getClientPlayer().setLePlateau(plateau);
+    Plateau plateau = new Plateau(6, 7); // initialise à un plateau de taille normale
+    client1.getClientPlayer().setLePlateau(plateau); 
+    client1.getClientPlayer().setCouleur("rouge");
     client2.getClientPlayer().setLePlateau(plateau);
+    client2.getClientPlayer().setCouleur("jaune");
     return client2;
   }
 
@@ -190,7 +192,7 @@ public class Serveur {
     boolean pose = false;
       Joueur joueur =  this.getClient(nomJoueur).getClientPlayer();
       try {
-        if (joueur.getNomJoueur()!=null){
+        if (joueur.getNomJoueur()!=null){ 
           boolean result = joueur.getPlateau().poseJeton(nomColonne, joueur);
           pose = true;
         }

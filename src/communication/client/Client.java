@@ -96,10 +96,11 @@ public class Client extends Thread {
           "-> DISCONNECT deconnecte de l'espace Joueur\n";
         break;
       case ClientState.INGAME:
-        terminal = "NOT IMPLEMENTED\n";
+        terminal = "\n";
         break;
       case ClientState.LOOKINGADVERSARY:
         terminal = "AWAITING QUERY\n";
+
         break;
       default:
         terminal = "NOTHING";
