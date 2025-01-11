@@ -198,8 +198,8 @@ public class Client extends Thread {
             String colonne = commandAndArgs[1];
             try {
               Integer.parseInt(colonne);
-              commandAndArgs[2] = this.nomJoueur;
-              this.request("play", commandAndArgs, this.clientState == ClientState.INGAME);
+              String[] commandAndArgsPlay = new String[] {commandAndArgs[0], commandAndArgs[1], this.nomJoueur};
+              this.request("play", commandAndArgsPlay, this.clientState == ClientState.INGAME);
             }
             catch (NumberFormatException e){
               throw new IOException("Veuillez entrer un nombre");

@@ -64,13 +64,19 @@ public class Plateau {
    * @return true si le jeton s'est posé sinon false
    * @throws IndexOutOfBoundsException en dehors du plateau
    */
-  public boolean poseJeton(int y, Joueur joueur) throws EnDehorsDuPlateauException, GagnantException {
-    int x = this.getMaxligne(y);
+  public boolean poseJeton(int y, Joueur joueur) throws EnDehorsDuPlateauException, GagnantException, OccupeeException {
+    Integer x = this.getMaxligne(y);
+    if (x==null){
+      throw new EnDehorsDuPlateauException("Cette colonne est déjà remplie");
+    }
     try {
       this.lePlateau[x][y].poseJeton(joueur.getCouleur());
     } 
+    catch (OccupeeException e){
+      throw new OccupeeException(e.getMessage());
+    }
     catch (Exception e) {
-      throw new EnDehorsDuPlateauException("Le jeton n'a pas pu être ajouté");
+      throw new EnDehorsDuPlateauException("Le jeton doit être posé dans la colonne comprise entre " + 0 + " et " + this.nbColonnes);
     }
     if (!(this.lePlateau[x][y].contientJeton())) {
       return false;

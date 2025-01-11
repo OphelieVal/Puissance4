@@ -135,8 +135,8 @@ public class ClientHandler implements Runnable {
                                     break;
                                 case "play":
                                 System.out.println("played");
-                                    String player = args[3];
-                                    Integer colonne = Integer.parseInt(args[2]);
+                                    String player = args[2];
+                                    Integer colonne = Integer.parseInt(args[1]);
                                     String result = this.serveur.play(colonne, player);
                                     this.sendResponse("serverMessage", result);
                                     serverLog(player + " a joué colonne " + colonne + " resultat plateau : " + result);

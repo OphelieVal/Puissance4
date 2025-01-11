@@ -35,9 +35,10 @@ public class Case {
    * @return true si le jeton est posé
    * @throws Exception si la case contient deja un jeton
    */
-  public boolean poseJeton(String couleur) throws Exception{
-    if (!(this.contientJeton())){
-      throw new Exception();
+  public boolean poseJeton(String couleur) throws OccupeeException{
+    if (this.contientJeton()){
+      String message = "La case a déjà un jeton de couleur " + this.couleur;
+      throw new OccupeeException(message);
     }
     this.aJeton = true;
     this.couleur = couleur;

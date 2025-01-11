@@ -11,6 +11,7 @@ import java.util.Random;
 import modele.EnDehorsDuPlateauException;
 import modele.GagnantException;
 import modele.Joueur;
+import modele.OccupeeException;
 import modele.Plateau;
 
 
@@ -218,6 +219,9 @@ public class Serveur {
       }
       catch (GagnantException e){
         this.win(joueur);
+      }
+      catch (OccupeeException e){
+        return "Il y a déjà un jeton";
       }
     if (pose){
       return "OK jeton posé";
