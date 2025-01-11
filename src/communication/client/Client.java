@@ -1,6 +1,5 @@
 package communication.client;
 
-import com.sun.source.doctree.EscapeTree;
 import communication.thread.client.ClientSocket;
 import java.io.IOException;
 import java.net.InetAddress;
@@ -97,11 +96,14 @@ public class Client extends Thread {
           "-> DISCONNECT deconnecte de l'espace Joueur\n";
         break;
       case ClientState.INGAME:
-        terminal = "NO COMMANE\n";
-      case ClientState.LOOKINGADVERSARY:
         terminal = "NOT IMPLEMENTED\n";
+        break;
+      case ClientState.LOOKINGADVERSARY:
+        terminal = "AWAITING QUERY\n";
+        break;
       default:
         terminal = "NOTHING";
+        break;
     }
     this.nettoieTerminal();
     System.out.println("Actual client state: "+this.get_ClientState());
@@ -135,6 +137,13 @@ public class Client extends Thread {
         System.out.println("Unknown command");
       }
   }
+
+//  public synchronized void waitPlayerJoin(String[] args) throws IOException, InterruptedException {
+//    Thread.sleep(1000);
+//    while (this.clientState == ClientState.LOOKINGADVERSARY) {
+//      this.wait();
+//    }
+//  }
 
   /**
    * Methode principal, lancement du client
@@ -181,13 +190,13 @@ public class Client extends Thread {
           case "ask":
             if (commandAndArgs.length != 2) throw new IOException("La commande ask doit avoir 1 argument 'ASK <nom du Joueur>'");
             this.request("ask", commandAndArgs, this.clientState == ClientState.USERCONNECTED);
+            Thread.sleep(1000);
             break;
 
           case "disconnect":
             if (commandAndArgs.length > 1) throw new IOException("Il ne doit pas avoir d'argument pour cette commande");
             this.request("disconnect", commandAndArgs, this.clientState == ClientState.USERCONNECTED);
             break;
-
           default:
             throw new IOException("Unknown command");
         }
@@ -204,11 +213,13 @@ public class Client extends Thread {
       }
 
     }
-      try {
-          this.clientSocket.closeSocket();
-      } catch (IOException e) {
-          throw new RuntimeException(e);
-      }
-      scanner.close();
+
+    try {
+        this.clientSocket.closeSocket();
+    } catch (IOException e) {
+        throw new RuntimeException(e);
+    }
+
+    scanner.close();
   }
 }

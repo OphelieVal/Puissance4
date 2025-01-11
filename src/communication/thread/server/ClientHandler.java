@@ -120,7 +120,6 @@ public class ClientHandler implements Runnable {
                                     if (client==null){
                                         this.sendResponse("clientInstruction", "SET LOOKINGADVERSARY STATE OK");
                                         this.sendResponse("serverMessage", "EN ATTENTE d'autres joueurs");
-//                                        this.writer.println("EN ATTENTE d'autres joueurs");
                                     }
                                     else {
                                         this.sendResponse("serverMessage", "ADVERSAIRE TROUVE USERNAME: "+client.getNomJoueur() + " | " +
@@ -130,8 +129,16 @@ public class ClientHandler implements Runnable {
                                     }
                                     break;
 
-                                case "awaitqueu":
-
+//                                case "awaiting":
+//                                    status = this.serveur.isPlayerInAwaitingQueue(args[1], this.clientInetAdress);
+//                                    if (status) {
+//                                        this.sendResponse("clientInstruction", "AWAITQUEUE OK");
+//                                        this.sendResponse("serverMessage", "LOOKING FOR ANOTHER PLAYER TO JOIN...");
+//                                    }else {
+//                                        this.sendResponse("clientInstruction", "AWAITQUEUE NO");
+//                                        this.sendResponse("serverMessage", "GAME FOUND");
+//                                        this.sendResponse("serverMessage", "STARTING...");
+//                                    }
 
                                 case "disconnect":
                                     serverLog("received disconnect request from: "+this.clientInetAdress);
