@@ -229,6 +229,10 @@ public class Serveur {
     return "ERR nomJoueur invalide";
   }
 
+  public String getInGamePlateau(String username) {
+    return this.getClient(username).getClientPlayer().getPlateau().toString();
+  }
+
   /**
    * verifie si le joueur a gagné
    * @param joueur

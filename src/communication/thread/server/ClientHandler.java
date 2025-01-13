@@ -134,13 +134,22 @@ public class ClientHandler implements Runnable {
                                     }
                                     break;
                                 case "play":
-                                System.out.println("played");
+                                    System.out.println("played");
                                     String player = args[2];
                                     Integer colonne = Integer.parseInt(args[1]);
                                     String result = this.serveur.play(colonne, player);
                                     this.sendResponse("serverMessage", result);
                                     serverLog(player + " a joué colonne " + colonne + " resultat plateau : " + result);
+                                    serverLog("actual game plate: "+ this.serveur.getInGamePlateau(player));
+                                    Thread.sleep(100);
                                     break;
+
+                                case "getactualplate":
+                                    System.out.println("getactualplate: " + args[1]);
+                                    serverLog("player: "+args[1]+" asked to see the actual game plate");
+                                    this.sendResponse("serverMessage", this.serveur.getInGamePlateau(args[1]));
+                                    break;
+
                                 default:
                                     this.sendResponse("serverMessage","ERR commande non connue");
                                     break;

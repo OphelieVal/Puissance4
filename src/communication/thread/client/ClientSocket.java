@@ -127,7 +127,15 @@ public class ClientSocket extends Thread {
                             this.handleSreverInstruction(infos[1]);
                             break;
                         case "serverMessage":
-                            System.out.println("Message du serveur: " + infos[1]);
+                            String[] temp = infos[1].split("-");
+                            if (temp[0].equals("PLATEAU_VISUAL_STRING")) {
+                                String[] lines = temp[2].split("LINESEP");
+                                for (String line: lines) {
+                                    System.out.println(line);
+                                }
+                            }else {
+                                System.out.println("Message du serveur: " + infos[1]);
+                            }
                             break;
                         default:
                             System.out.println("Indication non connue: " + infos[1]);
