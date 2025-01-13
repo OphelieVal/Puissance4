@@ -77,52 +77,6 @@ public class Case {
     return this.y;
   }
 
-  /**
-   * verifie si quatre pions sont alignés horizontalement
-   * @param casedepart
-   * @return le nombre de pions alignés 
-   */
-  public int quatreHorizontal(Case casedepart) {
-    String couleurJeton = this.getCouleur();
-    int cpt = 1;
-    for (Case case_voisine : this.lesVoisines){
-      if (cpt>=4){
-        return cpt;
-      }
-      if (!(case_voisine==casedepart)&&case_voisine.getColonne()==this.getColonne()&&case_voisine.getCouleur()==couleurJeton){
-        cpt += case_voisine.quatreHorizontal(this);
-      }
-    }
-    return cpt;
-  }
-
-  /**
-   * verifie si quatre pions sont alignés verticalement
-   * @param casedepart
-   * @return le nombre de pions alignés 
-   */
-  public int quatreVertical(Case casedepart) {
-    String couleurJeton = this.getCouleur();
-    int cpt = 1;
-    for (Case case_voisine : this.lesVoisines){
-      if (cpt>=4){
-        return cpt;
-      }
-      if (!(case_voisine==casedepart)&&case_voisine.getLigne()==this.getColonne()&&case_voisine.getCouleur()==couleurJeton){
-        cpt += case_voisine.quatreHorizontal(this);
-      }
-    }
-    return cpt;
-  }
-
-  /**
-   * verifie si quatre pions sont alignés diagonalement
-   * @param casedepart
-   * @return le nombre de pions alignés 
-   */
-  public int quatreDiagonal(Case casedepart) {
-    return 1;
-  }
 
   @Override 
   public boolean equals(Object objet){

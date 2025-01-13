@@ -90,6 +90,9 @@ public class Plateau {
       throw new EnDehorsDuPlateauException("Cette colonne est déjà remplie");
     }
     try {
+      if (joueur.aGagne(x, y)){
+        throw new GagnantException();
+      }
       this.lePlateau[x][y].poseJeton(joueur.getCouleur());
     } 
     catch (OccupeeException e){
@@ -100,9 +103,6 @@ public class Plateau {
     }
     if (!(this.lePlateau[x][y].contientJeton())) {
       return false;
-    }
-    if (joueur.aGagne(x, y)){
-      throw new GagnantException();
     }
     this.casesRestantes--;
     return true;
@@ -171,6 +171,102 @@ public class Plateau {
       return
        this.casesRestantes;
     }
+
+    /**
+     * verifie si le joueur a gagné verticalement
+     * @param casedepart
+     * @return nb de pions alignés
+     */
+    public int quatreVertical(Case casedepart) {
+      int ligne = casedepart.getLigne(); 
+      int colonne = casedepart.getColonne(); 
+      String couleurJeton = casedepart.getCouleur();
+      int cpt = 1;
+      for (int i = ligne - 1; i >= 0; i--) {
+          if (lePlateau[i][colonne].getCouleur() != null && lePlateau[i][colonne].getCouleur().equals(couleurJeton)) {
+              cpt++;
+              if (cpt >= 4) {
+                  return cpt;
+              }
+          } else {
+              break;
+          }
+      }
+      for (int i = ligne + 1; i < lePlateau.length; i++) {
+          if (lePlateau[i][colonne].getCouleur() != null && lePlateau[i][colonne].getCouleur().equals(couleurJeton)) {
+              cpt++;
+              if (cpt >= 4) {
+                  return cpt;
+              }
+          } else {
+              break;
+          }
+      }
+      return cpt;
+  }
+
+  /**
+     * verifie si le joueur a gagné horizontalement
+     * @param casedepart
+     * @return nb de pions alignés
+     */
+  public int quatreHorizontal(Case casedepart) {
+    int ligne = casedepart.getLigne();
+    int colonne = casedepart.getColonne();
+    String couleurJeton = casedepart.getCouleur();
+    int cpt = 1;
+    for (int j = colonne - 1; j >= 0; j--) {
+        if (lePlateau[ligne][j].getCouleur() != null && lePlateau[ligne][j].getCouleur().equals(couleurJeton)) {
+            cpt++;
+            if (cpt >= 4) {
+                return cpt;
+            }} else {
+            break;
+        }
+    }
+    for (int j = colonne + 1; j < lePlateau[0].length; j++) {
+        if (lePlateau[ligne][j].getCouleur() != null && lePlateau[ligne][j].getCouleur().equals(couleurJeton)) {
+            cpt++;
+            if (cpt >= 4) {
+                return cpt;
+            }
+        } else {
+            break;
+        }}
+    return cpt;}
+      
+    /**
+     * verifie si le joueur a gagné diagonalement
+     * @param casedepart
+     * @return nb de pions alignés
+     */
+    public int quatreDiagonal(Case casedepart) {
+      int ligne = casedepart.getLigne();
+      int colonne = casedepart.getColonne();
+      String couleurJeton = casedepart.getCouleur();
+      int cpt = 1;
+      for (int i = ligne + 1, j = colonne - 1; i < lePlateau.length && j >= 0; i++, j--) {
+          if (lePlateau[i][j].getCouleur() != null && lePlateau[i][j].getCouleur().equals(couleurJeton)) {
+              cpt++;
+              if (cpt >= 4) {
+                  return cpt;
+              }
+          } else {
+              break;
+          }
+      }
+      for (int i = ligne - 1, j = colonne + 1; i >= 0 && j < lePlateau[0].length; i--, j++) {
+          if (lePlateau[i][j].getCouleur() != null && lePlateau[i][j].getCouleur().equals(couleurJeton)) {
+              cpt++;
+              if (cpt >= 4) {
+                  return cpt;
+              }
+          } else {
+              break;
+          }
+      }
+      return cpt;}
+  
 
     @Override
     public boolean equals(Object objet){

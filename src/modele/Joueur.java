@@ -70,9 +70,9 @@ public class Joueur {
    */
   public boolean aGagne(int x, int y) {
     Case caseJouee = this.lePlateau.getCase(x, y);
-    return caseJouee.quatreHorizontal(caseJouee) >= 4 ||
-           caseJouee.quatreVertical(caseJouee) >= 4 ||
-           caseJouee.quatreDiagonal(caseJouee) >= 4;
+    return this.lePlateau.quatreHorizontal(caseJouee) >= 4 ||
+           this.lePlateau.quatreVertical(caseJouee) >= 4 ||
+           this.lePlateau.quatreDiagonal(caseJouee) >= 4;
   }
 
 

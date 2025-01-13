@@ -101,13 +101,13 @@ public class Client extends Thread {
       case ClientState.LOOKINGADVERSARY:
         terminal = "AWAITING QUERY\n";
       case ClientState.WAITGAME:
-        terminal = "Ce n'est pas votre tour\nPatientez..\n";
+        terminal = "Ce n'est as votre tour, patientez..\n";
         try { 
-          String[] command = new String[] {"play", this.nomJoueur};
+          String[] command = new String[] {"play -1", this.nomJoueur};
           this.ask_client(command);
          }
         catch (Exception e){
-
+          System.out.println(e.getMessage());
         }
         break;
       default:
@@ -139,7 +139,6 @@ public class Client extends Thread {
             prepare += args[i] + " ";
           }
         }
-        //System.out.println(prepare);
         this.clientSocket.sendCommand(prepare);
         Thread.sleep(1500);
       }else {
@@ -270,7 +269,7 @@ public class Client extends Thread {
               this.request("play", commandAndArgsPlay, this.clientState == ClientState.INGAME);
               Thread.sleep(1000);
               while (this.clientState == ClientState.WAITGAME) {
-                this.request("play", new String[]{"play",this.nomJoueur}, true);
+                this.request("waitgame", new String[]{"play",this.nomJoueur}, true);
                 System.out.println("state: "+this.clientState);
                 System.out.println("Durée écoulé: "+ (System.currentTimeMillis()-currentTime));
                 Thread.sleep(500);

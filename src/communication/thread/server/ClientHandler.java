@@ -156,6 +156,14 @@ public class ClientHandler implements Runnable {
                                         this.sendResponse("serverMessage", player + " a tenté de jouer");
                                     }
                                     break;
+                                case "waitgame":
+                                String joueur = args[1];
+                                plateau = this.serveur.getClient(joueur).getClientPlayer().getPlateau();
+                                    if (plateau.getTurn().equals(joueur)){
+                                        this.sendResponse("clientInstruction", "SET INGAME");
+                                        serverLog("au tour de " + joueur);
+                                    }
+                                break;
                                 default:
                                     this.sendResponse("serverMessage","ERR commande non connue");
                                     break;
