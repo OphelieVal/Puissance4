@@ -9,6 +9,7 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import modele.Plateau;
 
 public class ClientHandler implements Runnable {
     private final Socket socket;
@@ -114,9 +115,17 @@ public class ClientHandler implements Runnable {
                                     if (status) {
                                         this.sendResponse("serverMessage", "LOOKING FOR ANOTHER PLAYER TO JOIN...");
                                     }else {
-                                        this.sendResponse("clientInstruction", "SET INGAME STATE OK");
+                                        Plateau plateau = this.serveur.getClient(args[1]).getClientPlayer().getPlateau();
+                                        if (plateau.getTurn().equals(args[1])){
+                                            this.sendResponse("clientInstruction", "SET INGAME STATE OK");
+                                        }
+                                        else {
+                                            this.sendResponse("clientInstruction", "SET WAITGAME");
+                                            serverLog(args[1] + " mis en attente\n");
+                                        }
                                         this.sendResponse("serverMessage", "GAME FOUND");
                                         this.sendResponse("serverMessage", "STARTING...");
+
                                     }
                                     break;
 
@@ -134,12 +143,20 @@ public class ClientHandler implements Runnable {
                                     }
                                     break;
                                 case "play":
-                                System.out.println("played");
                                     String player = args[2];
                                     Integer colonne = Integer.parseInt(args[1]);
-                                    String result = this.serveur.play(colonne, player);
-                                    this.sendResponse("serverMessage", result);
-                                    serverLog(player + " a joué colonne " + colonne + " resultat plateau : " + result);
+                                    Plateau plateau = this.serveur.getClient(player).getClientPlayer().getPlateau();
+                                    if (plateau.getTurn().equals(player)){
+                                        String result = this.serveur.play(colonne, player);
+                                        this.sendResponse("serverMessage", result);
+                                        serverLog(player + " a joué colonne " + colonne + " resultat plateau : " + result);
+                                        plateau.setTurn(this.serveur.getClient(plateau).getNomJoueur());
+                                        this.sendResponse("clientInstruction", "SET WAITGAME");
+                                    }
+                                    else {
+                                        this.sendResponse("serverMessage", player + " a tenté de jouer");
+
+                                    }
                                     break;
                                 default:
                                     this.sendResponse("serverMessage","ERR commande non connue");
@@ -179,7 +196,15 @@ public class ClientHandler implements Runnable {
             this.sendResponse("serverMessage", "ADVERSAIRE TROUVE USERNAME: "+client.getNomJoueur() + " | " +
                                                 "IP: " + client.getClientIP());
             this.sendResponse("serverMessage", "OK plateau initilialisé");
-            this.sendResponse("clientInstruction", "SET INGAME STATE OK");
+            Plateau plateau = this.serveur.getClient(joueur).getClientPlayer().getPlateau();
+            if (plateau.getTurn().equals(joueur)){
+                this.sendResponse("clientInstruction", "SET INGAME STATE OK");
+                serverLog(joueur + " va jouer son tour\n");
+            }
+            else {
+                this.sendResponse("clientInstruction", "SET WAITGAME");
+                
+            }
         }
 
     }

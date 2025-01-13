@@ -2,6 +2,27 @@
     "configurations": [
         {
             "type": "java",
+            "name": "client1",
+            "request": "launch",
+            "mainClass": "executable.client1",
+            "projectName": "Puissance4_f5563a55"
+        },
+        {
+            "type": "java",
+            "name": "client2",
+            "request": "launch",
+            "mainClass": "executable.client2",
+            "projectName": "Puissance4_f5563a55"
+        },
+        {
+            "type": "java",
+            "name": "server",
+            "request": "launch",
+            "mainClass": "executable.server",
+            "projectName": "Puissance4_f5563a55"
+        },
+        {
+            "type": "java",
             "name": "server",
             "request": "launch",
             "mainClass": "executable.server",

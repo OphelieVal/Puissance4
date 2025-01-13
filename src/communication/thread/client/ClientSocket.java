@@ -2,16 +2,13 @@ package communication.thread.client;
 
 import communication.client.Client;
 import communication.client.ClientState;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
 import java.util.Calendar;
-import java.util.NoSuchElementException;
 
 public class ClientSocket extends Thread {
     private final int port;
@@ -87,6 +84,9 @@ public class ClientSocket extends Thread {
                     case "INGAME":
                         this.client.set_ClientState(ClientState.INGAME);
                         break;
+                    case "WAITGAME":
+                        this.client.set_ClientState(ClientState.WAITGAME);
+                        break;
                 }
                 break;
 
@@ -95,16 +95,9 @@ public class ClientSocket extends Thread {
                 if (name.equals("NULL")) this.client.setNomJoueur(null);
                 else this.client.setNomJoueur(args[1]);
                 break;
-
-            case "awaitqueu":
-                if (args[1].toUpperCase().equals("OK"))  {
-                    String[] argument = {"awaiting", this.client.get_nomJoueur()};
-                    this.client.request("await", argument, true);
-                }else if (args[1].toUpperCase().equals("NO"))  {
-                    this.client.set_ClientState(ClientState.INGAME);
-                    this.client.notifyAll();
-                }
-
+            case "NOTTURN":
+                System.out.println("Ce n'est pas votre tour");
+                
             default:
                 System.out.println("non disponible: " + type);
                 break;
@@ -118,7 +111,7 @@ public class ClientSocket extends Thread {
             clientSocketInit();
             while (true) {
                 String serverMessage = this.reader.readLine();
-                if (!serverMessage.isEmpty()) {
+                if ((serverMessage!=null)&&!serverMessage.isEmpty()) {
                     this.clientLog("received interaction: [" + serverMessage + "] du serveur");
                     String[] infos = serverMessage.split("\\|");
                     String indicator = infos[0].split(":")[1];

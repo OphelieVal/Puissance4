@@ -12,6 +12,7 @@ public class Plateau {
   private int casesRestantes;
 
   private Case[][] lePlateau;
+  private String turn;
 
   private List<String> allColors = Arrays.asList("YELLOW", "RED", "BLUE", "PURPLE");
   private List<String> chosenColors = new ArrayList<>();
@@ -26,6 +27,14 @@ public class Plateau {
         this.lePlateau[i][j] = new Case(i, j);
       }
     }
+  }
+
+  public String getTurn(){
+    return this.turn;
+  }
+
+  public void setTurn(String turn){
+    this.turn = turn;
   }
 
   public String getAColor() {
@@ -164,6 +173,13 @@ public class Plateau {
           }
       }
       return false;
+  }
+
+  @Override 
+  public int hashCode(){
+    int hash = this.nbLignes + this.nbColonnes + this.casesRestantes + this.turn.hashCode() * 97;
+    return hash;
+
   }
 
 }

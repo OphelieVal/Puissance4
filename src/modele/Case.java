@@ -137,6 +137,11 @@ public class Case {
     }   
     return false;
 }
+  @Override
+  public int hashCode(){
+    int hash = this.x + this.y + this.couleur.hashCode() * 97;
+    return hash;
+  }
   
 
 
