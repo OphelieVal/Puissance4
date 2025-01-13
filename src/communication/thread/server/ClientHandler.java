@@ -92,7 +92,14 @@ public class ClientHandler implements Runnable {
                 } else {
                     try {
                         message = reader.readLine();
-                        String[] args = message.split(" ");
+                        String[] args = null;
+                        if (message != null){
+                            args = message.split(" ");
+                        }
+                        else {
+                            message = " ";
+                            args = new String[0];
+                        }
                         if (!message.isEmpty()) {
                             this.serverLog("received interaction: [" + message + "] from client: "+this.clientInetAdress +
                                     " | command and args numbers: "+args.length);
@@ -112,21 +119,7 @@ public class ClientHandler implements Runnable {
 
                                 case "isawait":
                                     status = this.serveur.isPlayerInAwaitingQueue(args[1], this.clientInetAdress);
-                                    if (status) {
-                                        this.sendResponse("serverMessage", "LOOKING FOR ANOTHER PLAYER TO JOIN...");
-                                    }else {
-                                        Plateau plateau = this.serveur.getClient(args[1]).getClientPlayer().getPlateau();
-                                        if (plateau.getTurn().equals(args[1])){
-                                            this.sendResponse("clientInstruction", "SET INGAME STATE OK");
-                                        }
-                                        else {
-                                            this.sendResponse("clientInstruction", "SET WAITGAME");
-                                            serverLog(args[1] + " mis en attente\n");
-                                        }
-                                        this.sendResponse("serverMessage", "GAME FOUND");
-                                        this.sendResponse("serverMessage", "STARTING...");
-
-                                    }
+                                    this.isawait(args, status);
                                     break;
 
                                 case "disconnect":
@@ -150,28 +143,31 @@ public class ClientHandler implements Runnable {
                                         String result = this.serveur.play(colonne, player);
                                         this.sendResponse("serverMessage", result);
                                         serverLog(player + " a joué colonne " + colonne + " resultat plateau : " + result);
-                                        plateau.setTurn(this.serveur.getClient(plateau).getNomJoueur());
+                                        if (plateau.getJoueur1().getNomJoueur().equals(player)){
+                                            plateau.setTurn(plateau.getJoueur2().getNomJoueur());
+                                        }
+                                        else {
+                                            plateau.setTurn(plateau.getJoueur1().getNomJoueur());
+                                        }
+                                        
                                         this.sendResponse("clientInstruction", "SET WAITGAME");
                                     }
                                     else {
                                         this.sendResponse("serverMessage", player + " a tenté de jouer");
-
                                     }
                                     break;
                                 default:
                                     this.sendResponse("serverMessage","ERR commande non connue");
                                     break;
-
                             }
                         }
                     } catch (IOException e) {
                         throw new RuntimeException(e);
                     }
-
                 }
             }
         }catch (Exception e) {
-            System.err.println(e.getMessage()+e.getCause());
+            System.err.println(e.getMessage());
             System.err.println("Déconnexion client inattendu");
         } finally {
             try {
@@ -185,6 +181,10 @@ public class ClientHandler implements Runnable {
         }
     }
 
+    /**
+     * demande de partie au serveur
+     * @param args
+     */
     public void ask_server(String[] args){
         String joueur = args[1];
         PlayerClient client = this.serveur.ask(joueur);
@@ -203,12 +203,19 @@ public class ClientHandler implements Runnable {
             }
             else {
                 this.sendResponse("clientInstruction", "SET WAITGAME");
+                serverLog(joueur + " attend son tour\n");
                 
             }
         }
 
     }
 
+    /**
+     * connexion du client au serveur
+     * @param args
+     * @param status
+     * @throws IOException
+     */
     public void connect_server(String[] args, boolean status) throws IOException{
         if (status) {
             this.sendResponse("serverMessage", "Deja connecte "+args[1]+" OK");
@@ -223,4 +230,29 @@ public class ClientHandler implements Runnable {
         }
 
     }
+
+    /**
+     * recherche de joueur dans le serveur
+     * @param args
+     * @param status
+     */
+    public void isawait(String[] args, boolean status){
+        if (status) {
+            this.sendResponse("serverMessage", "LOOKING FOR ANOTHER PLAYER TO JOIN...");
+        }else {
+            Plateau plateau = this.serveur.getClient(args[1]).getClientPlayer().getPlateau();
+            if (plateau.getTurn().equals(args[1])){
+                this.sendResponse("clientInstruction", "SET INGAME STATE OK");
+                    }
+            else {
+                this.sendResponse("clientInstruction", "SET WAITGAME");
+                serverLog(args[1] + " mis en attente\n");
+            }
+        this.sendResponse("serverMessage", "GAME FOUND");
+        this.sendResponse("serverMessage", "STARTING...");
+
+        }
+    }
+
+
 }

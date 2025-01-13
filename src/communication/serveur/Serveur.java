@@ -130,18 +130,6 @@ public class Serveur {
   }
 
 
-  public PlayerClient getClient(Plateau plateau){
-    PlayerClient p1 = null;
-    for (PlayerClient player : this.clientsJoueurs){
-      if (player.getClientPlayer().getPlateau().equals(plateau)&&p1==null){
-         p1 = player;
-      }
-      else if (player.getClientPlayer().getPlateau().equals(plateau)&&(!(p1.equals(player)))){
-        return player;
-      }
-    }
-    return null;
-  }
   /**
    * get un client en attente
    * @return un client en attente
@@ -205,7 +193,7 @@ public class Serveur {
       this.waitClient(client1);
       return null;
     }
-    Plateau plateau = new Plateau(6, 7); // initialise à un plateau de taille normale
+    Plateau plateau = new Plateau(6, 7, client1.getClientPlayer(), client2.getClientPlayer()); // initialise à un plateau de taille normale
     client1.getClientPlayer().setLePlateau(plateau); 
     client1.getClientPlayer().setCouleur("rouge");
     client2.getClientPlayer().setLePlateau(plateau);

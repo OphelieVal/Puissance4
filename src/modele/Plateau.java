@@ -16,8 +16,10 @@ public class Plateau {
 
   private List<String> allColors = Arrays.asList("YELLOW", "RED", "BLUE", "PURPLE");
   private List<String> chosenColors = new ArrayList<>();
+  private Joueur j1;
+  private Joueur j2;
 
-  public Plateau(int nbLignes, int nbColonnes) {
+  public Plateau(int nbLignes, int nbColonnes, Joueur j1, Joueur j2) {
     this.nbLignes = nbLignes;
     this.nbColonnes = nbColonnes;
     this.casesRestantes = this.nbLignes * this.nbColonnes;
@@ -27,8 +29,17 @@ public class Plateau {
         this.lePlateau[i][j] = new Case(i, j);
       }
     }
+    this.j1 = j1;
+    this.j2 = j2;
   }
 
+  public Joueur getJoueur1(){
+    return this.j1;
+  }
+  public Joueur getJoueur2(){
+    return this.j2;
+  }
+  
   public String getTurn(){
     return this.turn;
   }

@@ -129,7 +129,7 @@ public class ClientSocket extends Thread {
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            e.getMessage();
         } finally {
             try {
                 if (reader != null) reader.close();

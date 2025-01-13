@@ -230,16 +230,21 @@ public class Client extends Thread {
   }
 
 
-
+  /**
+   * gere la commande ask du client
+   * @param commandAndArgs
+   * @throws IOException
+   * @throws InterruptedException
+   */
   public void ask_client(String[] commandAndArgs) throws IOException, InterruptedException{
     if (commandAndArgs.length != 1) throw new IOException("La commande ask ne doit pas avoir d'arguments ");
             String[] arguments = new String[] {"ask", this.nomJoueur};
             this.request("ask", arguments, this.clientState == ClientState.USERCONNECTED);
             Thread.sleep(1000);
-            String[] none = new String[] {"isawait", this.nomJoueur};
+            String[] content = new String[] {"isawait", this.nomJoueur};
             long currentTime = System.currentTimeMillis();
             while (this.clientState == ClientState.LOOKINGADVERSARY) {
-              this.request("isawait", none, true);
+              this.request("isawait", content, true);
               System.out.println("state: "+this.clientState);
               System.out.println("Durée écoulé: "+ (System.currentTimeMillis()-currentTime));
               Thread.sleep(500);
@@ -248,6 +253,12 @@ public class Client extends Thread {
             Thread.sleep(1000);
   }
 
+  /**
+   * gere la commande connect du client
+   * @param commandAndArgs
+   * @throws IOException
+   * @throws InterruptedException
+   */
   public void play_client(String[] commandAndArgs)throws IOException, InterruptedException{
     long currentTime = System.currentTimeMillis();
     if (commandAndArgs.length < 2) throw new IOException("Veuillez rentrer le numéro de la colonne à jouer");
@@ -257,12 +268,14 @@ public class Client extends Thread {
               Integer.parseInt(colonne);
               String[] commandAndArgsPlay = new String[] {commandAndArgs[0], commandAndArgs[1], this.nomJoueur};
               this.request("play", commandAndArgsPlay, this.clientState == ClientState.INGAME);
+              Thread.sleep(1000);
               while (this.clientState == ClientState.WAITGAME) {
                 this.request("play", new String[]{"play",this.nomJoueur}, true);
                 System.out.println("state: "+this.clientState);
                 System.out.println("Durée écoulé: "+ (System.currentTimeMillis()-currentTime));
                 Thread.sleep(500);
               }
+
             }
             catch (NumberFormatException e){
               throw new IOException("Veuillez entrer un nombre");
