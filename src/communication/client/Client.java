@@ -82,7 +82,7 @@ public class Client extends Thread {
    * Permet de mettre a jour le terminal en fonction de l'etat du client
    * @param actualState
    */
-  public void updateTerminal(ClientState actualState) {
+  public void updateTerminal(ClientState actualState) throws IOException, InterruptedException {
     String terminal = "";
     switch (actualState) {
       case ClientState.USERDISCONNECTED:
@@ -96,13 +96,15 @@ public class Client extends Thread {
           "-> DISCONNECT deconnecte de l'espace Joueur\n";
         break;
       case ClientState.INGAME:
+        String[] args = new String[] {"getactualplate", this.nomJoueur} ;
+        this.request("getactualplate", args, this.clientState == ClientState.INGAME);
         terminal = "Vous avez rejoint une nouvelle partie\nVous posséder un plateau de 6 lignes et 7 colonnes\nPour jouer, entrez PLAY + le numéro de la colonne (0 à 6) où vous déposez un jeton\nQUIT pour quitter";
         break;
       case ClientState.LOOKINGADVERSARY:
         terminal = "AWAITING QUERY\n";
       case ClientState.WAITGAME:
         terminal = "Ce n'est as votre tour, patientez..\n";
-        try { 
+        try {
           String[] command = new String[] {"play -1", this.nomJoueur};
           this.ask_client(command);
          }
@@ -139,6 +141,7 @@ public class Client extends Thread {
             prepare += args[i] + " ";
           }
         }
+        //System.out.println(prepare);
         this.clientSocket.sendCommand(prepare);
         Thread.sleep(1500);
       }else {
@@ -174,8 +177,14 @@ public class Client extends Thread {
     System.out.println("========================\n   Bienvenue dans le Puissance 4 - Client     \n========================\n");
     while (!quit) {
 
-      this.updateTerminal(this.clientState);
-      String s = scanner.nextLine();
+        try {
+            this.updateTerminal(this.clientState);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+        String s = scanner.nextLine();
       String[] commandAndArgs = s.split(" ");
       request = commandAndArgs[0].toLowerCase();
 
@@ -201,7 +210,7 @@ public class Client extends Thread {
 
           case "play":
             this.play_client(commandAndArgs);
-            
+
             break;
           case "disconnect":
             if (commandAndArgs.length > 1) throw new IOException("Il ne doit pas avoir d'argument pour cette commande");
@@ -237,19 +246,23 @@ public class Client extends Thread {
    */
   public void ask_client(String[] commandAndArgs) throws IOException, InterruptedException{
     if (commandAndArgs.length != 1) throw new IOException("La commande ask ne doit pas avoir d'arguments ");
-            String[] arguments = new String[] {"ask", this.nomJoueur};
-            this.request("ask", arguments, this.clientState == ClientState.USERCONNECTED);
-            Thread.sleep(1000);
-            String[] content = new String[] {"isawait", this.nomJoueur};
-            long currentTime = System.currentTimeMillis();
-            while (this.clientState == ClientState.LOOKINGADVERSARY) {
-              this.request("isawait", content, true);
-              System.out.println("state: "+this.clientState);
-              System.out.println("Durée écoulé: "+ (System.currentTimeMillis()-currentTime));
-              Thread.sleep(500);
-            }
-            System.out.print("exiting while");
-            Thread.sleep(1000);
+    String[] arguments = new String[] {"ask", this.nomJoueur};
+    this.request("ask", arguments, this.clientState == ClientState.USERCONNECTED);
+    Thread.sleep(1000);
+    String[] none = new String[] {"isawait", this.nomJoueur};
+    long currentTime = System.currentTimeMillis();
+    while (this.clientState == ClientState.LOOKINGADVERSARY) {
+      this.request("isawait", none, true);
+      System.out.println("state: "+this.clientState);
+      System.out.println("Durée écoulé: "+ (System.currentTimeMillis()-currentTime) + " ms");
+      Thread.sleep(500);
+    }
+    System.out.print("exiting while");
+//            this.request("getactualplate", new String[] {"getactualplate",this.nomJoueur}, true);
+    Thread.sleep(1000);
+    System.out.println("state before actualplate: "+this.clientState);
+//    this.request("getactualplate", new String[] {"getactualplate", this.nomJoueur}, this.clientState == ClientState.INGAME);
+
   }
 
   /**
@@ -280,7 +293,6 @@ public class Client extends Thread {
               throw new IOException("Veuillez entrer un nombre");
             }
   }
-
 }
 
 

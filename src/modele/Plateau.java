@@ -19,7 +19,7 @@ public class Plateau {
   private Joueur j1;
   private Joueur j2;
 
-  public Plateau(int nbLignes, int nbColonnes, Joueur j1, Joueur j2) {
+  public Plateau(int nbLignes, int nbColonnes) {
     this.nbLignes = nbLignes;
     this.nbColonnes = nbColonnes;
     this.casesRestantes = this.nbLignes * this.nbColonnes;
@@ -39,7 +39,7 @@ public class Plateau {
   public Joueur getJoueur2(){
     return this.j2;
   }
-  
+
   public String getTurn(){
     return this.turn;
   }
@@ -103,6 +103,9 @@ public class Plateau {
     }
     if (!(this.lePlateau[x][y].contientJeton())) {
       return false;
+    }
+    if (joueur.aGagne(x, y)){
+      throw new GagnantException();
     }
     this.casesRestantes--;
     return true;
@@ -178,8 +181,8 @@ public class Plateau {
      * @return nb de pions alignés
      */
     public int quatreVertical(Case casedepart) {
-      int ligne = casedepart.getLigne(); 
-      int colonne = casedepart.getColonne(); 
+      int ligne = casedepart.getLigne();
+      int colonne = casedepart.getColonne();
       String couleurJeton = casedepart.getCouleur();
       int cpt = 1;
       for (int i = ligne - 1; i >= 0; i--) {
@@ -234,7 +237,7 @@ public class Plateau {
             break;
         }}
     return cpt;}
-      
+
     /**
      * verifie si le joueur a gagné diagonalement
      * @param casedepart
@@ -266,7 +269,32 @@ public class Plateau {
           }
       }
       return cpt;}
-  
+
+
+    public String getVisualPlate() {
+      StringBuilder plate = new StringBuilder();
+      plate.append("VALUE-");
+      for (int i = this.nbLignes-1; i>=0; i--){
+        plate.append("LINESEP[ ");
+        for (int j = 0; j<this.nbColonnes; j++){
+            String currentCase = " ( " ;
+            currentCase += this.getCase(i, j).getCouleur();
+            currentCase += " ) ";
+            if (j != this.nbColonnes-1){
+              currentCase += " ";
+            }
+            plate.append(currentCase);
+        }
+        plate.append(" ] ");
+      }
+      return plate.toString();
+    }
+
+    @Override
+    public String toString() {
+      if (this.getVisualPlate() != null) return "PLATEAU_VISUAL_STRING-" + this.getVisualPlate();
+      else return "no plate to show";
+    }
 
     @Override
     public boolean equals(Object objet){
@@ -282,7 +310,7 @@ public class Plateau {
       return false;
   }
 
-  @Override 
+  @Override
   public int hashCode(){
     int hash = this.nbLignes + this.nbColonnes + this.casesRestantes + this.turn.hashCode() * 97;
     return hash;

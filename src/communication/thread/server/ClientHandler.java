@@ -82,115 +82,8 @@ public class ClientHandler implements Runnable {
         }
     }
 
-    @Override
-    public void run() {
-        String message = "";
-        try {
-            while (true) {
-                if (socket.isClosed()) {
-                    break;
-                } else {
-                    try {
-                        message = reader.readLine();
-                        String[] args = null;
-                        if (message != null){
-                            args = message.split(" ");
-                        }
-                        else {
-                            message = " ";
-                            args = new String[0];
-                        }
-                        if (!message.isEmpty()) {
-                            this.serverLog("received interaction: [" + message + "] from client: "+this.clientInetAdress +
-                                    " | command and args numbers: "+args.length);
-                            boolean status;
-                            String indicator = args[0];
-                            switch (indicator.toLowerCase()) {
-
-                                case "connect":
-                                    serverLog("received connection request from: "+this.clientInetAdress +" to username: "+args[1]);
-                                    status = this.serveur.clientIsConnected(args[1], this.clientInetAdress);
-                                    this.connect_server(args, status);
-                                    break;
-
-                                case "ask":
-                                    this.ask_server(args);
-                                    break;
-
-                                case "isawait":
-                                    status = this.serveur.isPlayerInAwaitingQueue(args[1], this.clientInetAdress);
-                                    this.isawait(args, status);
-                                    break;
-
-                                case "disconnect":
-                                    serverLog("received disconnect request from: "+this.clientInetAdress);
-                                    status = this.serveur.disconnect(this.clientInetAdress);
-                                    if (status) {
-                                        this.sendResponse("clientInstruction", "INITUSERNAME NULL OK");
-                                        this.sendResponse("clientInstruction", "SET USERDISCONNECTED STATE OK");
-                                        this.sendResponse("serverMessage", "vous etes déconnecté");
-                                        serverLog("clients connectes: "+this.serveur.showConnectedClients());
-                                    }else {
-                                        this.sendResponse("serverMessage", "ERR Vous n'êtes pas connecté en tant que joueur pour "+this.clientInetAdress);
-                                        serverLog("clients connectes: "+this.serveur.showConnectedClients());
-                                    }
-                                    break;
-                                case "play":
-                                    String player = args[2];
-                                    Integer colonne = Integer.parseInt(args[1]);
-                                    Plateau plateau = this.serveur.getClient(player).getClientPlayer().getPlateau();
-                                    if (plateau.getTurn().equals(player)){
-                                        String result = this.serveur.play(colonne, player);
-                                        this.sendResponse("serverMessage", result);
-                                        serverLog(player + " a joué colonne " + colonne + " resultat plateau : " + result);
-                                        if (plateau.getJoueur1().getNomJoueur().equals(player)){
-                                            plateau.setTurn(plateau.getJoueur2().getNomJoueur());
-                                        }
-                                        else {
-                                            plateau.setTurn(plateau.getJoueur1().getNomJoueur());
-                                        }
-                                        
-                                        this.sendResponse("clientInstruction", "SET WAITGAME");
-                                    }
-                                    else {
-                                        this.sendResponse("serverMessage", player + " a tenté de jouer");
-                                    }
-                                    break;
-                                case "waitgame":
-                                String joueur = args[1];
-                                plateau = this.serveur.getClient(joueur).getClientPlayer().getPlateau();
-                                    if (plateau.getTurn().equals(joueur)){
-                                        this.sendResponse("clientInstruction", "SET INGAME");
-                                        serverLog("au tour de " + joueur);
-                                    }
-                                break;
-                                default:
-                                    this.sendResponse("serverMessage","ERR commande non connue");
-                                    break;
-                            }
-                        }
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
-                    }
-                }
-            }
-        }catch (Exception e) {
-            System.err.println(e.getMessage());
-            System.err.println("Déconnexion client inattendu");
-        } finally {
-            try {
-                if (reader != null) reader.close();
-                if (writer != null) writer.close();
-                if (socket != null) socket.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            this.serveur.disconnect(this.clientInetAdress);
-        }
-    }
-
     /**
-     * demande de partie au serveur
+     *
      * @param args
      */
     public void ask_server(String[] args){
@@ -202,24 +95,14 @@ public class ClientHandler implements Runnable {
         }
         else {
             this.sendResponse("serverMessage", "ADVERSAIRE TROUVE USERNAME: "+client.getNomJoueur() + " | " +
-                                                "IP: " + client.getClientIP());
+                    "IP: " + client.getClientIP());
             this.sendResponse("serverMessage", "OK plateau initilialisé");
-            Plateau plateau = this.serveur.getClient(joueur).getClientPlayer().getPlateau();
-            if (plateau.getTurn().equals(joueur)){
-                this.sendResponse("clientInstruction", "SET INGAME STATE OK");
-                serverLog(joueur + " va jouer son tour\n");
-            }
-            else {
-                this.sendResponse("clientInstruction", "SET WAITGAME");
-                serverLog(joueur + " attend son tour\n");
-                
-            }
+            this.sendResponse("clientInstruction", "SET INGAME STATE OK");
         }
-
     }
 
     /**
-     * connexion du client au serveur
+     *
      * @param args
      * @param status
      * @throws IOException
@@ -237,6 +120,106 @@ public class ClientHandler implements Runnable {
             this.sendMessage("ERR connexion à  "+args[1]+" refusé ou échoué");
         }
 
+    }
+
+    @Override
+    public void run() {
+        String message = "";
+        try {
+            while (!socket.isClosed()) {
+                try {
+                    message = reader.readLine();
+                    String[] args = message.split(" ");
+                    if (!message.isEmpty()) {
+                        this.serverLog("received interaction: [" + message + "] from client: " + this.clientInetAdress +
+                                " | command and args numbers: " + args.length);
+                        boolean status;
+                        String indicator = args[0];
+                        switch (indicator.toLowerCase()) {
+
+                            case "connect":
+                                serverLog("received connection request from: " + this.clientInetAdress + " to username: " + args[1]);
+                                status = this.serveur.clientIsConnected(args[1], this.clientInetAdress);
+                                this.connect_server(args, status);
+                                break;
+
+                            case "ask":
+                                this.ask_server(args);
+                                break;
+
+                            case "isawait":
+                                status = this.serveur.isPlayerInAwaitingQueue(args[1], this.clientInetAdress);
+                                this.isawait(args, status);
+                                break;
+
+                            case "disconnect":
+                                serverLog("received disconnect request from: "+this.clientInetAdress);
+                                status = this.serveur.disconnect(this.clientInetAdress);
+                                if (status) {
+                                    this.sendResponse("clientInstruction", "INITUSERNAME NULL OK");
+                                    this.sendResponse("clientInstruction", "SET USERDISCONNECTED STATE OK");
+                                    this.sendResponse("serverMessage", "vous etes déconnecté");
+                                    serverLog("clients connectes: "+this.serveur.showConnectedClients());
+                                }else {
+                                    this.sendResponse("serverMessage", "ERR Vous n'êtes pas connecté en tant que joueur pour "+this.clientInetAdress);
+                                    serverLog("clients connectes: "+this.serveur.showConnectedClients());
+                                }
+                                break;
+
+                            case "play":
+                                String player = args[2];
+                                Integer colonne = Integer.parseInt(args[1]);
+                                Plateau plateau = this.serveur.getClient(player).getClientPlayer().getPlateau();
+                                if (plateau.getTurn().equals(player)){
+                                    String result = this.serveur.play(colonne, player);
+                                    this.sendResponse("serverMessage", result);
+                                    serverLog(player + " a joué colonne " + colonne + " resultat plateau : " + result);
+                                    if (plateau.getJoueur1().getNomJoueur().equals(player)){
+                                        plateau.setTurn(plateau.getJoueur2().getNomJoueur());
+                                    }
+                                    else {
+                                        plateau.setTurn(plateau.getJoueur1().getNomJoueur());
+                                    }
+
+                                    this.sendResponse("clientInstruction", "SET WAITGAME");
+                                }
+                                else {
+                                    this.sendResponse("serverMessage", player + " a tenté de jouer");
+                                }
+                                break;
+
+                            case "waitgame":
+                                String joueur = args[1];
+                                plateau = this.serveur.getClient(joueur).getClientPlayer().getPlateau();
+                                    if (plateau.getTurn().equals(joueur)){
+                                        this.sendResponse("clientInstruction", "SET INGAME");
+                                        serverLog("au tour de " + joueur);
+                                    }
+                                break;
+
+                            default:
+                                this.sendResponse("serverMessage","ERR commande non connue");
+                                break;
+                        }
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                }
+            } catch (RuntimeException e) {
+            throw new RuntimeException(e);
+        }
+    } catch (Exception e) {
+            System.err.println(e.getMessage() + e.getCause());
+            System.err.println("Déconnexion client inattendu");
+        } finally {
+            try {
+                if (reader != null) reader.close();
+                if (writer != null) writer.close();
+                if (socket != null) socket.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            this.serveur.disconnect(this.clientInetAdress);
+        }
     }
 
     /**
@@ -258,9 +241,5 @@ public class ClientHandler implements Runnable {
             }
         this.sendResponse("serverMessage", "GAME FOUND");
         this.sendResponse("serverMessage", "STARTING...");
-
-        }
     }
-
-
 }
