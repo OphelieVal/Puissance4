@@ -73,19 +73,19 @@ public class Serveur {
    * sinon false
    */
 //  Debug with GPT (temporaire et sera supprimer a la fin de la correction)
-    public boolean disconnect(String clientIP) {
-      System.out.println("Attempting to disconnect client with IP: " + clientIP);
-      for (PlayerClient client : this.clientsJoueurs) {
-        System.out.println("Checking client: " + client.getClientIP());
-        if (client.getClientIP().equals(clientIP)) {
-          this.clientsJoueurs.remove(client);
-          System.out.println("Client disconnected: " + clientIP);
-          return true;
-        }
+  public boolean disconnect(String clientIP) {
+    System.out.println("Attempting to disconnect client with IP: " + clientIP);
+    for (PlayerClient client : this.clientsJoueurs) {
+      System.out.println("Checking client: " + client.getClientIP());
+      if (client.getClientIP().equals(clientIP)) {
+        this.clientsJoueurs.remove(client);
+        System.out.println("Client disconnected: " + clientIP);
+        return true;
       }
-      System.out.println("Client not found: " + clientIP);
-      return false;
     }
+    System.out.println("Client not found: " + clientIP);
+    return false;
+  }
 //  public boolean disconnect(String clientIP) {
 //    for (PlayerClient client : this.clientsJoueurs) {
 //      if (client.getClientIP().equals(clientIP)) {
@@ -117,7 +117,7 @@ public class Serveur {
   }
 
   public void newClientConnected(String ip) {
-      serverLog("Un nouveau client est connecté avec l'ip: "+ip);
+    serverLog("Un nouveau client est connecté avec l'ip: "+ip);
   }
 
   public PlayerClient getClient(String nomJoueur){
@@ -194,7 +194,7 @@ public class Serveur {
       return null;
     }
     Plateau plateau = new Plateau(6, 7, client1.getClientPlayer(), client2.getClientPlayer()); // initialise à un plateau de taille normale
-    client1.getClientPlayer().setLePlateau(plateau); 
+    client1.getClientPlayer().setLePlateau(plateau);
     client1.getClientPlayer().setCouleur("rouge");
     client2.getClientPlayer().setLePlateau(plateau);
     client2.getClientPlayer().setCouleur("jaune");
@@ -212,30 +212,26 @@ public class Serveur {
    */
   public String play(int nomColonne, String nomJoueur) {
     boolean pose = false;
-      Joueur joueur =  this.getClient(nomJoueur).getClientPlayer();
-      try {
-        if (joueur.getNomJoueur()!=null){ 
-          boolean result = joueur.getPlateau().poseJeton(nomColonne, joueur);
-          pose = true;
-        }
+    Joueur joueur =  this.getClient(nomJoueur).getClientPlayer();
+    try {
+      if (joueur.getNomJoueur()!=null){
+        boolean result = joueur.getPlateau().poseJeton(nomColonne, joueur);
+        pose = true;
       }
-      catch (EnDehorsDuPlateauException e){
-        return "ERR plus de place sur cette colonne";
-      }
-      catch (GagnantException e){
-        this.win(joueur);
-      }
-      catch (OccupeeException e){
-        return "Il y a déjà un jeton";
-      }
+    }
+    catch (EnDehorsDuPlateauException e){
+      return "ERR plus de place sur cette colonne";
+    }
+    catch (GagnantException e){
+      this.win(joueur);
+    }
+    catch (OccupeeException e){
+      return "Il y a déjà un jeton";
+    }
     if (pose){
       return "OK jeton posé";
     }
     return "ERR nomJoueur invalide";
-  }
-
-  public String getInGamePlateau(String username) {
-    return this.getClient(username).getClientPlayer().getPlateau().toString();
   }
 
   /**
