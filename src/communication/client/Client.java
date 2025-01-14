@@ -106,12 +106,21 @@ public class Client extends Thread {
 
       case ClientState.WAITGAME:
         terminal = "Ce n'est as votre tour, patientez..\n";
-        try {
-          String[] command = new String[] {"play -1", this.nomJoueur};
-          this.ask_client(command);
-         }
-        catch (Exception e){
-          System.out.println(e.getMessage());
+//        while (this.clientState == ClientState.WAITGAME) {
+//          try {
+//            String[] command = new String[] {"play -1", this.nomJoueur};
+//            this.ask_client(command);
+//          }
+//          catch (Exception e){
+//            System.out.println(e.getMessage());
+//          }
+//        }
+//        while (this.clientState == ClientState.WAITGAME) {
+        if (this.clientState == ClientState.LOOKINGADVERSARY) {
+          this.request("waitgame", new String[]{"play",this.nomJoueur}, true);
+          System.out.println("state: "+this.clientState);
+          Thread.sleep(500);
+          this.updateTerminal(this.clientState);
         }
         break;
 
@@ -239,7 +248,14 @@ public class Client extends Thread {
 
     scanner.close();
   }
-
+  public void request_turn() throws IOException, InterruptedException {
+    while (this.clientState == ClientState.WAITGAME) {
+      this.request("waitgame", new String[]{"play",this.nomJoueur}, true);
+      System.out.println("state: "+this.clientState);
+//      System.out.println("Durée écoulé: "+ (System.currentTimeMillis()-currentTime));
+      Thread.sleep(500);
+    }
+  }
 
   /**
    * gere la commande ask du client
@@ -262,6 +278,14 @@ public class Client extends Thread {
     }
     System.out.println("exiting while");
     Thread.sleep(1000);
+
+//    while (this.clientState == ClientState.WAITGAME) {
+//      this.request("waitgame", new String[]{"play",this.nomJoueur}, true);
+//      System.out.println("state: "+this.clientState);
+//      System.out.println("Durée écoulé: "+ (System.currentTimeMillis()-currentTime));
+//      Thread.sleep(500);
+//    }
+    this.request_turn();
     String[] args = new String[] {"getactualplate", this.nomJoueur} ;
     this.request("getactualplate", args, this.clientState == ClientState.INGAME);
   }
@@ -282,13 +306,14 @@ public class Client extends Thread {
       String[] commandAndArgsPlay = new String[] {commandAndArgs[0], commandAndArgs[1], this.nomJoueur};
       this.request("play", commandAndArgsPlay, this.clientState == ClientState.INGAME);
       Thread.sleep(1000);
-      while (this.clientState == ClientState.WAITGAME) {
-        this.request("waitgame", new String[]{"play",this.nomJoueur}, true);
-        System.out.println("state: "+this.clientState);
-        System.out.println("Durée écoulé: "+ (System.currentTimeMillis()-currentTime));
-        Thread.sleep(500);
-      }
-
+//      while (this.clientState == ClientState.WAITGAME) {
+//        this.request("waitgame", new String[]{"play",this.nomJoueur}, true);
+//        System.out.println("state: "+this.clientState);
+//        System.out.println("Durée écoulé: "+ (System.currentTimeMillis()-currentTime));
+//        Thread.sleep(500);
+//      }
+//      this.updateTerminal(this.clientState);
+      this.request_turn();
     }
     catch (NumberFormatException e){
       throw new IOException("Veuillez entrer un nombre");

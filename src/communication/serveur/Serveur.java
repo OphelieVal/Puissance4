@@ -204,6 +204,10 @@ public class Serveur {
     return client2;
   }
 
+  public String getInGamePlateau(String username) {
+    return this.getClient(username).getClientPlayer().getPlateau().toString();
+  }
+
   /**
    * depose le jeton du joueur sur le plateau 
    * @param nomColonne colonne ou le jeton est pose
