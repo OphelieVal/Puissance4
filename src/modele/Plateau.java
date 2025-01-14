@@ -33,13 +33,13 @@ public class Plateau {
     this.j2 = j2;
   }
 
-  public Joueur getJoueur1(){
-    return this.j1;
-  }
+    public Joueur getJoueur1(){
+      return this.j1;
+    }
   public Joueur getJoueur2(){
     return this.j2;
   }
-  
+
   public String getTurn(){
     return this.turn;
   }
@@ -103,6 +103,9 @@ public class Plateau {
     }
     if (!(this.lePlateau[x][y].contientJeton())) {
       return false;
+    }
+    if (joueur.aGagne(x, y)){
+      throw new GagnantException();
     }
     this.casesRestantes--;
     return true;
@@ -178,8 +181,8 @@ public class Plateau {
      * @return nb de pions alignés
      */
     public int quatreVertical(Case casedepart) {
-      int ligne = casedepart.getLigne(); 
-      int colonne = casedepart.getColonne(); 
+      int ligne = casedepart.getLigne();
+      int colonne = casedepart.getColonne();
       String couleurJeton = casedepart.getCouleur();
       int cpt = 1;
       for (int i = ligne - 1; i >= 0; i--) {
@@ -234,7 +237,7 @@ public class Plateau {
             break;
         }}
     return cpt;}
-      
+
     /**
      * verifie si le joueur a gagné diagonalement
      * @param casedepart
@@ -266,7 +269,8 @@ public class Plateau {
           }
       }
       return cpt;}
-  
+
+
     public String getVisualPlate() {
       StringBuilder plate = new StringBuilder();
       plate.append("VALUE-");
@@ -306,7 +310,7 @@ public class Plateau {
       return false;
   }
 
-  @Override 
+  @Override
   public int hashCode(){
     int hash = this.nbLignes + this.nbColonnes + this.casesRestantes + this.turn.hashCode() * 97;
     return hash;
