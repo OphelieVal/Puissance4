@@ -19,6 +19,5 @@ public class TestJDBC{
         else {
             System.out.println("La connexion à votre BD ne s'est pas faite.");
         }
-
     }
 }

@@ -10,7 +10,7 @@ public class PlayerBD {
         this.connexion = new ConnexionMySQL("servinfo-maria", "DBakhtar", "akhtar", "noalecaca");
     }
     
-    public List<PlayerBD> getListePersonne(){
+    public List<Joueur> getListePersonne(){
         List<modele.Joueur> res = new ArrayList<>();
         try{
             Connection c = this.connexion.getConnexion();
@@ -22,11 +22,13 @@ public class PlayerBD {
                 idp = rs.getInt("idp");
                 nomp = rs.getString("nomp");
                 couleurp = rs.getString("couleurp");
-                Joueur joueur = new modele.Joueur(nomp, couleurp);
+                Joueur joueur = new modele.Joueur(nomp, couleurp, idp);
+                res.add(joueur);
             }
             rs.close();
         }catch(SQLException e){
             System.out.println("erreur :" + e.getMessage());
         }
+        return res;
     } 
 }
