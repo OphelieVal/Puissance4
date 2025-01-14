@@ -19,7 +19,7 @@ public class Plateau {
   private Joueur j1;
   private Joueur j2;
 
-  public Plateau(int nbLignes, int nbColonnes) {
+  public Plateau(int nbLignes, int nbColonnes, Joueur j1, Joueur j2) {
     this.nbLignes = nbLignes;
     this.nbColonnes = nbColonnes;
     this.casesRestantes = this.nbLignes * this.nbColonnes;

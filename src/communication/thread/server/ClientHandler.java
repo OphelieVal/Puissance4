@@ -211,6 +211,12 @@ public class ClientHandler implements Runnable {
                     }
                     break;
 
+                case "getactualplate":
+                    System.out.println("getactualplate: " + args[1]);
+                    serverLog("player: " + args[1] + " asked to see the actual game plate");
+                    this.sendResponse("serverMessage", this.serveur.getInGamePlateau(args[1]));
+                    break;
+
                 default:
                     this.sendResponse("serverMessage","ERR commande non connue");
                     break;
