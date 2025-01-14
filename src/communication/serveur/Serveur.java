@@ -129,7 +129,6 @@ public class Serveur {
     return null;
   }
 
-
   /**
    * get un client en attente
    * @return un client en attente
@@ -143,8 +142,6 @@ public class Serveur {
     return null;
 
   }
-
-
 
 //---------------------------------------------------------------------------------
   /**

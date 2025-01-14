@@ -33,7 +33,18 @@ public class Plateau {
     this.j2 = j2;
   }
 
-    public Joueur getJoueur1(){
+
+  // getter 
+
+  public void setJ1(Joueur joueur){
+    this.j1 = joueur;
+  }
+
+  public void setJ2(Joueur joueur){
+    this.j2 = joueur;
+  }
+
+  public Joueur getJoueur1(){
       return this.j1;
     }
   public Joueur getJoueur2(){

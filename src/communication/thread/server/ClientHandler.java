@@ -9,6 +9,8 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+
+import modele.Joueur;
 import modele.Plateau;
 
 public class ClientHandler implements Runnable {
@@ -143,6 +145,9 @@ public class ClientHandler implements Runnable {
 
     public void handle() throws IOException {
         String message = reader.readLine();
+        if (message==null){
+            return;
+        }
         String[] args = message.split(" ");
         if (!message.isEmpty()) {
             this.serverLog("received interaction: [" + message + "] from client: " + this.clientInetAdress +
@@ -206,8 +211,19 @@ public class ClientHandler implements Runnable {
                     String joueur = args[1];
                     plateau = this.serveur.getClient(joueur).getClientPlayer().getPlateau();
                     if (plateau.getTurn().equals(joueur)){
-                        this.sendResponse("clientInstruction", "SET INGAME");
-                        serverLog("au tour de " + joueur);
+                        if (plateau.getJoueur1()!=null && plateau.getJoueur2()!=null){
+                            this.sendResponse("clientInstruction", "SET INGAME");
+                            serverLog("au tour de " + joueur);
+                        }
+                        else {
+                            this.sendResponse("clientInstruction", "SET USERCONNECTED");
+                            serverLog("fin partie "+ joueur);
+                        }
+                        
+                    }
+                    else if (plateau.getJoueur1()!=null && plateau.getJoueur2()!=null){
+                        this.sendResponse("clientInstruction", "SET USERCONNECTED");
+                            serverLog("fin partie "+ joueur);
                     }
                     break;
 
@@ -231,7 +247,17 @@ public class ClientHandler implements Runnable {
                 try {
                     this.handle();
                 } catch (Exception e) {
+                    Plateau plateau = this.serveur.getClient(this.username).getClientPlayer().getPlateau();
+                    Joueur j1 = plateau.getJoueur1();
+                    Joueur j2 = plateau.getJoueur2();
+                    if (j1.getNomJoueur()==this.username){
+                        plateau.setJ1(null);
+                    }
+                    else {
+                        plateau.setJ2(null);
+                    }
                     e.printStackTrace();
+                    break;
                 }
             }
         } catch (Exception e) {
