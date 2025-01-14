@@ -33,9 +33,9 @@ public class Plateau {
     this.j2 = j2;
   }
 
-  public Joueur getJoueur1(){
-    return this.j1;
-  }
+    public Joueur getJoueur1(){
+      return this.j1;
+    }
   public Joueur getJoueur2(){
     return this.j2;
   }
