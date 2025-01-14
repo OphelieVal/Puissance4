@@ -70,9 +70,11 @@ public class Joueur {
    */
   public boolean aGagne(int x, int y) {
     Case caseJouee = this.lePlateau.getCase(x, y);
-    return this.lePlateau.quatreHorizontal(caseJouee) >= 4 ||
-           this.lePlateau.quatreVertical(caseJouee) >= 4 ||
-           this.lePlateau.quatreDiagonal(caseJouee) >= 4;
+    int count = 4;
+    boolean winState = this.lePlateau.quatreHorizontal(caseJouee) >= count ||
+            this.lePlateau.quatreVertical(caseJouee) >= count ||
+            this.lePlateau.quatreDiagonal(caseJouee) >= count;
+    return winState;
   }
 
 
@@ -82,5 +84,12 @@ public class Joueur {
   public void reset() {
     this.gameOver = false;
     this.lePlateau.reset();
+  }
+
+  public boolean setInitialState() {
+    this.gameOver = false;
+    this.lePlateau = null;
+    this.currentColor = null;
+    return true;
   }
 }

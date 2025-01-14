@@ -7,8 +7,11 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.net.SocketException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+
+import modele.Joueur;
 import modele.Plateau;
 
 public class ClientHandler implements Runnable {
@@ -184,7 +187,7 @@ public class ClientHandler implements Runnable {
                     String player = args[2];
                     Integer colonne = Integer.parseInt(args[1]);
                     Plateau plateau = this.serveur.getClient(player).getClientPlayer().getPlateau();
-                    if (plateau.getTurn().equals(player)){
+                    if (plateau.getTurn().equals(player) && !(plateau.isGameEnded())) {
                         String result = this.serveur.play(colonne, player);
                         this.sendResponse("serverMessage", result);
                         serverLog(player + " a joué colonne " + colonne + " resultat plateau : " + result);
@@ -205,9 +208,18 @@ public class ClientHandler implements Runnable {
                 case "waitgame":
                     String joueur = args[1];
                     plateau = this.serveur.getClient(joueur).getClientPlayer().getPlateau();
-                    if (plateau.getTurn().equals(joueur)){
+                    if (plateau.isGameEnded()) {
+                        this.sendResponse("serverMessage", this.serveur.getInGamePlateau(joueur));
+                        this.sendResponse("serverMessage", "GAME ENDED");
+                        this.sendResponse("serverMessage", "Le gagnant est: "+plateau.getWiner().getNomJoueur());
+                        this.sendResponse("clientInstruction", "SHOW WINNER "+plateau.getWiner().getNomJoueur());
+                        this.sendResponse("clientInstruction", "SET GAMEENDED");
+                    }else if (plateau.getTurn().equals(joueur) && !(plateau.isGameEnded())){
                         this.sendResponse("clientInstruction", "SET INGAME");
                         serverLog("au tour de " + joueur);
+                    }else {
+                        this.serverLog("au tour de " + plateau.getTurn());
+                        this.sendResponse("serverMessage", "En attente d'une instruction valide");
                     }
                     break;
 
@@ -215,6 +227,14 @@ public class ClientHandler implements Runnable {
                     System.out.println("getactualplate: " + args[1]);
                     serverLog("player: " + args[1] + " asked to see the actual game plate");
                     this.sendResponse("serverMessage", this.serveur.getInGamePlateau(args[1]));
+                    break;
+
+                case "home":
+                    serverLog("client: " + this.clientInetAdress + " went to the main menu");
+                    Joueur currentPlayer   = this.serveur.getClient(args[1]).getClientPlayer();
+                    currentPlayer.setInitialState();
+                    this.sendResponse("serverMessage","redirecting to home menu");
+                    this.sendResponse("clientInstruction", "SET USERCONNECTED STATE OK");
                     break;
 
                 default:
@@ -230,14 +250,16 @@ public class ClientHandler implements Runnable {
             while (!socket.isClosed()) {
                 try {
                     this.handle();
-                } catch (Exception e) {
-                    e.printStackTrace();
+                } catch (SocketException e ) {
+                    System.out.println("Client socket error");
+                    break;
                 }
             }
         } catch (Exception e) {
             System.err.println(e.getMessage() + e.getCause());
             System.err.println("Déconnexion client inattendu");
-        } finally {
+        }
+        finally {
             try {
                 if (reader != null) reader.close();
                 if (writer != null) writer.close();

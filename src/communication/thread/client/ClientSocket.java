@@ -87,6 +87,8 @@ public class ClientSocket extends Thread {
                     case "WAITGAME":
                         this.client.set_ClientState(ClientState.WAITGAME);
                         break;
+                    case "GAMEENDED":
+                        this.client.set_ClientState(ClientState.ENDGAME);
                 }
                 break;
 
@@ -97,6 +99,13 @@ public class ClientSocket extends Thread {
                 break;
             case "NOTTURN":
                 System.out.println("Ce n'est pas votre tour");
+
+            case "SHOW":
+                if (args[1].equals("WINER")) {
+                    if (args[2].equals(this.client.get_nomJoueur())) System.out.println("Vous avez gagne la partie");
+                    else System.out.println("Vous avez gagne la partie");
+                }
+                break;
                 
             default:
                 System.out.println("non disponible: " + type);

@@ -219,15 +219,14 @@ public class Serveur {
     Joueur joueur =  this.getClient(nomJoueur).getClientPlayer();
     try {
       if (joueur.getNomJoueur()!=null){
-        boolean result = joueur.getPlateau().poseJeton(nomColonne, joueur);
-        pose = true;
+        pose = joueur.getPlateau().poseJeton(nomColonne, joueur);
       }
-    }
-    catch (EnDehorsDuPlateauException e){
-      return "ERR plus de place sur cette colonne";
     }
     catch (GagnantException e){
       this.win(joueur);
+    }
+    catch (EnDehorsDuPlateauException e){
+      return "ERR plus de place sur cette colonne";
     }
     catch (OccupeeException e){
       return "Il y a déjà un jeton";
@@ -240,12 +239,11 @@ public class Serveur {
 
   /**
    * verifie si le joueur a gagné
+   *
    * @param joueur
-   * @return true si a gagné sinon false
    */
-  public boolean win(Joueur joueur) {
-    System.out.println(joueur.getNomJoueur() + " a gagné la partie ");
-    return true;
+  public void win(Joueur joueur) {
+    this.serverLog(joueur.getNomJoueur() + " a gagné la partie ");
   }
   /**
    * fin de partie du joueur = quitte le plateau de jeu

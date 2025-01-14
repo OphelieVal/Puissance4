@@ -106,16 +106,6 @@ public class Client extends Thread {
 
       case ClientState.WAITGAME:
         terminal = "Ce n'est as votre tour, patientez..\n";
-//        while (this.clientState == ClientState.WAITGAME) {
-//          try {
-//            String[] command = new String[] {"play -1", this.nomJoueur};
-//            this.ask_client(command);
-//          }
-//          catch (Exception e){
-//            System.out.println(e.getMessage());
-//          }
-//        }
-//        while (this.clientState == ClientState.WAITGAME) {
         if (this.clientState == ClientState.LOOKINGADVERSARY) {
           this.request("waitgame", new String[]{"play",this.nomJoueur}, true);
           System.out.println("state: "+this.clientState);
@@ -123,7 +113,10 @@ public class Client extends Thread {
           this.updateTerminal(this.clientState);
         }
         break;
-
+      case ClientState.ENDGAME:
+        terminal = "Entrez une commande : \n"+
+                "-> HOME retour a l'ecran d'acceuil\n";
+        break;
       default:
         terminal = "NOTHING";
         break;
@@ -228,6 +221,12 @@ public class Client extends Thread {
             if (commandAndArgs.length > 1) throw new IOException("Il ne doit pas avoir d'argument pour cette commande");
             this.request("disconnect", commandAndArgs, this.clientState == ClientState.USERCONNECTED);
             break;
+
+          case "home":
+            if (commandAndArgs.length != 1) throw new IOException("Il ne doit pas avoir d'argument pour cette commande");
+            this.request("home", commandAndArgs, this.clientState == ClientState.ENDGAME);
+            break;
+            
           default:
             throw new IOException("Unknown command");
         }

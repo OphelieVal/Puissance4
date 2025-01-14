@@ -18,6 +18,8 @@ public class Plateau {
   private List<String> chosenColors = new ArrayList<>();
   private Joueur j1;
   private Joueur j2;
+  private Joueur winer;
+  private boolean ganeEnded = false;
 
   public Plateau(int nbLignes, int nbColonnes, Joueur j1, Joueur j2) {
     this.nbLignes = nbLignes;
@@ -36,6 +38,11 @@ public class Plateau {
     public Joueur getJoueur1(){
       return this.j1;
     }
+
+  public Joueur getWiner() { return this.winer;}
+
+  public boolean isGameEnded() {return this.ganeEnded;}
+
   public Joueur getJoueur2(){
     return this.j2;
   }
@@ -78,19 +85,20 @@ public class Plateau {
 
   }
 
-  /** pose un jeton sur une case du plateau 
-   * @param x la ligne du plateau
+  /** pose un jeton sur une case du plateau
    * @param y la colonne du plateau
+   *
    * @return true si le jeton s'est posé sinon false
    * @throws IndexOutOfBoundsException en dehors du plateau
    */
-  public boolean poseJeton(int y, Joueur joueur) throws EnDehorsDuPlateauException, GagnantException, OccupeeException {
+  public synchronized boolean poseJeton(int y, Joueur joueur) throws EnDehorsDuPlateauException, GagnantException, OccupeeException {
     Integer x = this.getMaxligne(y);
-    if (x==null){
-      throw new EnDehorsDuPlateauException("Cette colonne est déjà remplie");
-    }
+    if (x==null) throw new EnDehorsDuPlateauException("Cette colonne est déjà remplie");
+
     try {
       if (joueur.aGagne(x, y)){
+        this.winer = joueur;
+        this.ganeEnded = true;
         throw new GagnantException();
       }
       this.lePlateau[x][y].poseJeton(joueur.getCouleur());
@@ -101,12 +109,15 @@ public class Plateau {
     catch (Exception e) {
       throw new EnDehorsDuPlateauException("Le jeton doit être posé dans la colonne comprise entre " + 0 + " et " + this.nbColonnes);
     }
-    if (!(this.lePlateau[x][y].contientJeton())) {
-      return false;
-    }
+
+    if (!(this.lePlateau[x][y].contientJeton())) return false;
+
     if (joueur.aGagne(x, y)){
+      this.winer = joueur;
+      this.ganeEnded = true;
       throw new GagnantException();
     }
+
     this.casesRestantes--;
     return true;
   }
