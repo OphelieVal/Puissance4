@@ -267,6 +267,30 @@ public class Plateau {
       }
       return cpt;}
   
+    public String getVisualPlate() {
+      StringBuilder plate = new StringBuilder();
+      plate.append("VALUE-");
+      for (int i = this.nbLignes-1; i>=0; i--){
+        plate.append("LINESEP[ ");
+        for (int j = 0; j<this.nbColonnes; j++){
+            String currentCase = " ( " ;
+            currentCase += this.getCase(i, j).getCouleur();
+            currentCase += " ) ";
+            if (j != this.nbColonnes-1){
+              currentCase += " ";
+            }
+            plate.append(currentCase);
+        }
+        plate.append(" ] ");
+      }
+      return plate.toString();
+    }
+
+    @Override
+    public String toString() {
+      if (this.getVisualPlate() != null) return "PLATEAU_VISUAL_STRING-" + this.getVisualPlate();
+      else return "no plate to show";
+    }
 
     @Override
     public boolean equals(Object objet){
