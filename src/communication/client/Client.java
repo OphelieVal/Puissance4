@@ -101,7 +101,7 @@ public class Client extends Thread {
         if (this.clientState == ClientState.LOOKINGADVERSARY) {
           this.request("waitgame", new String[]{"play",this.nomJoueur}, true);
           this.clientSocket.clientLog("state: "+this.clientState);
-          Thread.sleep(500);
+          Thread.sleep(135);
           this.updateTerminal(this.clientState);
         }
         break;
@@ -140,7 +140,7 @@ public class Client extends Thread {
         }
 //        this.clientSocket.clientLog(prepare);
         this.clientSocket.sendCommand(prepare);
-        Thread.sleep(1500);
+        Thread.sleep(135);
       }else {
         System.out.println("Unknown command");
       }
@@ -209,7 +209,8 @@ public class Client extends Thread {
 
           case "home":
             if (commandAndArgs.length != 1) throw new IOException("Il ne doit pas avoir d'argument pour cette commande");
-            this.request("home", commandAndArgs, this.clientState == ClientState.ENDGAME);
+            this.request("home", new String[] {"home", this.nomJoueur}, this.clientState == ClientState.ENDGAME);
+            Thread.sleep(135);
             break;
 
           case "playerstats":
@@ -258,7 +259,7 @@ public class Client extends Thread {
       this.clientSocket.clientLog("state: "+this.clientState);
       this.clientSocket.clientLog("Durée écoulé: "+ (System.currentTimeMillis()-currentTime) + " ms");
       counter++;
-      Thread.sleep(500);
+      Thread.sleep(135);
     }
   }
 
@@ -269,7 +270,7 @@ public class Client extends Thread {
       this.request("isawait", none, true);
       this.clientSocket.clientLog("state: "+this.clientState);
       this.clientSocket.clientLog("Durée écoulé: "+ (System.currentTimeMillis()-currentTime) + " ms");
-      Thread.sleep(500);
+      Thread.sleep(135);
     }
   }
 
@@ -283,10 +284,10 @@ public class Client extends Thread {
     if (commandAndArgs.length != 1) throw new IOException("La commande ask ne doit pas avoir d'arguments ");
     String[] arguments = new String[] {"ask", this.nomJoueur};
     this.request("ask", arguments, this.clientState == ClientState.USERCONNECTED);
-    Thread.sleep(1000);
+    Thread.sleep(135);
 
     this.request_adversary();
-    Thread.sleep(1000);
+    Thread.sleep(135);
 
     this.request_turn();
     String[] args = new String[] {"getactualplate", this.nomJoueur} ;
@@ -307,7 +308,7 @@ public class Client extends Thread {
       Integer.parseInt(colonne);
       String[] commandAndArgsPlay = new String[] {commandAndArgs[0], commandAndArgs[1], this.nomJoueur};
       this.request("play", commandAndArgsPlay, this.clientState == ClientState.INGAME);
-      Thread.sleep(1000);
+      Thread.sleep(135);
       this.request_turn();
     }
     catch (NumberFormatException e){
