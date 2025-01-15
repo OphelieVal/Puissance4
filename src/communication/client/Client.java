@@ -10,57 +10,38 @@ public class Client extends Thread {
   private final String serverIP;
   private final String clientIP;
   private final ClientSocket clientSocket;
-  private int serverPort;
   private String nomJoueur;
   private ClientState clientState = ClientState.USERDISCONNECTED;
 
   public Client(String serverIP, int serverPort) throws UnknownHostException {
     this.serverIP = serverIP;
     this.clientIP = InetAddress.getLocalHost().getHostAddress();
-    this.serverPort = serverPort;
-    this.clientSocket = new ClientSocket(this.serverPort, this.serverIP, this);
-  }
-
-  /** getter IP server
-   * @return IP du serveur
-   */
-  public String get_ServerIP(){
-    return this.serverIP;
+    this.clientSocket = new ClientSocket(serverPort, this.serverIP, this);
   }
 
   /** getter nom joueur
    * @return nom du joueur
    */
-  public String get_nomJoueur(){
-    return this.nomJoueur;
-  }
+  public String get_nomJoueur(){return this.nomJoueur;}
 
-  public void setNomJoueur(String nomJoueur){
-    this.nomJoueur = nomJoueur;
-  }
+  public void setNomJoueur(String nomJoueur){this.nomJoueur = nomJoueur;}
 
   /** getter IP client
    * @return IP du client
    */
-  public synchronized String get_ClientIP(){
-    return this.clientIP;
-  }
+  public synchronized String get_ClientIP(){return this.clientIP;}
 
   /**
    * getter Etat du client
    * @return Etat actuel du client
    */
-  public synchronized ClientState get_ClientState(){
-    return this.clientState;
-  }
+  public synchronized ClientState get_ClientState(){return this.clientState;}
 
   /**
    * Setter Etat client future
    * @param clientState Etat future
    */
-  public synchronized void set_ClientState(ClientState clientState){
-    this.clientState = clientState;
-  }
+  public synchronized void set_ClientState(ClientState clientState){this.clientState = clientState;}
 
   /**
    * nettoie le terminal
@@ -143,7 +124,7 @@ public class Client extends Thread {
       if (executeCondition) {
         String prepare = "\n"+command;
         if (args.length > 1) {
-          System.out.println("[logs] one or more param in request");
+//          System.out.println("[logs] one or more param in request");
           prepare += " ";
           for (int i = 1; i < args.length; i++) {
             prepare += args[i] + " ";
@@ -155,13 +136,6 @@ public class Client extends Thread {
       }else {
         System.out.println("Unknown command");
       }
-  }
-
-  public synchronized void waitPlayerJoin(String[] args) throws IOException, InterruptedException {
-    Thread.sleep(1000);
-    while (this.clientState == ClientState.LOOKINGADVERSARY) {
-      this.wait();
-    }
   }
 
   /**
@@ -265,6 +239,7 @@ public class Client extends Thread {
 
     scanner.close();
   }
+
   public void request_turn() throws IOException, InterruptedException {
     long currentTime = System.currentTimeMillis();
     while (this.clientState == ClientState.WAITGAME) {
@@ -313,7 +288,6 @@ public class Client extends Thread {
    * @throws InterruptedException
    */
   public void play_client(String[] commandAndArgs)throws IOException, InterruptedException{
-
     if (commandAndArgs.length < 2) throw new IOException("Veuillez rentrer le numéro de la colonne à jouer");
     System.out.println(commandAndArgs.length+"");
     String colonne = commandAndArgs[1];
