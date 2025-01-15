@@ -5,5 +5,6 @@ public enum ClientState {
     USERCONNECTED,
     INGAME,
     LOOKINGADVERSARY,
-    WAITGAME
+    WAITGAME,
+    ENDGAME
 }

@@ -10,57 +10,46 @@ public class Client extends Thread {
   private final String serverIP;
   private final String clientIP;
   private final ClientSocket clientSocket;
-  private int serverPort;
   private String nomJoueur;
   private ClientState clientState = ClientState.USERDISCONNECTED;
+  private boolean logs = false;
 
   public Client(String serverIP, int serverPort) throws UnknownHostException {
     this.serverIP = serverIP;
     this.clientIP = InetAddress.getLocalHost().getHostAddress();
-    this.serverPort = serverPort;
-    this.clientSocket = new ClientSocket(this.serverPort, this.serverIP, this);
+    this.clientSocket = new ClientSocket(serverPort, this.serverIP, this);
   }
 
-  /** getter IP server
-   * @return IP du serveur
-   */
-  public String get_ServerIP(){
-    return this.serverIP;
+  public Client(String serverIP, int serverPort, boolean logs) throws UnknownHostException {
+    this.serverIP = serverIP;
+    this.clientIP = InetAddress.getLocalHost().getHostAddress();
+    this.logs = logs;
+    this.clientSocket = new ClientSocket(serverPort, this.serverIP, this, logs);
   }
 
   /** getter nom joueur
    * @return nom du joueur
    */
-  public String get_nomJoueur(){
-    return this.nomJoueur;
-  }
+  public String get_nomJoueur(){return this.nomJoueur;}
 
-  public void setNomJoueur(String nomJoueur){
-    this.nomJoueur = nomJoueur;
-  }
+  public void setNomJoueur(String nomJoueur){this.nomJoueur = nomJoueur;}
 
   /** getter IP client
    * @return IP du client
    */
-  public synchronized String get_ClientIP(){
-    return this.clientIP;
-  }
+  public synchronized String get_ClientIP(){return this.clientIP;}
 
   /**
    * getter Etat du client
    * @return Etat actuel du client
    */
-  public synchronized ClientState get_ClientState(){
-    return this.clientState;
-  }
+  public synchronized ClientState get_ClientState(){return this.clientState;}
 
   /**
    * Setter Etat client future
    * @param clientState Etat future
    */
-  public synchronized void set_ClientState(ClientState clientState){
-    this.clientState = clientState;
-  }
+  public synchronized void set_ClientState(ClientState clientState){this.clientState = clientState;}
 
   /**
    * nettoie le terminal
@@ -93,7 +82,10 @@ public class Client extends Thread {
       case ClientState.USERCONNECTED:
         terminal = "Entrez une commande : \n"+
           "-> ASK demande d'une nouvelle partie avec un joueur\n"+
-          "-> DISCONNECT deconnecte de l'espace Joueur\n";
+          "-> DISCONNECT deconnecte de l'espace Joueur\n" +
+          "-> PLAYERSLIST donne la liste de tout les joueur actuellement connecte\n" +
+          "-> ALLPLAYERSLIST donne la liste de tout les joueur enregistrer sur le jeu\n" +
+          "-> PLAYERSTATS <username> deconnecte de l'espace Joueur\n";
         break;
       case ClientState.INGAME:
         String[] args = new String[] {"getactualplate", this.nomJoueur} ;
@@ -106,15 +98,17 @@ public class Client extends Thread {
 
       case ClientState.WAITGAME:
         terminal = "Ce n'est as votre tour, patientez..\n";
-        try {
-          String[] command = new String[] {"play -1", this.nomJoueur};
-          this.ask_client(command);
-         }
-        catch (Exception e){
-          System.out.println(e.getMessage());
+        if (this.clientState == ClientState.LOOKINGADVERSARY) {
+          this.request("waitgame", new String[]{"play",this.nomJoueur}, true);
+          this.clientSocket.clientLog("state: "+this.clientState);
+          Thread.sleep(135);
+          this.updateTerminal(this.clientState);
         }
         break;
-
+      case ClientState.ENDGAME:
+        terminal = "Entrez une commande : \n"+
+                "-> HOME retour a l'ecran d'acceuil\n";
+        break;
       default:
         terminal = "NOTHING";
         break;
@@ -138,25 +132,18 @@ public class Client extends Thread {
       if (executeCondition) {
         String prepare = "\n"+command;
         if (args.length > 1) {
-          System.out.println("[logs] one or more param in request");
+//          this.clientSocket.clientLog("[logs] one or more param in request");
           prepare += " ";
           for (int i = 1; i < args.length; i++) {
             prepare += args[i] + " ";
           }
         }
-        //System.out.println(prepare);
+//        this.clientSocket.clientLog(prepare);
         this.clientSocket.sendCommand(prepare);
-        Thread.sleep(1500);
+        Thread.sleep(135);
       }else {
         System.out.println("Unknown command");
       }
-  }
-
-  public synchronized void waitPlayerJoin(String[] args) throws IOException, InterruptedException {
-    Thread.sleep(1000);
-    while (this.clientState == ClientState.LOOKINGADVERSARY) {
-      this.wait();
-    }
   }
 
   /**
@@ -219,6 +206,28 @@ public class Client extends Thread {
             if (commandAndArgs.length > 1) throw new IOException("Il ne doit pas avoir d'argument pour cette commande");
             this.request("disconnect", commandAndArgs, this.clientState == ClientState.USERCONNECTED);
             break;
+
+          case "home":
+            if (commandAndArgs.length != 1) throw new IOException("Il ne doit pas avoir d'argument pour cette commande");
+            this.request("home", new String[] {"home", this.nomJoueur}, this.clientState == ClientState.ENDGAME);
+            Thread.sleep(135);
+            break;
+
+          case "playerstats":
+            if (commandAndArgs.length != 2) throw new IOException("La commande playerstats doit avoir 1 argument <nomDuJoueur>");
+            this.request("playerstats", commandAndArgs, this.clientState == ClientState.USERCONNECTED);
+            break;
+
+          case "playerslist":
+            if (commandAndArgs.length != 1) throw new IOException("Il ne doit pas avoir d'argument pour cette commande");
+            this.request("playerstats", commandAndArgs, this.clientState == ClientState.USERCONNECTED);
+            break;
+
+          case "allplayerslist":
+            if (commandAndArgs.length != 1) throw new IOException("Il ne doit pas avoir d'argument pour cette commande");
+            this.request("allplayerslist", commandAndArgs, this.clientState == ClientState.USERCONNECTED);
+            break;
+
           default:
             throw new IOException("Unknown command");
         }
@@ -240,6 +249,30 @@ public class Client extends Thread {
     scanner.close();
   }
 
+  public void request_turn() throws IOException, InterruptedException {
+    long currentTime = System.currentTimeMillis();
+    int counter = 0;
+    while (this.clientState == ClientState.WAITGAME) {
+      String showInTerninal = "false";
+      if (counter == 0 )  showInTerninal = "true";
+      this.request("waitgame", new String[]{"play",this.nomJoueur, showInTerninal}, true);
+      this.clientSocket.clientLog("state: "+this.clientState);
+      this.clientSocket.clientLog("Durée écoulé: "+ (System.currentTimeMillis()-currentTime) + " ms");
+      counter++;
+      Thread.sleep(135);
+    }
+  }
+
+  public void request_adversary() throws IOException, InterruptedException {
+    String[] none = new String[] {"isawait", this.nomJoueur};
+    long currentTime = System.currentTimeMillis();
+    while (this.clientState == ClientState.LOOKINGADVERSARY) {
+      this.request("isawait", none, true);
+      this.clientSocket.clientLog("state: "+this.clientState);
+      this.clientSocket.clientLog("Durée écoulé: "+ (System.currentTimeMillis()-currentTime) + " ms");
+      Thread.sleep(135);
+    }
+  }
 
   /**
    * gere la commande ask du client
@@ -251,19 +284,14 @@ public class Client extends Thread {
     if (commandAndArgs.length != 1) throw new IOException("La commande ask ne doit pas avoir d'arguments ");
     String[] arguments = new String[] {"ask", this.nomJoueur};
     this.request("ask", arguments, this.clientState == ClientState.USERCONNECTED);
-    Thread.sleep(1000);
-    String[] none = new String[] {"isawait", this.nomJoueur};
-    long currentTime = System.currentTimeMillis();
-    while (this.clientState == ClientState.LOOKINGADVERSARY) {
-      this.request("isawait", none, true);
-      System.out.println("state: "+this.clientState);
-      System.out.println("Durée écoulé: "+ (System.currentTimeMillis()-currentTime) + " ms");
-      Thread.sleep(500);
-    }
-    System.out.println("exiting while");
-    Thread.sleep(1000);
+    Thread.sleep(135);
+
+    this.request_adversary();
+    Thread.sleep(135);
+
+    this.request_turn();
     String[] args = new String[] {"getactualplate", this.nomJoueur} ;
-    this.request("getactualplate", args, this.clientState == ClientState.INGAME);
+//    this.request("getactualplate", args, this.clientState == ClientState.INGAME);
   }
 
   /**
@@ -273,7 +301,6 @@ public class Client extends Thread {
    * @throws InterruptedException
    */
   public void play_client(String[] commandAndArgs)throws IOException, InterruptedException{
-    long currentTime = System.currentTimeMillis();
     if (commandAndArgs.length < 2) throw new IOException("Veuillez rentrer le numéro de la colonne à jouer");
     System.out.println(commandAndArgs.length+"");
     String colonne = commandAndArgs[1];
@@ -281,14 +308,8 @@ public class Client extends Thread {
       Integer.parseInt(colonne);
       String[] commandAndArgsPlay = new String[] {commandAndArgs[0], commandAndArgs[1], this.nomJoueur};
       this.request("play", commandAndArgsPlay, this.clientState == ClientState.INGAME);
-      Thread.sleep(1000);
-      while (this.clientState == ClientState.WAITGAME) {
-        this.request("waitgame", new String[]{"play",this.nomJoueur}, true);
-        System.out.println("state: "+this.clientState);
-        System.out.println("Durée écoulé: "+ (System.currentTimeMillis()-currentTime));
-        Thread.sleep(500);
-      }
-
+      Thread.sleep(135);
+      this.request_turn();
     }
     catch (NumberFormatException e){
       throw new IOException("Veuillez entrer un nombre");

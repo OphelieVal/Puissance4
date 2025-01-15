@@ -23,9 +23,7 @@ public class Joueur {
   /** getter nom joueur
    * @return le nom du joueur
    */
-  public String getNomJoueur() { 
-    return nomJoueur; 
-  }
+  public String getNomJoueur() {return nomJoueur;}
 
   /** getter couleur joueur
    * @return couleur du joueur
@@ -37,9 +35,7 @@ public class Joueur {
   /** gette le plateau actuel
    * @return plateau actuel du joueur
    */
-  public Plateau getPlateau(){
-    return this.lePlateau;
-  }
+  public Plateau getPlateau(){return this.lePlateau;}
 
     /** getter du id 
    * @return id du joueur
@@ -79,11 +75,12 @@ public class Joueur {
    */
   public boolean aGagne(int x, int y) {
     Case caseJouee = this.lePlateau.getCase(x, y);
-    return this.lePlateau.quatreHorizontal(caseJouee) >= 4 ||
-           this.lePlateau.quatreVertical(caseJouee) >= 4 ||
-           this.lePlateau.quatreDiagonal(caseJouee) >= 4;
+    int count = 4;
+    boolean winState = this.lePlateau.quatreHorizontal(caseJouee) >= count ||
+            this.lePlateau.quatreVertical(caseJouee) >= count ||
+            this.lePlateau.quatreDiagonal(caseJouee) >= count;
+    return winState;
   }
-
 
   /** remet à jour l'ensemble des cases du plateau
    * 
@@ -91,5 +88,12 @@ public class Joueur {
   public void reset() {
     this.gameOver = false;
     this.lePlateau.reset();
+  }
+
+  public boolean setInitialState() {
+    this.gameOver = false;
+    this.lePlateau = null;
+    this.currentColor = null;
+    return true;
   }
 }

@@ -19,12 +19,20 @@ public class ClientSocket extends Thread {
     private BufferedReader reader;
     private PrintWriter writer;
     private boolean isConnected = false;
+    private boolean showLogs = false;
 
 
     public ClientSocket(int listenPort, String ip, Client client) {
         this.port = listenPort;
         this.ip = ip;
         this.client = client;
+    }
+
+    public ClientSocket(int listenPort, String ip, Client client, boolean showLogs) {
+        this.port = listenPort;
+        this.ip = ip;
+        this.client = client;
+        this.showLogs = showLogs;
     }
 
     public void clientSocketInit() throws IOException {
@@ -49,8 +57,10 @@ public class ClientSocket extends Thread {
      * @param message message du log
      */
     public void clientLog(String message) {
-        String timeStamp = new SimpleDateFormat("[yyyy-MM-dd HH:mm:ss]").format(Calendar.getInstance().getTime());
-        System.out.println(timeStamp + " : "+ message);
+        if (this.showLogs) {
+            String timeStamp = new SimpleDateFormat("[yyyy-MM-dd HH:mm:ss]").format(Calendar.getInstance().getTime());
+            System.out.println(timeStamp + " : "+ message);
+        }
     }
 
     public void closeSocket() throws IOException {
@@ -65,8 +75,8 @@ public class ClientSocket extends Thread {
      * @param serverInstruction instruction complete du serveur
      * @throws InterruptedException Exception
      */
-    public void handleSreverInstruction(String serverInstruction) throws InterruptedException, IOException {
-        this.clientLog("get instruction: " + serverInstruction);
+    public void handleServerInstruction(String serverInstruction) throws InterruptedException, IOException {
+        if (this.showLogs) this.clientLog("get instruction: " + serverInstruction);
         String[] args = serverInstruction.split(" ");
         String type = args[0].toLowerCase();
         switch (type) {
@@ -87,6 +97,8 @@ public class ClientSocket extends Thread {
                     case "WAITGAME":
                         this.client.set_ClientState(ClientState.WAITGAME);
                         break;
+                    case "GAMEENDED":
+                        this.client.set_ClientState(ClientState.ENDGAME);
                 }
                 break;
 
@@ -97,7 +109,14 @@ public class ClientSocket extends Thread {
                 break;
             case "NOTTURN":
                 System.out.println("Ce n'est pas votre tour");
-                
+
+            case "SHOW":
+                if (args[1].equals("WINER")) {
+                    if (args[2].equals(this.client.get_nomJoueur())) System.out.println("Vous avez gagne la partie");
+                    else System.out.println("Vous avez gagne la partie");
+                }
+                break;
+
             default:
                 System.out.println("non disponible: " + type);
                 break;
@@ -112,12 +131,12 @@ public class ClientSocket extends Thread {
             while (true) {
                 String serverMessage = this.reader.readLine();
                 if ((serverMessage!=null)&&!serverMessage.isEmpty()) {
-                    this.clientLog("received interaction: [" + serverMessage + "] du serveur");
+                    if (this.showLogs) this.clientLog("received interaction: [" + serverMessage + "] du serveur");
                     String[] infos = serverMessage.split("\\|");
                     String indicator = infos[0].split(":")[1];
                     switch (indicator) {
                         case "clientInstruction":
-                            this.handleSreverInstruction(infos[1]);
+                            this.handleServerInstruction(infos[1]);
                             break;
                         case "serverMessage":
                             String[] temp = infos[1].split("-");

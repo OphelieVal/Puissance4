@@ -18,30 +18,22 @@ public class PlayerClient {
     /** getter nom joueur
      * @return nom du joueur
      */
-    public String getNomJoueur() { 
-        return this.nomJoueur; 
-    }
+    public String getNomJoueur() {return this.nomJoueur;}
 
     /**getter IP client
      * @return IP du client
      */
-    public String getClientIP() { 
-        return this.clientIP; 
-    }
+    public String getClientIP() {return this.clientIP;}
 
     /** gette objet joueur
      * @return objet joueur
      */
-    public Joueur getClientPlayer() { 
-        return this.clientPlayer; 
-    }
+    public Joueur getClientPlayer() {return this.clientPlayer;}
 
     /** setter joueur
      * @param clientPlayer joueur
      */
-    public void setClientPlayer(Joueur clientPlayer) { 
-        this.clientPlayer = clientPlayer;
-    }
+    public void setClientPlayer(Joueur clientPlayer) {this.clientPlayer = clientPlayer;}
 
     /**setter nom joueur
      * @param nomJoueur nom du joueurs
@@ -54,9 +46,7 @@ public class PlayerClient {
     /** setter IP client
      * @param clientIP IP du client
      */
-    public void setClientIP(String clientIP) { 
-        this.clientIP = clientIP; 
-    }
+    public void setClientIP(String clientIP) {this.clientIP = clientIP;}
 
     @Override
     public boolean equals(Object o) {
@@ -76,7 +66,5 @@ public class PlayerClient {
     }
 
     @Override
-    public int hashCode() {
-        return this.nomJoueur.hashCode() + this.clientIP.hashCode();
-    }
+    public int hashCode() {return this.nomJoueur.hashCode() + this.clientIP.hashCode();}
 }
