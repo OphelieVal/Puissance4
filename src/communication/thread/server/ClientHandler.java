@@ -237,6 +237,24 @@ public class ClientHandler implements Runnable {
                     this.sendResponse("clientInstruction", "SET USERCONNECTED STATE OK");
                     break;
 
+                case "playerstats":
+                    serverLog("client: " + this.clientInetAdress + " asked to see the stats of: " + args[1]);
+                    this.sendResponse("serverMessage", "Functionality not implemented yet (See a player's stats)");
+                    // TODO fonction pour voir les stats d'un joueur (implementation et interrogation BD requise)
+                    break;
+
+                case "playerslist":
+                    serverLog("client: " + this.clientInetAdress + " asked to see the list of connected players");
+                    this.sendResponse("serverMessage", "Functionality not implemented yet (See connected players)");
+                    // TODO fonction pour voir la list de joueur en ligne
+                    break;
+
+                case "allplayerslist":
+                    serverLog("client: " + this.clientInetAdress + " asked to see the list of all registered players");
+                    this.sendResponse("serverMessage", "Functionality not implemented yet (See registered players)");
+                    // TODO fonction pour voir la liste de joueur possedant des stats sur Puissance-4
+                    break;
+
                 default:
                     this.sendResponse("serverMessage","ERR commande non connue");
                     break;

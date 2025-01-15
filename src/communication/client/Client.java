@@ -93,7 +93,10 @@ public class Client extends Thread {
       case ClientState.USERCONNECTED:
         terminal = "Entrez une commande : \n"+
           "-> ASK demande d'une nouvelle partie avec un joueur\n"+
-          "-> DISCONNECT deconnecte de l'espace Joueur\n";
+          "-> DISCONNECT deconnecte de l'espace Joueur\n" +
+          "-> PLAYERSLIST donne la liste de tout les joueur actuellement connecte\n" +
+          "-> ALLPLAYERSLIST donne la liste de tout les joueur enregistrer sur le jeu\n" +
+          "-> PLAYERSTATS <username> deconnecte de l'espace Joueur\n";
         break;
       case ClientState.INGAME:
         String[] args = new String[] {"getactualplate", this.nomJoueur} ;
@@ -226,7 +229,22 @@ public class Client extends Thread {
             if (commandAndArgs.length != 1) throw new IOException("Il ne doit pas avoir d'argument pour cette commande");
             this.request("home", commandAndArgs, this.clientState == ClientState.ENDGAME);
             break;
-            
+
+          case "playerstats":
+            if (commandAndArgs.length != 2) throw new IOException("La commande playerstats doit avoir 1 argument <nomDuJoueur>");
+            this.request("playerstats", commandAndArgs, this.clientState == ClientState.USERCONNECTED);
+            break;
+
+          case "playerslist":
+            if (commandAndArgs.length != 1) throw new IOException("Il ne doit pas avoir d'argument pour cette commande");
+            this.request("playerstats", commandAndArgs, this.clientState == ClientState.USERCONNECTED);
+            break;
+
+          case "allplayerslist":
+            if (commandAndArgs.length != 1) throw new IOException("Il ne doit pas avoir d'argument pour cette commande");
+            this.request("allplayerslist", commandAndArgs, this.clientState == ClientState.USERCONNECTED);
+            break;
+
           default:
             throw new IOException("Unknown command");
         }
