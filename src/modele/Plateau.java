@@ -5,23 +5,19 @@ import java.util.Arrays;
 import java.util.List;
 
 public class Plateau {
-  private int nbLignes = 0;
+    private int nbLignes = 0;
+    private int nbColonnes = 0;
+    private int casesRestantes;
+    private Case[][] lePlateau;
+    private String turn;
+    private List<String> allColors = Arrays.asList("YELLOW", "RED", "BLUE", "PURPLE");
+    private List<String> chosenColors = new ArrayList<>();
+    private final Joueur j1;
+    private final Joueur j2;
+    private Joueur winner;
+    private boolean gameEnded = false;
 
-  private int nbColonnes = 0;
-
-  private int casesRestantes;
-
-  private Case[][] lePlateau;
-  private String turn;
-
-  private List<String> allColors = Arrays.asList("YELLOW", "RED", "BLUE", "PURPLE");
-  private List<String> chosenColors = new ArrayList<>();
-  private Joueur j1;
-  private Joueur j2;
-  private Joueur winer;
-  private boolean ganeEnded = false;
-
-  public Plateau(int nbLignes, int nbColonnes, Joueur j1, Joueur j2) {
+    public Plateau(int nbLignes, int nbColonnes, Joueur j1, Joueur j2) {
     this.nbLignes = nbLignes;
     this.nbColonnes = nbColonnes;
     this.casesRestantes = this.nbLignes * this.nbColonnes;
@@ -33,48 +29,45 @@ public class Plateau {
     }
     this.j1 = j1;
     this.j2 = j2;
-  }
-
-    public Joueur getJoueur1(){
-      return this.j1;
     }
 
-  public Joueur getWiner() { return this.winer;}
+    public Joueur getJoueur1(){return this.j1;}
 
-  public boolean isGameEnded() {return this.ganeEnded;}
+    public Joueur getWinner() { return this.winner;}
 
-  public Joueur getJoueur2(){
+    public boolean isGameEnded() {return this.gameEnded;}
+
+    public Joueur getJoueur2(){
     return this.j2;
-  }
+    }
 
-  public String getTurn(){
+    public String getTurn(){
     return this.turn;
-  }
+    }
 
-  public void setTurn(String turn){
+    public void setTurn(String turn){
     this.turn = turn;
-  }
+    }
 
-  public String getAColor() {
+    public String getAColor() {
     for (String color : this.allColors) {
       if (!this.chosenColors.contains(color)) {
         return color;
       }
     }
     return null;
-  }
+    }
 
-  public void setChosenColors(List<String> chosenColors) {
+    public void setChosenColors(List<String> chosenColors) {
     this.chosenColors = chosenColors;
-  }
+    }
 
-  /** pose un jeton sur une case du plateau
-  /**
-   * get la position x libre de la colonne y
-   * @param y
-   * @return la ligne disponible pour la colonne y
-   */
-  public Integer getMaxligne(int y){
+    /**
+    * get la position x libre de la colonne y
+    * @param y colonne choisi
+    * @return la ligne disponible pour la colonne y
+    */
+    public Integer getMaxligne(int y){
     for (int x = 0; x<this.nbLignes; x++){
       if (!(this.lePlateau[x][y].contientJeton())){
         return x;
@@ -83,26 +76,25 @@ public class Plateau {
     return null;
 
 
-  }
+    }
 
-  /** pose un jeton sur une case du plateau
-   * @param y la colonne du plateau
-   *
-   * @return true si le jeton s'est posé sinon false
-   * @throws IndexOutOfBoundsException en dehors du plateau
-   */
-  public synchronized boolean poseJeton(int y, Joueur joueur) throws EnDehorsDuPlateauException, GagnantException, OccupeeException {
+    /** pose un jeton sur une case du plateau
+    * @param y la colonne du plateau
+    * @return true si le jeton s'est posé sinon false
+    * @throws IndexOutOfBoundsException en dehors du plateau
+    */
+    public synchronized boolean poseJeton(int y, Joueur joueur) throws EnDehorsDuPlateauException, GagnantException, OccupeeException {
     Integer x = this.getMaxligne(y);
     if (x==null) throw new EnDehorsDuPlateauException("Cette colonne est déjà remplie");
 
     try {
       if (joueur.aGagne(x, y)){
-        this.winer = joueur;
-        this.ganeEnded = true;
+        this.winner = joueur;
+        this.gameEnded = true;
         throw new GagnantException();
       }
       this.lePlateau[x][y].poseJeton(joueur.getCouleur());
-    } 
+    }
     catch (OccupeeException e){
       throw new OccupeeException(e.getMessage());
     }
@@ -113,64 +105,57 @@ public class Plateau {
     if (!(this.lePlateau[x][y].contientJeton())) return false;
 
     if (joueur.aGagne(x, y)){
-      this.winer = joueur;
-      this.ganeEnded = true;
+      this.winner = joueur;
+      this.gameEnded = true;
       throw new GagnantException();
     }
 
     this.casesRestantes--;
     return true;
-  }
+    }
 
-  /** reset l'ensemble des cases du plateau
-   *
-   */
-  public void reset() {
+    /** reset l'ensemble des cases du plateau */
+    public void reset() {
     for (int i = 0; i<this.nbLignes;i++){
       for (int j = 0; j<this.nbColonnes;j++){
         this.lePlateau[i][j].reset();
       }
     }
-  }
+    }
 
-  /** getter d'une case du plateau
-   * @param numLigne ligne de la case
-   * @param numColonne colonne de la case
-   * @return case du plateau
-   * @throws IndexOutOfBoundsException
-   */
-  public Case getCase(int numLigne, int numColonne) throws IndexOutOfBoundsException {
+    /** getter d'une case du plateau
+    * @param numLigne ligne de la case
+    * @param numColonne colonne de la case
+    * @return case du plateau
+    * @throws IndexOutOfBoundsException
+    */
+    public Case getCase(int numLigne, int numColonne) throws IndexOutOfBoundsException {
     try {
       Case element = this.lePlateau[numLigne][numColonne];
       return element;
     }
-
     catch (Exception e) {
       System.err.println("la case renseignée n'existe pas");
       throw new IndexOutOfBoundsException();
     }
-  }
+    }
 
     /** getter cases du plateau
-     * @return l'ensemble des cases du plateau
-     */
-    public Case[][] getLePlateau() {
-        return lePlateau;
-    }
+    * @return l'ensemble des cases du plateau
+    */
+    public Case[][] getLePlateau() {return lePlateau;}
 
     /** setter case plateau
-     * @param lePlateau set les cases du plateau
-     */
-    public void setLePlateau(Case[][] lePlateau) {
-        this.lePlateau = lePlateau;
-    }
+    * @param lePlateau set les cases du plateau
+    */
+    public void setLePlateau(Case[][] lePlateau) {this.lePlateau = lePlateau;}
 
     /**
-     * getter nb lignes du plateau
-     * @return nombre lignes du plateau
-     */
+    * getter nb lignes du plateau
+    * @return nombre lignes du plateau
+    */
     public int getNbLignes(){
-      return this.nbLignes;
+        return this.nbLignes;
     }
 
     /**
@@ -219,12 +204,12 @@ public class Plateau {
       return cpt;
   }
 
-  /**
+    /**
      * verifie si le joueur a gagné horizontalement
      * @param casedepart
      * @return nb de pions alignés
      */
-  public int quatreHorizontal(Case casedepart) {
+    public int quatreHorizontal(Case casedepart) {
     int ligne = casedepart.getLigne();
     int colonne = casedepart.getColonne();
     String couleurJeton = casedepart.getCouleur();
@@ -281,7 +266,10 @@ public class Plateau {
       }
       return cpt;}
 
-
+    /**
+     * Permet d'obtenir la representation en une ligne du plateau de jeu
+     * @return String plateau de jeu parse
+     */
     public String getVisualPlate() {
       StringBuilder plate = new StringBuilder();
       plate.append("VALUE-");
@@ -309,23 +297,22 @@ public class Plateau {
 
     @Override
     public boolean equals(Object objet){
-      if (objet == null){return false;}
-      if (objet == this){return true;}
-      if (!(objet instanceof Case)){return false;}
-      Plateau tmp = (Plateau) objet;
-      if (this.nbLignes == tmp.getNbLignes() && this.nbColonnes == tmp.getNbColonnes()){
-          if (this.casesRestantes == tmp.getCasesRestantes()){
-              if (this.lePlateau.equals(tmp.getLePlateau())){return true;}
+          if (objet == null){return false;}
+          if (objet == this){return true;}
+          if (!(objet instanceof Case)){return false;}
+          Plateau tmp = (Plateau) objet;
+          if (this.nbLignes == tmp.getNbLignes() && this.nbColonnes == tmp.getNbColonnes()){
+              if (this.casesRestantes == tmp.getCasesRestantes()){
+                  if (this.lePlateau.equals(tmp.getLePlateau())){return true;}
+              }
           }
+          return false;
       }
-      return false;
-  }
 
-  @Override
-  public int hashCode(){
-    int hash = this.nbLignes + this.nbColonnes + this.casesRestantes + this.turn.hashCode() * 97;
-    return hash;
-
-  }
+    @Override
+    public int hashCode(){
+            int hash = this.nbLignes + this.nbColonnes + this.casesRestantes + this.turn.hashCode() * 97;
+            return hash;
+          }
 
 }
