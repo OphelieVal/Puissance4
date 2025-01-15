@@ -2,6 +2,13 @@
     "configurations": [
         {
             "type": "java",
+            "name": "TestJDBC",
+            "request": "launch",
+            "mainClass": "TestJDBC",
+            "projectName": "Puissance4_114d7acd"
+        },
+        {
+            "type": "java",
             "name": "client1",
             "request": "launch",
             "mainClass": "executable.client1",
