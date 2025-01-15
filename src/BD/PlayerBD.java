@@ -1,7 +1,9 @@
-import src.modele.*;
+import modele.*;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+
+import modele.Joueur;
 
 
 public class PlayerBD {
