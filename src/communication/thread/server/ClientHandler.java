@@ -32,9 +32,7 @@ public class ClientHandler implements Runnable {
         this.clientInetAdress = socket.getInetAddress().getHostAddress();
     }
 
-    public String getClientIP() {
-        return this.clientInetAdress;
-    }
+    public String getClientIP() {return this.clientInetAdress;}
 
     /**
      * Permer d'afficher un log dans la console du server
@@ -85,9 +83,8 @@ public class ClientHandler implements Runnable {
         }
     }
 
-    /**
-     *
-     * @param args
+    /** Procedure de demande de recherche de partie avec un autre joueur
+     * @param args Commandes et argument
      */
     public void ask_server(String[] args){
         String joueur = args[1];
@@ -211,8 +208,8 @@ public class ClientHandler implements Runnable {
                     if (plateau.isGameEnded()) {
                         this.sendResponse("serverMessage", this.serveur.getInGamePlateau(joueur));
                         this.sendResponse("serverMessage", "GAME ENDED");
-                        this.sendResponse("serverMessage", "Le gagnant est: "+plateau.getWiner().getNomJoueur());
-                        this.sendResponse("clientInstruction", "SHOW WINNER "+plateau.getWiner().getNomJoueur());
+                        this.sendResponse("serverMessage", "Le gagnant est: "+plateau.getWinner().getNomJoueur());
+                        this.sendResponse("clientInstruction", "SHOW WINNER "+plateau.getWinner().getNomJoueur());
                         this.sendResponse("clientInstruction", "SET GAMEENDED");
                     }else if (plateau.getTurn().equals(joueur) && !(plateau.isGameEnded())){
                         this.sendResponse("clientInstruction", "SET INGAME");
@@ -261,6 +258,7 @@ public class ClientHandler implements Runnable {
             }
         }
     }
+
     @Override
     public void run() {
         String message = "";
@@ -269,13 +267,13 @@ public class ClientHandler implements Runnable {
                 try {
                     this.handle();
                 } catch (SocketException e ) {
-                    System.out.println("Client socket error");
+                    serverLog("Client socket error: "+ this.clientInetAdress);
                     break;
                 }
             }
         } catch (Exception e) {
-            System.err.println(e.getMessage() + e.getCause());
-            System.err.println("Déconnexion client inattendu");
+            serverLog("Déconnexion client inattendu : " + this.clientInetAdress);
+            System.err.println(e.getMessage() + e.getCause()); //debug
         }
         finally {
             try {

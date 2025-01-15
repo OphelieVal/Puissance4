@@ -12,11 +12,19 @@ public class Client extends Thread {
   private final ClientSocket clientSocket;
   private String nomJoueur;
   private ClientState clientState = ClientState.USERDISCONNECTED;
+  private boolean logs = false;
 
   public Client(String serverIP, int serverPort) throws UnknownHostException {
     this.serverIP = serverIP;
     this.clientIP = InetAddress.getLocalHost().getHostAddress();
     this.clientSocket = new ClientSocket(serverPort, this.serverIP, this);
+  }
+
+  public Client(String serverIP, int serverPort, boolean logs) throws UnknownHostException {
+    this.serverIP = serverIP;
+    this.clientIP = InetAddress.getLocalHost().getHostAddress();
+    this.logs = logs;
+    this.clientSocket = new ClientSocket(serverPort, this.serverIP, this, logs);
   }
 
   /** getter nom joueur
@@ -92,7 +100,7 @@ public class Client extends Thread {
         terminal = "Ce n'est as votre tour, patientez..\n";
         if (this.clientState == ClientState.LOOKINGADVERSARY) {
           this.request("waitgame", new String[]{"play",this.nomJoueur}, true);
-          System.out.println("state: "+this.clientState);
+          this.clientSocket.clientLog("state: "+this.clientState);
           Thread.sleep(500);
           this.updateTerminal(this.clientState);
         }
@@ -124,13 +132,13 @@ public class Client extends Thread {
       if (executeCondition) {
         String prepare = "\n"+command;
         if (args.length > 1) {
-//          System.out.println("[logs] one or more param in request");
+//          this.clientSocket.clientLog("[logs] one or more param in request");
           prepare += " ";
           for (int i = 1; i < args.length; i++) {
             prepare += args[i] + " ";
           }
         }
-        //System.out.println(prepare);
+//        this.clientSocket.clientLog(prepare);
         this.clientSocket.sendCommand(prepare);
         Thread.sleep(1500);
       }else {
@@ -244,8 +252,8 @@ public class Client extends Thread {
     long currentTime = System.currentTimeMillis();
     while (this.clientState == ClientState.WAITGAME) {
       this.request("waitgame", new String[]{"play",this.nomJoueur}, true);
-      System.out.println("state: "+this.clientState);
-      System.out.println("Durée écoulé: "+ (System.currentTimeMillis()-currentTime) + " ms");
+      this.clientSocket.clientLog("state: "+this.clientState);
+      this.clientSocket.clientLog("Durée écoulé: "+ (System.currentTimeMillis()-currentTime) + " ms");
       Thread.sleep(500);
     }
   }
@@ -255,8 +263,8 @@ public class Client extends Thread {
     long currentTime = System.currentTimeMillis();
     while (this.clientState == ClientState.LOOKINGADVERSARY) {
       this.request("isawait", none, true);
-      System.out.println("state: "+this.clientState);
-      System.out.println("Durée écoulé: "+ (System.currentTimeMillis()-currentTime) + " ms");
+      this.clientSocket.clientLog("state: "+this.clientState);
+      this.clientSocket.clientLog("Durée écoulé: "+ (System.currentTimeMillis()-currentTime) + " ms");
       Thread.sleep(500);
     }
   }

@@ -21,9 +21,7 @@ public class Joueur {
   /** getter nom joueur
    * @return le nom du joueur
    */
-  public String getNomJoueur() { 
-    return nomJoueur; 
-  }
+  public String getNomJoueur() {return nomJoueur;}
 
   /** getter couleur joueur
    * @return couleur du joueur
@@ -35,9 +33,7 @@ public class Joueur {
   /** gette le plateau actuel
    * @return plateau actuel du joueur
    */
-  public Plateau getPlateau(){
-    return this.lePlateau;
-  }
+  public Plateau getPlateau(){return this.lePlateau;}
 
   /** setter nom joueur
    * @param nomJoueur nom du joueur
@@ -76,7 +72,6 @@ public class Joueur {
             this.lePlateau.quatreDiagonal(caseJouee) >= count;
     return winState;
   }
-
 
   /** remet à jour l'ensemble des cases du plateau
    * 

@@ -119,7 +119,6 @@ public class Serveur {
     return null;
   }
 
-
   /**
    * get un client en attente
    * @return un client en attente
@@ -133,8 +132,6 @@ public class Serveur {
     return null;
 
   }
-
-
 
 //---------------------------------------------------------------------------------
   /**
@@ -159,7 +156,6 @@ public class Serveur {
       return "Joueur: "+client.getNomJoueur()+ "supprimé de la file d'attente";
     }
   }
-
 
   /** verifie si le joueur est dans la file d'attente */
   public boolean isPlayerInAwaitingQueue(String nomJoueur, String clientIP) {
@@ -235,6 +231,7 @@ public class Serveur {
   public void win(Joueur joueur) {
     this.serverLog(joueur.getNomJoueur() + " a gagné la partie ");
   }
+
   /**
    * fin de partie du joueur = quitte le plateau de jeu
    * @param nomJoueur
@@ -254,9 +251,7 @@ public class Serveur {
    * @param nomJoueur
    * @return statistique d'un joueur
    */
-  public String getStats(String nomJoueur) {
-    return "";
-  }
+  public String getStats(String nomJoueur) {return "";}
 
   /** demande la fin de connexion d'un joueur
    * @param nomJoueur nom d'un joueur
