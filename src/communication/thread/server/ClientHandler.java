@@ -205,6 +205,10 @@ public class ClientHandler implements Runnable {
                     else {
                         this.sendResponse("serverMessage", player + " a tenté de jouer");
                     }
+                    if (plateau.getJoueur1()==null && plateau.getJoueur2()==null){
+                        this.sendResponse("clientInstruction", "SET USERCONNECTED");
+                            serverLog("fin partie "+ player);
+                    }
                     break;
 
                 case "waitgame":
@@ -221,7 +225,7 @@ public class ClientHandler implements Runnable {
                         }
                         
                     }
-                    else if (plateau.getJoueur1()!=null && plateau.getJoueur2()!=null){
+                    else if (plateau.getJoueur1()==null && plateau.getJoueur2()==null){
                         this.sendResponse("clientInstruction", "SET USERCONNECTED");
                             serverLog("fin partie "+ joueur);
                     }
@@ -247,15 +251,6 @@ public class ClientHandler implements Runnable {
                 try {
                     this.handle();
                 } catch (Exception e) {
-                    Plateau plateau = this.serveur.getClient(this.username).getClientPlayer().getPlateau();
-                    Joueur j1 = plateau.getJoueur1();
-                    Joueur j2 = plateau.getJoueur2();
-                    if (j1.getNomJoueur()==this.username){
-                        plateau.setJ1(null);
-                    }
-                    else {
-                        plateau.setJ2(null);
-                    }
                     e.printStackTrace();
                     break;
                 }
