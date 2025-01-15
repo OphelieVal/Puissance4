@@ -127,8 +127,19 @@ public class ClientHandler implements Runnable {
      * @param status
      */
     public void isawait(String[] args, boolean status){
-        if (status) this.sendResponse("serverMessage", "LOOKING FOR ANOTHER PLAYER TO JOIN...");
-        else {
+//        if (status) this.sendResponse("serverMessage", "LOOKING FOR ANOTHER PLAYER TO JOIN...");
+//        else {
+//            Plateau plateau = this.serveur.getClient(args[1]).getClientPlayer().getPlateau();
+//            if (plateau.getTurn().equals(args[1])) {
+//                this.sendResponse("clientInstruction", "SET INGAME STATE OK");
+//            } else {
+//                this.sendResponse("clientInstruction", "SET WAITGAME");
+//                serverLog(args[1] + " mis en attente\n");
+//            }
+//        }
+//        this.sendResponse("serverMessage", "GAME FOUND");
+//        this.sendResponse("serverMessage", "STARTING...");
+        if (!status) {
             Plateau plateau = this.serveur.getClient(args[1]).getClientPlayer().getPlateau();
             if (plateau.getTurn().equals(args[1])) {
                 this.sendResponse("clientInstruction", "SET INGAME STATE OK");
@@ -136,9 +147,17 @@ public class ClientHandler implements Runnable {
                 this.sendResponse("clientInstruction", "SET WAITGAME");
                 serverLog(args[1] + " mis en attente\n");
             }
+            this.sendResponse("serverMessage", "GAME FOUND");
+            this.sendResponse("serverMessage", "STARTING...");
+        } else {
+            this.serverLog("LOOKING FOR ANOTHER PLAYER TO JOIN...");
+//            this.serverLog("LOOKING FOR ANOTHER PLAYER TO JOIN...");
+//            this.serverLog("LOOKING FOR ANOTHER PLAYER TO JOIN...");
+//            this.sendResponse("serverMessage", "LOOKING FOR ANOTHER PLAYER TO JOIN...");
+//            this.sendResponse("serverMessage", "GAME FOUND");
+//            this.sendResponse("serverMessage", "STARTING...");
         }
-        this.sendResponse("serverMessage", "GAME FOUND");
-        this.sendResponse("serverMessage", "STARTING...");
+
     }
 
     public void handle() throws IOException {
@@ -204,6 +223,7 @@ public class ClientHandler implements Runnable {
 
                 case "waitgame":
                     String joueur = args[1];
+                    String showInTerninal = args[2];
                     plateau = this.serveur.getClient(joueur).getClientPlayer().getPlateau();
                     if (plateau.isGameEnded()) {
                         this.sendResponse("serverMessage", this.serveur.getInGamePlateau(joueur));
@@ -216,7 +236,7 @@ public class ClientHandler implements Runnable {
                         serverLog("au tour de " + joueur);
                     }else {
                         this.serverLog("au tour de " + plateau.getTurn());
-                        this.sendResponse("serverMessage", "En attente d'une instruction valide");
+                        if (showInTerninal.equals("true")) this.sendResponse("serverMessage", "En attente de votre tours");
                     }
                     break;
 

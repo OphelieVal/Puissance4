@@ -75,7 +75,7 @@ public class ClientSocket extends Thread {
      * @param serverInstruction instruction complete du serveur
      * @throws InterruptedException Exception
      */
-    public void handleSreverInstruction(String serverInstruction) throws InterruptedException, IOException {
+    public void handleServerInstruction(String serverInstruction) throws InterruptedException, IOException {
         if (this.showLogs) this.clientLog("get instruction: " + serverInstruction);
         String[] args = serverInstruction.split(" ");
         String type = args[0].toLowerCase();
@@ -136,7 +136,7 @@ public class ClientSocket extends Thread {
                     String indicator = infos[0].split(":")[1];
                     switch (indicator) {
                         case "clientInstruction":
-                            this.handleSreverInstruction(infos[1]);
+                            this.handleServerInstruction(infos[1]);
                             break;
                         case "serverMessage":
                             String[] temp = infos[1].split("-");

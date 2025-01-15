@@ -250,10 +250,14 @@ public class Client extends Thread {
 
   public void request_turn() throws IOException, InterruptedException {
     long currentTime = System.currentTimeMillis();
+    int counter = 0;
     while (this.clientState == ClientState.WAITGAME) {
-      this.request("waitgame", new String[]{"play",this.nomJoueur}, true);
+      String showInTerninal = "false";
+      if (counter == 0 )  showInTerninal = "true";
+      this.request("waitgame", new String[]{"play",this.nomJoueur, showInTerninal}, true);
       this.clientSocket.clientLog("state: "+this.clientState);
       this.clientSocket.clientLog("Durée écoulé: "+ (System.currentTimeMillis()-currentTime) + " ms");
+      counter++;
       Thread.sleep(500);
     }
   }
@@ -286,7 +290,7 @@ public class Client extends Thread {
 
     this.request_turn();
     String[] args = new String[] {"getactualplate", this.nomJoueur} ;
-    this.request("getactualplate", args, this.clientState == ClientState.INGAME);
+//    this.request("getactualplate", args, this.clientState == ClientState.INGAME);
   }
 
   /**
