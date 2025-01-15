@@ -1,7 +1,8 @@
-import modele.Joueur;
+import src.modele.*;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+
 
 public class PlayerBD {
     private ConnexionMySQL connexion;
