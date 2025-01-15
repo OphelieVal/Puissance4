@@ -1,4 +1,5 @@
-package bd;
+package BD.bd;
+
 import modele.*;
 import java.sql.*;
 import java.util.ArrayList;
@@ -9,7 +10,7 @@ public class PlayerBD {
     private ConnexionMySQL connexion;
 
     public PlayerBD(){ 
-        this.connexion = new ConnexionMySQL("servinfo-maria", "DBakhtar", "akhtar", "noalecaca");
+        this.connexion = new ConnexionMySQL("localhost", "SAESYSTEM", "nathan", "Nath2005");
     }
     
     public List<Joueur> getListeJoueurs(){

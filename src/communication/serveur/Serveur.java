@@ -8,7 +8,8 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Random;
 
-import bd.*;
+
+import BD.bd.*;
 import modele.EnDehorsDuPlateauException;
 import modele.GagnantException;
 import modele.Joueur;

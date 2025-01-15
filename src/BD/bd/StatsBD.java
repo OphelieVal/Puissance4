@@ -1,4 +1,5 @@
-package bd;
+package BD.bd;
+
 import java.sql.*;
 import java.sql.SQLException;
 
@@ -9,7 +10,7 @@ public class StatsBD {
     private ConnexionMySQL connexion;
 
     public StatsBD(){
-        this.connexion = new ConnexionMySQL("servinfo-maria", "DBakhtar", "akhtar", "noalecaca");
+        this.connexion = new ConnexionMySQL("localhost", "SAESYSTEM", "nathan", "Nath2005");
     }
 
     public Stats getStatsparJoueur(Joueur joueur){
