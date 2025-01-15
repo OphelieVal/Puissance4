@@ -13,6 +13,7 @@ import java.util.Calendar;
 
 import modele.Joueur;
 import modele.Plateau;
+import modele.Stats;
 
 public class ClientHandler implements Runnable {
     private final Socket socket;
@@ -243,7 +244,7 @@ public class ClientHandler implements Runnable {
                         serverLog("au tour de " + joueur);
                     }else {
                         this.serverLog("au tour de " + plateau.getTurn());
-                        if (showInTerninal.equals("true")) this.sendResponse("serverMessage", "En attente de votre tours");
+                        if (showInTerninal.equals("true")) this.sendResponse("serverMessage", "En attente de votre tour");
                     }
                     break;
 
@@ -263,8 +264,8 @@ public class ClientHandler implements Runnable {
 
                 case "playerstats":
                     serverLog("client: " + this.clientInetAdress + " asked to see the stats of: " + args[1]);
-                    this.sendResponse("serverMessage", "Functionality not implemented yet (See a player's stats)");
-                    // TODO fonction pour voir les stats d'un joueur (implementation et interrogation BD requise)
+                    Stats stats = this.serveur.getstatsBd().getStatsparJoueur(this.serveur.getClient(args[1]).getClientPlayer());
+                    this.sendResponse("serverMessage", "Vous possédez " + stats.getNbParties() + " parties totales et " + stats.getNbVictoires() + " victoires.");
                     break;
 
                 case "playerslist":

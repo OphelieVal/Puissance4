@@ -7,17 +7,15 @@ public class Joueur {
   private boolean gameOver = false;
   private String nomJoueur;
   private String couleur;
-  private int id;
   private Plateau lePlateau;
   private String currentColor;
   private ReentrantLock lock = new ReentrantLock();
 
-  public Joueur(String nomJoueur,String couleur,int id){
+  public Joueur(String nomJoueur,String couleur){
     this.nomJoueur = nomJoueur;
     this.couleur = couleur;
     this.lePlateau = null;
-    this.id = id;
-    
+
   }
 
   /** getter nom joueur
@@ -36,13 +34,6 @@ public class Joueur {
    * @return plateau actuel du joueur
    */
   public Plateau getPlateau(){return this.lePlateau;}
-
-    /** getter du id 
-   * @return id du joueur
-   */
-  public int getId(){
-    return this.id;
-  }
 
   /** setter nom joueur
    * @param nomJoueur nom du joueur

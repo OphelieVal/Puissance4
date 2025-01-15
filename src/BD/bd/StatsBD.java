@@ -1,3 +1,4 @@
+package bd;
 import java.sql.*;
 import java.sql.SQLException;
 
@@ -15,9 +16,9 @@ public class StatsBD {
         Stats stats = new Stats(null,0,0);
         try{
             Connection c = this.connexion.getConnexion();
-            String requete = "SELECT NbVictoires, NbParties FROM STATS WHERE idp = ?";
+            String requete = "SELECT NbVictoires, NbParties FROM STATS WHERE pseudo = ?";
             PreparedStatement ps = c.prepareStatement(requete);
-            ps.setInt(1, joueur.getId());
+            ps.setString(1, joueur.getNomJoueur());
             ResultSet rs = ps.executeQuery();
             if (rs.next()){
                 int nbVictoires = rs.getInt("NbVictoires");
@@ -35,9 +36,9 @@ public class StatsBD {
     public void ajouterStats(Joueur joueur, int nbVictoires, int nbParties){
         try{
             Connection c = this.connexion.getConnexion();
-            String requete = "INSERT INTO STATS (idp, NbVictoires, NbParties) VALUES (?,?,?)";
+            String requete = "INSERT INTO STATS (pseudo, NbVictoires, NbParties) VALUES (?,?,?)";
             PreparedStatement ps = c.prepareStatement(requete);
-            ps.setInt(1, joueur.getId());
+            ps.setString(1, joueur.getNomJoueur());
             ps.setInt(2, nbVictoires);
             ps.setInt(3, nbParties);
             ps.executeUpdate();
@@ -50,11 +51,28 @@ public class StatsBD {
     public void modifierStats(Joueur joueur, int nbVictoires, int nbParties){
         try{
             Connection c = this.connexion.getConnexion();
-            String requete = "UPDATE STATS SET NbVictoires =?, NbParties =? WHERE idp =?";
+            String requete = "UPDATE STATS SET NbVictoires =?, NbParties =? WHERE pseudo =?";
             PreparedStatement ps = c.prepareStatement(requete);
             ps.setInt(1, nbVictoires);
             ps.setInt(2, nbParties);
-            ps.setInt(3, joueur.getId());
+            ps.setString(3, joueur.getNomJoueur());
+            ps.executeUpdate();
+            ps.close();
+        }
+        catch (SQLException e) {
+            System.out.println("erreur : " + e.getMessage());
+        }
+    }
+
+    public void incrementStats(Joueur joueur, boolean victoire){
+        try{
+            Connection c = this.connexion.getConnexion();
+            Stats actuelStats = this.getStatsparJoueur(joueur);
+            String requete = "UPDATE STATS SET NbVictoires =?, NbParties =? WHERE pseudo =?";
+            PreparedStatement ps = c.prepareStatement(requete);
+            ps.setInt(1, actuelStats.getNbVictoires()+1);
+            ps.setInt(2, actuelStats.getNbParties()+1);
+            ps.setString(3, joueur.getNomJoueur());
             ps.executeUpdate();
             ps.close();
         }
@@ -66,9 +84,9 @@ public class StatsBD {
     public void supprimerStats(Joueur joueur){
         try{
             Connection c = this.connexion.getConnexion();
-            String requete = "DELETE FROM STATS WHERE idp =?";
+            String requete = "DELETE FROM STATS WHERE pseudo =?";
             PreparedStatement ps = c.prepareStatement(requete);
-            ps.setInt(1, joueur.getId());
+            ps.setString(1, joueur.getNomJoueur());
             ps.executeUpdate();
             ps.close();
         }

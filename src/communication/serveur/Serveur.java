@@ -1,6 +1,5 @@
 package communication.serveur;
 
-
 import communication.thread.server.ServerSocketConnector;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -8,6 +7,8 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Random;
+
+import bd.*;
 import modele.EnDehorsDuPlateauException;
 import modele.GagnantException;
 import modele.Joueur;
@@ -22,6 +23,8 @@ public class Serveur {
   private List<PlayerClient> attenteClients;
   private ServerSocketConnector socketConnexion;
   private Random rand = new Random();
+  private PlayerBD playerBD;
+  private StatsBD statsBD;
 
   public Serveur(int port) throws IOException {
     this.port = port;
@@ -30,6 +33,9 @@ public class Serveur {
     this.attenteClients = new ArrayList<>();
     this.socketConnexion = new ServerSocketConnector(port, this);
     this.socketConnexion.start();
+    this.playerBD = new PlayerBD();
+    this.statsBD = new StatsBD();
+
   }
 
   /** getter port
@@ -38,6 +44,23 @@ public class Serveur {
   public int get_port(){
     return this.port;
   }
+  /**
+   * getter player base de donnees
+   * @return le player modele
+   */
+  public PlayerBD getPlayerBD(){
+    return this.playerBD;
+  }
+
+  /**
+   * getter stats base de donnees
+   * @return le player modele
+   */
+  public StatsBD getstatsBd(){
+    return this.statsBD;
+  }
+
+
 
   /** verifie si le client est deja connecte au serveur 
    * @param nomJoueur nom du joueur

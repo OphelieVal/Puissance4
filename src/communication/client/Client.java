@@ -83,9 +83,9 @@ public class Client extends Thread {
         terminal = "Entrez une commande : \n"+
           "-> ASK demande d'une nouvelle partie avec un joueur\n"+
           "-> DISCONNECT deconnecte de l'espace Joueur\n" +
-          "-> PLAYERSLIST donne la liste de tout les joueur actuellement connecte\n" +
-          "-> ALLPLAYERSLIST donne la liste de tout les joueur enregistrer sur le jeu\n" +
-          "-> PLAYERSTATS <username> deconnecte de l'espace Joueur\n";
+          "-> PLAYERSLIST donne la liste de tous les joueurs actuellement connectes\n" +
+          "-> ALLPLAYERSLIST donne la liste de tous les joueurs enregistrés sur le jeu\n" +
+          "-> PLAYERSTATS voir vos stats\n";
         break;
       case ClientState.INGAME:
         String[] args = new String[] {"getactualplate", this.nomJoueur} ;
