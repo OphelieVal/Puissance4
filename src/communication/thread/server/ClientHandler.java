@@ -11,10 +11,7 @@ import java.net.SocketException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
-import modele.GagnantException;
-import modele.Joueur;
-import modele.Plateau;
-import modele.Stats;
+import modele.*;
 
 public class ClientHandler implements Runnable {
     private final Socket socket;
@@ -303,10 +300,10 @@ public class ClientHandler implements Runnable {
         } catch (Exception e) {
             serverLog("Déconnexion client inattendu : " + this.clientInetAdress);
 
-//            if (this.serveur.getClient(this.username).getClientPlayer().getPlateau() != null) this.serveur.forceEndGame(this.username, this.clientInetAdress);
 //            try {
-//                this.serveur.forceEndGame(this.serveur.getClient(this.username).getClientPlayer());
-//            } catch (GagnantException ex) {
+//                this.serveur.forceEndGame(this.clientInetAdress);
+//
+//            } catch (InGamePLayerDisconnected ex) {
 //                throw new RuntimeException(ex);
 //            }
             System.err.println(e.getMessage() + e.getCause()); //debug

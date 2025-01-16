@@ -10,11 +10,7 @@ import java.util.Random;
 
 
 import BD.bd.*;
-import modele.EnDehorsDuPlateauException;
-import modele.GagnantException;
-import modele.Joueur;
-import modele.OccupeeException;
-import modele.Plateau;
+import modele.*;
 
 
 public class Serveur {
@@ -231,8 +227,7 @@ public class Serveur {
       if (joueur.getNomJoueur()!=null){
         pose = joueur.getPlateau().poseJeton(nomColonne, joueur);
       }
-    }
-    catch (GagnantException e){
+    } catch (GagnantException e){
       this.win(joueur);
     }
     catch (EnDehorsDuPlateauException e){
@@ -256,11 +251,16 @@ public class Serveur {
     this.serverLog(joueur.getNomJoueur() + " a gagné la partie ");
   }
 
-  public void forceEndGame(Joueur player) throws GagnantException {
-    if ((player.getPlateau() != null) && (!player.getPlateau().isGameEnded())) {
-      player.getPlateau().signalPlayerDisconnected(player);
-    }
-  }
+//  public void forceEndGame(String clientIP) throws InGamePLayerDisconnected {
+//    for (PlayerClient client : this.clientsJoueurs) {
+//      if (client.getClientIP().equals(clientIP)) {
+//        Plateau plateau = client.getClientPlayer().getPlateau();
+//        if (plateau != null) {
+//          plateau.signalPlayerDisconnected();
+//        }
+//      }
+//    }
+//  }
 
   /**
    * fin de partie du joueur = quitte le plateau de jeu

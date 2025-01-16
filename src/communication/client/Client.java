@@ -113,7 +113,7 @@ public class Client extends Thread {
         terminal = "NOTHING";
         break;
     }
-    this.nettoieTerminal();
+    // this.nettoieTerminal();
     System.out.println("Actual client state: "+this.get_ClientState());
     if (!(this.nomJoueur == null) && this.clientState != ClientState.USERDISCONNECTED) {
       System.out.println("Connecte en tant que joueur: "+this.nomJoueur);
@@ -161,7 +161,7 @@ public class Client extends Thread {
       }
     this.clientSocket.start();
     boolean quit = false;
-    this.nettoieTerminal();
+    // this.nettoieTerminal();
     String request = "";
     Scanner scanner = new Scanner(System.in);
     System.out.println("========================\n   Bienvenue dans le Puissance 4 - Client     \n========================\n");
