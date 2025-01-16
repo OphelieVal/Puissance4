@@ -256,6 +256,12 @@ public class Serveur {
     this.serverLog(joueur.getNomJoueur() + " a gagné la partie ");
   }
 
+  public void forceEndGame(Joueur player) throws GagnantException {
+    if ((player.getPlateau() != null) && (!player.getPlateau().isGameEnded())) {
+      player.getPlateau().signalPlayerDisconnected(player);
+    }
+  }
+
   /**
    * fin de partie du joueur = quitte le plateau de jeu
    * @param nomJoueur

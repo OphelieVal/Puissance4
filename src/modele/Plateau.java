@@ -289,6 +289,12 @@ public class Plateau {
       return plate.toString();
     }
 
+    public void signalPlayerDisconnected(Joueur player) throws GagnantException {
+        if (this.j1.getNomJoueur().equals(player.getNomJoueur())) this.winner = j2;
+        else this.winner = j1;
+        this.gameEnded = true;
+        throw new GagnantException();
+    }
     @Override
     public String toString() {
       if (this.getVisualPlate() != null) return "PLATEAU_VISUAL_STRING-" + this.getVisualPlate();
