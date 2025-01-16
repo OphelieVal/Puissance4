@@ -1,16 +1,13 @@
 package BD.bd;
 
 import java.sql.*;
-import java.sql.SQLException;
-
-import modele.Joueur;
-import modele.Stats;
+import modele.*;
 
 public class StatsBD {
     private ConnexionMySQL connexion;
 
     public StatsBD(){
-        this.connexion = new ConnexionMySQL("localhost", "SAESYSTEM", "nathan", "Nath2005");
+        this.connexion = new ConnexionMySQL("servinfo-maria", "DBbocquet", "bocquet", "bocquet");
     }
 
     public Stats getStatsparJoueur(Joueur joueur){

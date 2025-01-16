@@ -113,7 +113,6 @@ public class Client extends Thread {
         terminal = "NOTHING";
         break;
     }
-    this.nettoieTerminal();
     System.out.println("Actual client state: "+this.get_ClientState());
     if (!(this.nomJoueur == null) && this.clientState != ClientState.USERDISCONNECTED) {
       System.out.println("Connecte en tant que joueur: "+this.nomJoueur);

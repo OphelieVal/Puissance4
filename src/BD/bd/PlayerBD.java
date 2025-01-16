@@ -1,16 +1,16 @@
 package BD.bd;
 
-import modele.*;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import modele.*;
 
 
 public class PlayerBD {
     private ConnexionMySQL connexion;
 
     public PlayerBD(){ 
-        this.connexion = new ConnexionMySQL("localhost", "SAESYSTEM", "nathan", "Nath2005");
+        this.connexion = new ConnexionMySQL("servinfo-maria", "DBbocquet", "bocquet", "bocquet");
     }
     
     public List<Joueur> getListeJoueurs(){

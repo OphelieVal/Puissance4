@@ -1,5 +1,8 @@
 package communication.serveur;
 
+
+import BD.bd.PlayerBD;
+import BD.bd.StatsBD;
 import communication.thread.server.ServerSocketConnector;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -7,9 +10,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Random;
-
-
-import BD.bd.*;
 import modele.EnDehorsDuPlateauException;
 import modele.GagnantException;
 import modele.Joueur;
@@ -24,8 +24,8 @@ public class Serveur {
   private List<PlayerClient> attenteClients;
   private ServerSocketConnector socketConnexion;
   private Random rand = new Random();
-  private PlayerBD playerBD;
-  private StatsBD statsBD;
+  private final PlayerBD playerBD;
+  private final StatsBD statsBD;
 
   public Serveur(int port) throws IOException {
     this.port = port;
@@ -36,7 +36,6 @@ public class Serveur {
     this.socketConnexion.start();
     this.playerBD = new PlayerBD();
     this.statsBD = new StatsBD();
-
   }
 
   /** getter port
@@ -45,14 +44,10 @@ public class Serveur {
   public int get_port(){
     return this.port;
   }
-  /**
-   * getter player base de donnees
-   * @return le player modele
-   */
+
   public PlayerBD getPlayerBD(){
     return this.playerBD;
   }
-
   /**
    * getter stats base de donnees
    * @return le player modele
@@ -60,8 +55,6 @@ public class Serveur {
   public StatsBD getstatsBd(){
     return this.statsBD;
   }
-
-
 
   /** verifie si le client est deja connecte au serveur 
    * @param nomJoueur nom du joueur
@@ -96,19 +89,29 @@ public class Serveur {
    * @return true si la demande a été prise en compte et realisé
    * sinon false
    */
-  public boolean disconnect(String clientIP) {
-    this.serverLog("Attempting to disconnect client with IP: " + clientIP);
-    for (PlayerClient client : this.clientsJoueurs) {
-      this.serverLog("Checking client: " + client.getClientIP());
-      if (client.getClientIP().equals(clientIP)) {
-        this.clientsJoueurs.remove(client);
-        this.serverLog("Client disconnected: " + clientIP);
-        return true;
+//  Debug with GPT (temporaire et sera supprimer a la fin de la correction)
+    public boolean disconnect(String clientIP) {
+      System.out.println("Attempting to disconnect client with IP: " + clientIP);
+      for (PlayerClient client : this.clientsJoueurs) {
+        System.out.println("Checking client: " + client.getClientIP());
+        if (client.getClientIP().equals(clientIP)) {
+          this.clientsJoueurs.remove(client);
+          System.out.println("Client disconnected: " + clientIP);
+          return true;
+        }
       }
+      System.out.println("Client not found: " + clientIP);
+      return false;
     }
-    this.serverLog("Client not found: " + clientIP);
-    return false;
-  }
+//  public boolean disconnect(String clientIP) {
+//    for (PlayerClient client : this.clientsJoueurs) {
+//      if (client.getClientIP().equals(clientIP)) {
+//        this.clientsJoueurs.remove(client);
+//        return true;
+//      }
+//    }
+//    return false;
+//  }
 
   /** affiche l'ensemble des clients connectes au serveur
    * @return ensemble clients connectes au serveur
@@ -131,7 +134,7 @@ public class Serveur {
   }
 
   public void newClientConnected(String ip) {
-    serverLog("Un nouveau client est connecté avec l'ip: "+ip);
+      serverLog("Un nouveau client est connecté avec l'ip: "+ip);
   }
 
   public PlayerClient getClient(String nomJoueur){
@@ -181,6 +184,7 @@ public class Serveur {
     }
   }
 
+
   /** verifie si le joueur est dans la file d'attente */
   public boolean isPlayerInAwaitingQueue(String nomJoueur, String clientIP) {
     for (PlayerClient client : this.attenteClients) {
@@ -204,7 +208,7 @@ public class Serveur {
       return null;
     }
     Plateau plateau = new Plateau(6, 7, client1.getClientPlayer(), client2.getClientPlayer()); // initialise à un plateau de taille normale
-    client1.getClientPlayer().setLePlateau(plateau);
+    client1.getClientPlayer().setLePlateau(plateau); 
     client1.getClientPlayer().setCouleur("rouge");
     client2.getClientPlayer().setLePlateau(plateau);
     client2.getClientPlayer().setCouleur("jaune");
@@ -212,10 +216,6 @@ public class Serveur {
 //    this.removeWaitClient(client1);
     this.removeWaitClient(client2);
     return client2;
-  }
-
-  public String getInGamePlateau(String username) {
-    return this.getClient(username).getClientPlayer().getPlateau().toString();
   }
 
   /**
@@ -226,36 +226,41 @@ public class Serveur {
    */
   public String play(int nomColonne, String nomJoueur) {
     boolean pose = false;
-    Joueur joueur =  this.getClient(nomJoueur).getClientPlayer();
-    try {
-      if (joueur.getNomJoueur()!=null){
-        pose = joueur.getPlateau().poseJeton(nomColonne, joueur);
+      Joueur joueur =  this.getClient(nomJoueur).getClientPlayer();
+      try {
+        if (joueur.getNomJoueur()!=null){ 
+          boolean result = joueur.getPlateau().poseJeton(nomColonne, joueur);
+          pose = true;
+        }
       }
-    }
-    catch (GagnantException e){
-      this.win(joueur);
-    }
-    catch (EnDehorsDuPlateauException e){
-      return "ERR plus de place sur cette colonne";
-    }
-    catch (OccupeeException e){
-      return "Il y a déjà un jeton";
-    }
+      catch (EnDehorsDuPlateauException e){
+        return "ERR plus de place sur cette colonne";
+      }
+      catch (GagnantException e){
+        this.win(joueur);
+      }
+      catch (OccupeeException e){
+        return "Il y a déjà un jeton";
+      }
     if (pose){
       return "OK jeton posé";
     }
     return "ERR nomJoueur invalide";
   }
 
-  /**
-   * verifie si le joueur a gagné
-   *
-   * @param joueur
-   */
-  public void win(Joueur joueur) {
-    this.serverLog(joueur.getNomJoueur() + " a gagné la partie ");
+  public String getInGamePlateau(String username) {
+    return this.getClient(username).getClientPlayer().getPlateau().toString();
   }
 
+  /**
+   * verifie si le joueur a gagné
+   * @param joueur
+   * @return true si a gagné sinon false
+   */
+  public boolean win(Joueur joueur) {
+    System.out.println(joueur.getNomJoueur() + " a gagné la partie ");
+    return true;
+  }
   /**
    * fin de partie du joueur = quitte le plateau de jeu
    * @param nomJoueur
@@ -275,7 +280,9 @@ public class Serveur {
    * @param nomJoueur
    * @return statistique d'un joueur
    */
-  public String getStats(String nomJoueur) {return "";}
+  public String getStats(String nomJoueur) {
+    return "";
+  }
 
   /** demande la fin de connexion d'un joueur
    * @param nomJoueur nom d'un joueur

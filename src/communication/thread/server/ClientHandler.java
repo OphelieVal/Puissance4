@@ -10,10 +10,8 @@ import java.net.Socket;
 import java.net.SocketException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-
 import modele.Joueur;
 import modele.Plateau;
-import modele.Stats;
 
 public class ClientHandler implements Runnable {
     private final Socket socket;
@@ -22,7 +20,7 @@ public class ClientHandler implements Runnable {
     private final PrintWriter writer;
     private final String clientInetAdress;
     private final Serveur serveur;
-    private String username;
+
 
     public ClientHandler(Socket socket, Serveur server) throws IOException {
         this.serveur = server;
@@ -128,18 +126,6 @@ public class ClientHandler implements Runnable {
      * @param status
      */
     public void isawait(String[] args, boolean status){
-//        if (status) this.sendResponse("serverMessage", "LOOKING FOR ANOTHER PLAYER TO JOIN...");
-//        else {
-//            Plateau plateau = this.serveur.getClient(args[1]).getClientPlayer().getPlateau();
-//            if (plateau.getTurn().equals(args[1])) {
-//                this.sendResponse("clientInstruction", "SET INGAME STATE OK");
-//            } else {
-//                this.sendResponse("clientInstruction", "SET WAITGAME");
-//                serverLog(args[1] + " mis en attente\n");
-//            }
-//        }
-//        this.sendResponse("serverMessage", "GAME FOUND");
-//        this.sendResponse("serverMessage", "STARTING...");
         if (!status) {
             Plateau plateau = this.serveur.getClient(args[1]).getClientPlayer().getPlateau();
             if (plateau.getTurn().equals(args[1])) {
@@ -152,11 +138,6 @@ public class ClientHandler implements Runnable {
             this.sendResponse("serverMessage", "STARTING...");
         } else {
             this.serverLog("LOOKING FOR ANOTHER PLAYER TO JOIN...");
-//            this.serverLog("LOOKING FOR ANOTHER PLAYER TO JOIN...");
-//            this.serverLog("LOOKING FOR ANOTHER PLAYER TO JOIN...");
-//            this.sendResponse("serverMessage", "LOOKING FOR ANOTHER PLAYER TO JOIN...");
-//            this.sendResponse("serverMessage", "GAME FOUND");
-//            this.sendResponse("serverMessage", "STARTING...");
         }
 
     }
@@ -245,7 +226,7 @@ public class ClientHandler implements Runnable {
                     }else {
                         this.serverLog("au tour de " + plateau.getTurn());
                         if (showInTerninal.equals("true")) this.sendResponse("serverMessage", "En attente de votre tour");
-                    }
+                }
                     break;
 
                 case "getactualplate":
@@ -264,8 +245,8 @@ public class ClientHandler implements Runnable {
 
                 case "playerstats":
                     serverLog("client: " + this.clientInetAdress + " asked to see the stats of: " + args[1]);
-                    Stats stats = this.serveur.getstatsBd().getStatsparJoueur(this.serveur.getClient(args[1]).getClientPlayer());
-                    this.sendResponse("serverMessage", "Vous possédez " + stats.getNbParties() + " parties totales et " + stats.getNbVictoires() + " victoires.");
+                    //Stats stats = this.serveur.getstatsBd().getStatsparJoueur(this.serveur.getClient(args[1]).getClientPlayer());
+                    //this.sendResponse("serverMessage", "Vous possédez " + stats.getNbParties() + " parties totales et " + stats.getNbVictoires() + " victoires.");
                     break;
 
                 case "playerslist":

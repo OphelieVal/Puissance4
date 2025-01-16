@@ -35,7 +35,7 @@ public class Case {
    * @return true si le jeton est posé
    * @throws Exception si la case contient deja un jeton
    */
-  public boolean poseJeton(String couleur) throws OccupeeException{
+  public synchronized boolean poseJeton(String couleur) throws OccupeeException{
     if (this.contientJeton()){
       String message = "La case a déjà un jeton de couleur " + this.couleur;
       throw new OccupeeException(message);
@@ -49,7 +49,7 @@ public class Case {
    * getter des cases voisines de la case actuelle
    * @return cases voisines
    */
-  public List<Case> getlesVoisines(){
+  public synchronized List<Case> getlesVoisines(){
     return this.lesVoisines;
   }
 

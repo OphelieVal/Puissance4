@@ -83,7 +83,7 @@ public class Plateau {
     * @return true si le jeton s'est posé sinon false
     * @throws IndexOutOfBoundsException en dehors du plateau
     */
-    public synchronized boolean poseJeton(int y, Joueur joueur) throws EnDehorsDuPlateauException, GagnantException, OccupeeException {
+    public boolean poseJeton(int y, Joueur joueur) throws EnDehorsDuPlateauException, GagnantException, OccupeeException {
     Integer x = this.getMaxligne(y);
     if (x==null) throw new EnDehorsDuPlateauException("Cette colonne est déjà remplie");
 
@@ -93,7 +93,9 @@ public class Plateau {
         this.gameEnded = true;
         throw new GagnantException();
       }
-      this.lePlateau[x][y].poseJeton(joueur.getCouleur());
+      synchronized (this) {
+        this.lePlateau[x][y].poseJeton(joueur.getCouleur());
+      }
     }
     catch (OccupeeException e){
       throw new OccupeeException(e.getMessage());

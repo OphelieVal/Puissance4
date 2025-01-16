@@ -1,10 +1,11 @@
 {
     "configurations": [
+
         {
             "type": "java",
             "name": "TestJDBC",
             "request": "launch",
-            "mainClass": "TestJDBC",
+            "mainClass": "BD.bd.TestJDBC",
             "projectName": "Puissance4_114d7acd"
         },
         {
