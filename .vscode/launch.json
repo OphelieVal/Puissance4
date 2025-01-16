@@ -1,0 +1,61 @@
+{
+    "configurations": [
+
+        {
+            "type": "java",
+            "name": "TestJDBC",
+            "request": "launch",
+            "mainClass": "BD.bd.TestJDBC",
+            "projectName": "Puissance4_114d7acd"
+        },
+        {
+            "type": "java",
+            "name": "client1",
+            "request": "launch",
+            "mainClass": "executable.client1",
+            "projectName": "Puissance4_f5563a55"
+        },
+        {
+            "type": "java",
+            "name": "client2",
+            "request": "launch",
+            "mainClass": "executable.client2",
+            "projectName": "Puissance4_f5563a55"
+        },
+        {
+            "type": "java",
+            "name": "server",
+            "request": "launch",
+            "mainClass": "executable.server",
+            "projectName": "Puissance4_f5563a55"
+        },
+        {
+            "type": "java",
+            "name": "server",
+            "request": "launch",
+            "mainClass": "executable.server",
+            "projectName": "Puissance4_50372f19"
+        },
+        {
+            "type": "java",
+            "name": "client2",
+            "request": "launch",
+            "mainClass": "executable.client2",
+            "projectName": "Puissance4_50372f19"
+        },
+        {
+            "type": "java",
+            "name": "client1",
+            "request": "launch",
+            "mainClass": "executable.client1",
+            "projectName": "Puissance4_50372f19"
+        },
+        {
+            "type": "java",
+            "name": "Launch Java Program",
+            "request": "launch",
+            "vmArgs": "--module-path /usr/share/openjfx/lib/ --add-modules javafx.controls,javafx.fxml",
+            "mainClass": ""
+        }
+    ]
+}
