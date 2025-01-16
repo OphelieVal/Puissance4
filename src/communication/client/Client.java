@@ -160,7 +160,7 @@ public class Client extends Thread {
       }
     this.clientSocket.start();
     boolean quit = false;
-    this.nettoieTerminal();
+    // this.nettoieTerminal();
     String request = "";
     Scanner scanner = new Scanner(System.in);
     System.out.println("========================\n   Bienvenue dans le Puissance 4 - Client     \n========================\n");

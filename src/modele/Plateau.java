@@ -291,6 +291,11 @@ public class Plateau {
       return plate.toString();
     }
 
+//    public void signalPlayerDisconnected() throws InGamePLayerDisconnected {
+//        this.winner = null;
+//        this.gameEnded = true;
+//        throw new InGamePLayerDisconnected();
+//    }
     @Override
     public String toString() {
       if (this.getVisualPlate() != null) return "PLATEAU_VISUAL_STRING-" + this.getVisualPlate();

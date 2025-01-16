@@ -10,8 +10,8 @@ import java.net.Socket;
 import java.net.SocketException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import modele.Joueur;
-import modele.Plateau;
+
+import modele.*;
 
 public class ClientHandler implements Runnable {
     private final Socket socket;
@@ -282,6 +282,12 @@ public class ClientHandler implements Runnable {
             }
         } catch (Exception e) {
             serverLog("Déconnexion client inattendu : " + this.clientInetAdress);
+//            try {
+//                this.serveur.forceEndGame(this.clientInetAdress);
+//
+//            } catch (InGamePLayerDisconnected ex) {
+//                throw new RuntimeException(ex);
+//            }
             System.err.println(e.getMessage() + e.getCause()); //debug
         }
         finally {
